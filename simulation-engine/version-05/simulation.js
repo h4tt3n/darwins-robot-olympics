@@ -695,6 +695,199 @@ class Simulation {
         }
 
         let position = new Vector2(200, 200); //new Vector2(0, 0);
+        let bigLegSectionLength = 32;
+        let smallLegSectionLength = 18;
+        let legSectionRadius = 10;
+        let legJointRadius = 8;
+        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+
+        // Body
+        var body = this.world.createParticle(position, 10, 30, randomColor);
+        bodyParts.particles.push(body);
+
+        // Leg anchors
+        var leftLegAnchor  = this.world.createParticle(position.add(new Vector2(-(body.radius+legJointRadius+2), 0)), 5, legJointRadius, randomColor);
+        var rightLegAnchor = this.world.createParticle(position.add(new Vector2( (body.radius+legJointRadius+2), 0)), 5, legJointRadius, randomColor);
+
+        var leftLegLinear = this.world.createLinearSpring(body, leftLegAnchor, 1.0, 1.0, 0.5);
+        var rightLegLinear = this.world.createLinearSpring(body, rightLegAnchor, 1.0, 1.0, 0.5);
+        leftLegLinear.radius = legSectionRadius;
+        rightLegLinear.radius = legSectionRadius;
+        leftLegLinear.color = randomColor2;
+        rightLegLinear.color = randomColor2;
+
+        var legAngular = this.world.createAngularSpring(leftLegLinear, rightLegLinear, 0.5, 0.5, 0.5)
+
+        // Articulated legs
+
+        // Left leg 1
+        //var leftLeg1Joint1 = this.world.createLinearState(leftLegAnchor.position.add(new Vector2(-30, -50)), 1.0);
+        var leftLeg1Joint1 = this.world.createParticle(leftLegAnchor.position.add(new Vector2(-bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var leftLeg1Joint2 = this.world.createParticle(leftLeg1Joint1.position.add(new Vector2(-bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var leftLeg1Foot = this.world.createParticle(leftLeg1Joint2.position.add(new Vector2(-bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        bodyParts.particles.push(leftLeg1Joint1);
+        bodyParts.particles.push(leftLeg1Joint2);
+        bodyParts.particles.push(leftLeg1Foot);
+
+        var leftLeg1Section1 = this.world.createLinearSpring(leftLegAnchor, leftLeg1Joint1, 1.0, 1.0, 0.5);
+        var leftLeg1Section2 = this.world.createLinearSpring(leftLeg1Joint1, leftLeg1Joint2, 1.0, 1.0, 0.5);
+        var leftLeg1Section3 = this.world.createLinearSpring(leftLeg1Joint2, leftLeg1Foot, 1.0, 1.0, 0.5);
+        leftLeg1Section1.radius = legSectionRadius;
+        leftLeg1Section2.radius = legSectionRadius;
+        leftLeg1Section3.radius = legSectionRadius;
+        leftLeg1Section1.color = randomColor2;
+        leftLeg1Section2.color = randomColor2;
+        leftLeg1Section3.color = randomColor2;
+
+        var leftLeg1Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg1Section1, 1.0, 1.0, 0.5);
+        var leftLeg1Angular2 = this.world.createAngularSpring(leftLeg1Section1, leftLeg1Section2, 0.25, 1.0, 0.5);
+        var leftLeg1Angular3 = this.world.createAngularSpring(leftLeg1Section2, leftLeg1Section3, 0.125, 1.0, 0.5);
+        
+        bodyParts.leftLeg1JointAngularSpring = leftLeg1Angular1;
+        bodyParts.leftLeg1AngularSprings.push(leftLeg1Angular2);
+        bodyParts.leftLeg1AngularSprings.push(leftLeg1Angular3);
+
+        // Left leg 2
+        var leftLeg2Joint1 = this.world.createParticle(leftLegAnchor.position.add(new Vector2(-smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var leftLeg2Joint2 = this.world.createParticle(leftLeg2Joint1.position.add(new Vector2(-smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var leftLeg2Foot = this.world.createParticle(leftLeg2Joint2.position.add(new Vector2(-smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
+
+        var leftLeg2Section1 = this.world.createLinearSpring(leftLegAnchor, leftLeg2Joint1, 1.0, 1.0, 0.5);
+        var leftLeg2Section2 = this.world.createLinearSpring(leftLeg2Joint1, leftLeg2Joint2, 1.0, 1.0, 0.5);
+        var leftLeg2Section3 = this.world.createLinearSpring(leftLeg2Joint2, leftLeg2Foot, 1.0, 1.0, 0.5);
+        leftLeg2Section1.radius = legSectionRadius;
+        leftLeg2Section2.radius = legSectionRadius;
+        leftLeg2Section3.radius = legSectionRadius;
+        leftLeg2Section1.color = randomColor2;
+        leftLeg2Section2.color = randomColor2;
+        leftLeg2Section3.color = randomColor2;
+
+        var leftLeg2Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg2Section1, 1.0, 1.0, 0.5);
+        var leftLeg2Angular2 = this.world.createAngularSpring(leftLeg2Section1, leftLeg2Section2, 0.25, 1.0, 0.5);
+        var leftLeg2Angular3 = this.world.createAngularSpring(leftLeg2Section2, leftLeg2Section3, 0.125, 1.0, 0.5);
+
+        bodyParts.leftLeg2JointAngularSpring = leftLeg2Angular1;
+        bodyParts.leftLeg2AngularSprings.push(leftLeg2Angular2);
+        bodyParts.leftLeg2AngularSprings.push(leftLeg2Angular3);
+
+        // Right leg 1
+        var rightLeg1Joint1 = this.world.createParticle(rightLegAnchor.position.add(new Vector2(bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var rightLeg1Joint2 = this.world.createParticle(rightLeg1Joint1.position.add(new Vector2(bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var rightLeg1Foot = this.world.createParticle(rightLeg1Joint2.position.add(new Vector2(bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
+
+        var rightLeg1Section1 = this.world.createLinearSpring(rightLegAnchor, rightLeg1Joint1, 1.0, 1.0, 0.5);
+        var rightLeg1Section2 = this.world.createLinearSpring(rightLeg1Joint1, rightLeg1Joint2, 1.0, 1.0, 0.5);
+        var rightLeg1Section3 = this.world.createLinearSpring(rightLeg1Joint2, rightLeg1Foot, 1.0, 1.0, 0.5);
+        rightLeg1Section1.radius = legSectionRadius;
+        rightLeg1Section2.radius = legSectionRadius;
+        rightLeg1Section3.radius = legSectionRadius;
+        rightLeg1Section1.color = randomColor2;
+        rightLeg1Section2.color = randomColor2;
+        rightLeg1Section3.color = randomColor2;
+
+        var rightLeg1Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg1Section1, 1.0, 1.0, 0.5);
+        var rightLeg1Angular2 = this.world.createAngularSpring(rightLeg1Section1, rightLeg1Section2, 0.25, 1.0, 0.5);
+        var rightLeg1Angular3 = this.world.createAngularSpring(rightLeg1Section2, rightLeg1Section3, 0.125, 1.0, 0.5);
+
+        bodyParts.rightLeg1JointAngularSpring = rightLeg1Angular1;
+        bodyParts.rightLeg1AngularSprings.push(rightLeg1Angular2);
+        bodyParts.rightLeg1AngularSprings.push(rightLeg1Angular3);
+
+        // Right leg 2
+        var rightLeg2Joint1 = this.world.createParticle(rightLegAnchor.position.add(new Vector2(smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var rightLeg2Joint2 = this.world.createParticle(rightLeg2Joint1.position.add(new Vector2(smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
+        var rightLeg2Foot = this.world.createParticle(rightLeg2Joint2.position.add(new Vector2(smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
+
+        var rightLeg2Section1 = this.world.createLinearSpring(rightLegAnchor, rightLeg2Joint1, 1.0, 1.0, 0.5);
+        var rightLeg2Section2 = this.world.createLinearSpring(rightLeg2Joint1, rightLeg2Joint2, 1.0, 1.0, 0.5);
+        var rightLeg2Section3 = this.world.createLinearSpring(rightLeg2Joint2, rightLeg2Foot, 1.0, 1.0, 0.5);
+        rightLeg2Section1.radius = legSectionRadius;
+        rightLeg2Section2.radius = legSectionRadius;
+        rightLeg2Section3.radius = legSectionRadius;
+        rightLeg2Section1.color = randomColor2;
+        rightLeg2Section2.color = randomColor2;
+        rightLeg2Section3.color = randomColor2;
+
+        var rightLeg2Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg2Section1, 1.0, 1.0, 0.5);
+        var rightLeg2Angular2 = this.world.createAngularSpring(rightLeg2Section1, rightLeg2Section2, 0.25, 1.0, 0.5);
+        var rightLeg2Angular3 = this.world.createAngularSpring(rightLeg2Section2, rightLeg2Section3, 0.125, 1.0, 0.5);
+
+        bodyParts.rightLeg2JointAngularSpring = rightLeg2Angular1;
+        bodyParts.rightLeg2AngularSprings.push(rightLeg2Angular2);
+        bodyParts.rightLeg2AngularSprings.push(rightLeg2Angular3);
+
+        // Push all Particles, LiearSprings and AngularSprings to BodyParts arrays
+        bodyParts.angularSprings.push(legAngular);
+        bodyParts.angularSprings.push(leftLeg1Angular1);
+        bodyParts.angularSprings.push(leftLeg1Angular2);
+        bodyParts.angularSprings.push(leftLeg1Angular3);
+        bodyParts.angularSprings.push(leftLeg2Angular1);
+        bodyParts.angularSprings.push(leftLeg2Angular2);
+        bodyParts.angularSprings.push(leftLeg2Angular3);
+        bodyParts.angularSprings.push(rightLeg1Angular1);
+        bodyParts.angularSprings.push(rightLeg1Angular2);
+        bodyParts.angularSprings.push(rightLeg1Angular3);
+        bodyParts.angularSprings.push(rightLeg2Angular1);
+        bodyParts.angularSprings.push(rightLeg2Angular2);
+        bodyParts.angularSprings.push(rightLeg2Angular3);
+
+        bodyParts.linearSprings.push(leftLegLinear);
+        bodyParts.linearSprings.push(rightLegLinear);
+        bodyParts.linearSprings.push(leftLeg1Section1);
+        bodyParts.linearSprings.push(leftLeg1Section2);
+        bodyParts.linearSprings.push(leftLeg1Section3);
+        bodyParts.linearSprings.push(leftLeg2Section1);
+        bodyParts.linearSprings.push(leftLeg2Section2);
+        bodyParts.linearSprings.push(leftLeg2Section3);
+        bodyParts.linearSprings.push(rightLeg1Section1);
+        bodyParts.linearSprings.push(rightLeg1Section2);
+        bodyParts.linearSprings.push(rightLeg1Section3);
+        bodyParts.linearSprings.push(rightLeg2Section1);
+        bodyParts.linearSprings.push(rightLeg2Section2);
+        bodyParts.linearSprings.push(rightLeg2Section3);
+
+        bodyParts.particles.push(body);
+        bodyParts.particles.push(leftLegAnchor);
+        bodyParts.particles.push(rightLegAnchor);
+        bodyParts.particles.push(leftLeg1Joint1);
+        bodyParts.particles.push(leftLeg1Joint2);
+        bodyParts.particles.push(leftLeg1Foot);
+        bodyParts.particles.push(leftLeg2Joint1);
+        bodyParts.particles.push(leftLeg2Joint2);
+        bodyParts.particles.push(leftLeg2Foot);
+        bodyParts.particles.push(rightLeg1Joint1);
+        bodyParts.particles.push(rightLeg1Joint2);
+        bodyParts.particles.push(rightLeg1Foot);
+        bodyParts.particles.push(rightLeg2Joint1);
+        bodyParts.particles.push(rightLeg2Joint2);
+        bodyParts.particles.push(rightLeg2Foot);
+
+        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+
+        let crab = new RoboCrab(brain, bodyParts, eyes);
+        //this.roboCrabs.push(crab);
+        this.roboWorms.push(crab); // Wrong, for testing
+        return crab;
+    }
+    createRoboCrabOld(params = {}) {
+
+        let bodyParts = {
+            particles : [],
+            linearSprings : [],
+            angularSprings : [],
+            leftLeg1AngularSprings : [],
+            leftLeg2AngularSprings : [],
+            rightLeg1AngularSprings : [],
+            rightLeg2AngularSprings : [],
+            leftLeg1JointAngularSpring : null,
+            leftLeg2JointAngularSpring : null,
+            rightLeg1JointAngularSpring : null,
+            rightLeg2JointAngularSpring : null,
+        }
+
+        let position = new Vector2(200, 200); //new Vector2(0, 0);
         let legSectionLength = 30;
         let legSectionRadius = 10;
         let legJointRadius = 8;

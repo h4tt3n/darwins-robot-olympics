@@ -57,34 +57,38 @@ class RoboCrab extends RoboBase {
         let legAngle = Math.PI * 2 * 0.15;
 
         // Update body
-        let angle = ToolBox.map(output[0], -1, 1, 0, -legAngle);
+        let angle = ToolBox.map(output[0], -1, 1, -legAngle, legAngle);
 
         for (let i = 0; i < this.body.leftLeg1AngularSprings.length; i++) {
             this.body.leftLeg1AngularSprings[i].setRestAngleVector(angle);
         }
 
-        angle = ToolBox.map(output[1], -1, 1, 0, -legAngle);
+        angle = ToolBox.map(output[1], -1, 1, -legAngle, legAngle);
 
         for (let i = 0; i < this.body.leftLeg2AngularSprings.length; i++) {
             this.body.leftLeg2AngularSprings[i].setRestAngleVector(angle);
         }
 
-        angle = ToolBox.map(output[2], -1, 1, 0, legAngle);
+        angle = ToolBox.map(output[2], -1, 1, -legAngle, legAngle);
 
         for (let i = 0; i < this.body.rightLeg1AngularSprings.length; i++) {
             this.body.rightLeg1AngularSprings[i].setRestAngleVector(angle);
         }
 
-        angle = ToolBox.map(output[3], -1, 1, 0, legAngle);
+        angle = ToolBox.map(output[3], -1, 1, -legAngle, legAngle);
 
         for (let i = 0; i < this.body.rightLeg2AngularSprings.length; i++) {
             this.body.rightLeg2AngularSprings[i].setRestAngleVector(angle);
         }
 
-        this.body.leftLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, 0, jointAngle));
-        this.body.leftLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[5], -1, 1, 0, jointAngle));
-        this.body.rightLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, 0, jointAngle));
-        this.body.rightLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[7], -1, 1, 0, jointAngle));
+        // this.body.leftLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, 0, jointAngle));
+        // this.body.leftLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[5], -1, 1, 0, jointAngle));
+        // this.body.rightLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, 0, jointAngle));
+        // this.body.rightLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[7], -1, 1, 0, jointAngle));
+        this.body.leftLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, -jointAngle, jointAngle));
+        this.body.leftLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[5], -1, 1, -jointAngle, jointAngle));
+        this.body.rightLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, -jointAngle, jointAngle));
+        this.body.rightLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[7], -1, 1, -jointAngle, jointAngle));
     }
 }
 

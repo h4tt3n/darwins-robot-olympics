@@ -99,6 +99,8 @@ const createChallengeFuncs = {
     "Long Jump" : createWorld2,
     "Climbing" : createWorld3,
     "Pitfall" : pitFall,
+    "Pitfall2" : pitFall2,
+    "Helmet" : helmet,
 }
 
 let createRobotFunc = createRobotFuncs["RoboWorm"];
@@ -420,6 +422,158 @@ function pitFall() {
     simulation.world.createLineSegment(pitBottomLeftPoint, pitBottomRightPoint);
     simulation.world.createLineSegment(pitBottomRightPoint, pitTopRightPoint);
     simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
+
+};
+
+function pitFall2() {
+    // Params
+    let top = -400;
+    let bottom = 400;
+    let left = -800;
+    let right = 2400;
+
+    let pitLeft = 700;
+    let pitRight = 1000;
+    let pitBottom = 2000;
+
+    // Create world
+    let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(600, 250));
+    let valdesSuperPoint2 = simulation.world.createPoint(new Vector2(1100, 250));
+
+    let segment = simulation.world.createLineSegment(valdesSuperPoint1, valdesSuperPoint2);
+
+    segment.radius = 24;
+
+
+    let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
+    let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
+    let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
+    let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
+    let pitTopLeftPoint = simulation.world.createPoint(new Vector2(pitLeft, bottom));
+    let pitBottomLeftPoint = simulation.world.createPoint(new Vector2(pitLeft - 100, pitBottom));
+    let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + 100, pitBottom));
+    let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom));
+
+
+    simulation.world.createLineSegment(topLeftPoint, topRightPoint);
+    simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
+    simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
+    simulation.world.createLineSegment(bottomLeftPoint, pitTopLeftPoint);
+    simulation.world.createLineSegment(pitTopLeftPoint, pitBottomLeftPoint);
+    simulation.world.createLineSegment(pitBottomLeftPoint, pitBottomRightPoint);
+    simulation.world.createLineSegment(pitBottomRightPoint, pitTopRightPoint);
+    simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
+
+};
+
+function helmet() {
+
+    // Params
+    let levelCenter = new Vector2(1000, 0);
+    let levelWidth = 3800;
+    let platformWidth = 1600;
+    let pitWidth = (levelWidth-2*platformWidth)/3;
+    let pitBottomMargin = 100;
+    let bottom = 1600;
+    let left = levelCenter.x-levelWidth/2;
+    
+    let pitDepth = 1200;
+
+    let domeRadius = levelWidth/2;
+    let domeWidth = domeRadius;
+    let domeHeight = 1400;
+    let numDomeSegments = 8;
+    let domeCenter = new Vector2(1000, -200);
+    let firstDomePoint = null;
+    let lastDomePoint = null;
+    
+    // Create dome Points
+    for(let i = 0; i < numDomeSegments; i++) {
+        let angle = -Math.PI * 1 * (i / (numDomeSegments-1));
+        let domePoint = simulation.world.createPoint(domeCenter.add(new Vector2(Math.cos(angle), Math.sin(angle)).mul(new Vector2(domeRadius, domeHeight))));
+        if (i == 0) {
+            firstDomePoint = domePoint;
+        }
+        if (i == numDomeSegments-1) 
+        {
+            lastDomePoint = domePoint;
+        }
+    }
+
+    // Create dome LineSegments
+    for(let i = 0; i < numDomeSegments-1; i++) {
+        let domePoint1 = simulation.world.points[i];
+        let domePoint2 = simulation.world.points[(i + 1)];
+        simulation.world.createLineSegment(domePoint1, domePoint2);
+    }
+
+    // Leftmost pit point
+    let topLeftPoint1 = simulation.world.createPoint(new Vector2(left, bottom - pitDepth));
+    let bottomLeftPoint1 = simulation.world.createPoint(new Vector2(left - pitBottomMargin, bottom));
+    let bottomRightPoint1 = simulation.world.createPoint(new Vector2(left + pitWidth + pitBottomMargin, bottom));
+    let topRightPoint1 = simulation.world.createPoint(new Vector2(left + pitWidth, bottom - pitDepth));
+
+    // Center pit point
+    let topLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth, bottom - pitDepth));
+    let bottomLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth - pitBottomMargin, bottom));
+    let bottomRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth + pitBottomMargin, bottom));
+    let topRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth, bottom - pitDepth));
+    
+    // Rightmost pit point
+    let topLeftPoint3 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + 2 * platformWidth, bottom - pitDepth));
+    let bottomLeftPoint3 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + 2 * platformWidth - pitBottomMargin, bottom));
+    let bottomRightPoint3 = simulation.world.createPoint(new Vector2(left + 3 * pitWidth + 2 * platformWidth + pitBottomMargin, bottom));
+    let topRightPoint3 = simulation.world.createPoint(new Vector2(left + 3 * pitWidth + 2 * platformWidth, bottom - pitDepth));
+
+    // Leftmost pit lineSegments
+    simulation.world.createLineSegment(lastDomePoint, topLeftPoint1);
+    simulation.world.createLineSegment(topLeftPoint1, bottomLeftPoint1);
+    simulation.world.createLineSegment(bottomLeftPoint1, bottomRightPoint1);
+    simulation.world.createLineSegment(bottomRightPoint1, topRightPoint1);
+    simulation.world.createLineSegment(topRightPoint1, topLeftPoint2);
+
+    // Center pit lineSegments
+    simulation.world.createLineSegment(topLeftPoint2, bottomLeftPoint2);
+    simulation.world.createLineSegment(bottomLeftPoint2, bottomRightPoint2);
+    simulation.world.createLineSegment(bottomRightPoint2, topRightPoint2);
+    simulation.world.createLineSegment(topRightPoint2, topLeftPoint3);
+
+    // Rightmost pit lineSegments
+    simulation.world.createLineSegment(topLeftPoint3, bottomLeftPoint3);
+    simulation.world.createLineSegment(bottomLeftPoint3, bottomRightPoint3);
+    simulation.world.createLineSegment(bottomRightPoint3, topRightPoint3);
+    simulation.world.createLineSegment(topRightPoint3, firstDomePoint);
+
+
+    // Params
+    // let top = -400;
+    // let bottom = 400;
+    // let left = -800;
+    // let right = 2400;
+
+    // let pitLeft = 800;
+    // let pitRight = 1000;
+    // let pitBottom = 2000;
+
+    // // Create world
+    // let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
+    // let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
+    // let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
+    // let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
+    // let pitTopLeftPoint = simulation.world.createPoint(new Vector2(pitLeft, bottom));
+    // let pitBottomLeftPoint = simulation.world.createPoint(new Vector2(pitLeft - 100, pitBottom));
+    // let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + 100, pitBottom));
+    // let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom));
+
+
+    // simulation.world.createLineSegment(topLeftPoint, topRightPoint);
+    // simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
+    // simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
+    // simulation.world.createLineSegment(bottomLeftPoint, pitTopLeftPoint);
+    // simulation.world.createLineSegment(pitTopLeftPoint, pitBottomLeftPoint);
+    // simulation.world.createLineSegment(pitBottomLeftPoint, pitBottomRightPoint);
+    // simulation.world.createLineSegment(pitBottomRightPoint, pitTopRightPoint);
+    // simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
 
 };
 
