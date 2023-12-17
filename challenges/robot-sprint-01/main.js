@@ -207,7 +207,23 @@ function evaluate() {
         
         // Create new robots
         simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.individuals);
-        
+
+        // let stringifiedRobots = [];
+
+        // // Stringify all newly created robotsand save in array
+        // for (let i = 0; i < simulation.roboWorms.length; i++) {
+        //     let stringifiedRobot = JSON.stringify(simulation.roboWorms[i]);
+        //     stringifiedRobots.push(stringifiedRobot);
+        // }
+
+        // simulation.roboWorms = [];
+
+        // // De-stringify all robots and save in simulation.roboWorms;
+        // for (let i = 0; i < stringifiedRobots.length; i++) {
+        //     let robot = JSON.parse(stringifiedRobots[i]);
+        //     simulation.roboWorms[i] = robot;
+        // }
+
         // Reset simulation
         simulation.deadRoboWorms = [];
         simulation.world.collisions = new Map();
