@@ -390,9 +390,9 @@ function createWorld3() {
     
     // Params
     let topLeft = 0;
-    let topRight = -1000;
-    let btmLeft = 1100;
-    let btmRight = 100;
+    let topRight = -600;
+    let btmLeft = 800;
+    let btmRight = 200;
     let left = -800;
     let right = 3000;
 

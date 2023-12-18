@@ -42,31 +42,31 @@ class World {
     applyImpulses(){
         for(var i = 0; i < constants.NUM_ITERATIONS; i++){
             this.applyCorrectiveImpulsesToMap(this.collisions);
-            this.applyCorrectiveImpulsestoArray(this.linearSprings);
             this.applyCorrectiveImpulsestoArray(this.angularSprings);
+            this.applyCorrectiveImpulsestoArray(this.linearSprings);
         }
     }
     applyCorrectiveImpulsestoArray(array){
-        for(var j = array.length-1; j >= 0; j--){
-            array[j].applyCorrectiveImpulse();
-        }
+        // for(var j = array.length-1; j >= 0; j--){
+        //     array[j].applyCorrectiveImpulse();
+        // }
         for(var j = 0; j < array.length; j++){
             array[j].applyCorrectiveImpulse();
         }
     }
     applyCorrectiveImpulsesToMap(map){
         const keys = Array.from(map.keys());
-        for(var j = keys.length-1; j >= 0; j--){
-            map.get(keys[j]).applyCorrectiveImpulse();
-        }
+        // for(var j = keys.length-1; j >= 0; j--){
+        //     map.get(keys[j]).applyCorrectiveImpulse();
+        // }
         for(var j = 0; j < keys.length; j++){
             map.get(keys[j]).applyCorrectiveImpulse();
         }
     }
     applyWarmStart(){
         this.collisions.forEach(c => { c.applyWarmStart() });
-        this.linearSprings.forEach(l => { l.applyWarmStart() });
         this.angularSprings.forEach(a => { a.applyWarmStart() });
+        this.linearSprings.forEach(l => { l.applyWarmStart() });
     }
     computeData(){
         this.linearSprings.forEach(l => { l.computeData() });
@@ -79,8 +79,8 @@ class World {
     }
     computeRestImpulse(){
         this.collisions.forEach(c => { c.computeRestImpulse() });
-        this.linearSprings.forEach(l => { l.computeRestImpulse() });
         this.angularSprings.forEach(a => { a.computeRestImpulse() });
+        this.linearSprings.forEach(l => { l.computeRestImpulse() });
     }
     update(){
         // Gravity

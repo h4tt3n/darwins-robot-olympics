@@ -264,11 +264,11 @@ class Simulation {
         bodyParts.linearSprings.push(lowerTorsoLinear);
 
         // Neck angular
-        var neckAngular = this.world.createAngularSpring(neckLinear, upperTorsoLinear, 0.25, 0.5, 0.5);
+        var neckAngular = this.world.createAngularSpring(neckLinear, upperTorsoLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(neckAngular);
 
         // Torso angular
-        var torsoAngular = this.world.createAngularSpring(upperTorsoLinear, lowerTorsoLinear, 0.25, 0.5, 0.5);
+        var torsoAngular = this.world.createAngularSpring(upperTorsoLinear, lowerTorsoLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(torsoAngular);
 
         // Left elbow
@@ -292,12 +292,12 @@ class Simulation {
         bodyParts.linearSprings.push(leftLowerArmLinear);
 
         // Left upper arm angular
-        var leftUpperArmAngular = this.world.createAngularSpring(upperTorsoLinear, leftUpperArmLinear, 0.25, 0.5, 0.5);
+        var leftUpperArmAngular = this.world.createAngularSpring(upperTorsoLinear, leftUpperArmLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(leftUpperArmAngular);
         bodyParts.leftUpperArmAngular = leftUpperArmAngular;
 
         // Left lower arm angular
-        var leftLowerArmAngular = this.world.createAngularSpring(leftUpperArmLinear, leftLowerArmLinear, 0.25, 0.5, 0.5);
+        var leftLowerArmAngular = this.world.createAngularSpring(leftUpperArmLinear, leftLowerArmLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(leftLowerArmAngular);
         bodyParts.leftLowerArmAngular = leftLowerArmAngular;
 
@@ -322,12 +322,12 @@ class Simulation {
         bodyParts.linearSprings.push(rightLowerArmLinear);
 
         // Right upper arm angular
-        var rightUpperArmAngular = this.world.createAngularSpring(upperTorsoLinear, rightUpperArmLinear, 0.25, 0.5, 0.5);
+        var rightUpperArmAngular = this.world.createAngularSpring(upperTorsoLinear, rightUpperArmLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(rightUpperArmAngular);
         bodyParts.rightUpperArmAngular = rightUpperArmAngular;
 
         // Right lower arm angular
-        var rightLowerArmAngular = this.world.createAngularSpring(rightUpperArmLinear, rightLowerArmLinear, 0.25, 0.5, 0.5);
+        var rightLowerArmAngular = this.world.createAngularSpring(rightUpperArmLinear, rightLowerArmLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(rightLowerArmAngular);
         bodyParts.rightLowerArmAngular = rightLowerArmAngular;
 
@@ -372,21 +372,21 @@ class Simulation {
         bodyParts.linearSprings.push(leftSoleLinear);
 
         // Left upper leg angular
-        var leftUpperLegAngular = this.world.createAngularSpring(lowerTorsoLinear, leftUpperLegLinear, 0.25, 0.5, 0.5);
+        var leftUpperLegAngular = this.world.createAngularSpring(lowerTorsoLinear, leftUpperLegLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(leftUpperLegAngular);
         bodyParts.leftUpperLegAngular = leftUpperLegAngular;
 
         // Left lower leg angular
-        var leftLowerLegAngular = this.world.createAngularSpring(leftUpperLegLinear, leftLowerLegLinear, 0.25, 0.5, 0.5);
+        var leftLowerLegAngular = this.world.createAngularSpring(leftUpperLegLinear, leftLowerLegLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(leftLowerLegAngular);
         bodyParts.leftLowerLegAngular = leftLowerLegAngular;
 
         // Left heel angular
-        var leftHeelAngular = this.world.createAngularSpring(leftLowerLegLinear, leftHeelLinear, 0.25, 0.5, 0.5);
+        var leftHeelAngular = this.world.createAngularSpring(leftLowerLegLinear, leftHeelLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(leftHeelAngular);
 
         // Left sole angular
-        var leftSoleAngular = this.world.createAngularSpring(leftHeelLinear, leftSoleLinear, 0.25, 0.5, 0.5);
+        var leftSoleAngular = this.world.createAngularSpring(leftHeelLinear, leftSoleLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(leftSoleAngular);
 
         // Right knee
@@ -430,21 +430,21 @@ class Simulation {
         bodyParts.linearSprings.push(rightSoleLinear);
 
         // Right upper leg angular
-        var rightUpperLegAngular = this.world.createAngularSpring(lowerTorsoLinear, rightUpperLegLinear, 0.25, 0.5, 0.5);
+        var rightUpperLegAngular = this.world.createAngularSpring(lowerTorsoLinear, rightUpperLegLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(rightUpperLegAngular);
         bodyParts.rightUpperLegAngular = rightUpperLegAngular;
 
         // Right lower leg angular
-        var rightLowerLegAngular = this.world.createAngularSpring(rightUpperLegLinear, rightLowerLegLinear, 0.25, 0.5, 0.5);
+        var rightLowerLegAngular = this.world.createAngularSpring(rightUpperLegLinear, rightLowerLegLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(rightLowerLegAngular);
         bodyParts.rightLowerLegAngular = rightLowerLegAngular;
 
         // Right heel angular
-        var rightHeelAngular = this.world.createAngularSpring(rightLowerLegLinear, rightHeelLinear, 0.25, 0.5, 0.5);
+        var rightHeelAngular = this.world.createAngularSpring(rightLowerLegLinear, rightHeelLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(rightHeelAngular);
 
         // Right sole angular
-        var rightSoleAngular = this.world.createAngularSpring(rightHeelLinear, rightSoleLinear, 0.25, 0.5, 0.5);
+        var rightSoleAngular = this.world.createAngularSpring(rightHeelLinear, rightSoleLinear, 0.125, 1.0, 0.5);
         bodyParts.angularSprings.push(rightSoleAngular);
 
         // Create brain

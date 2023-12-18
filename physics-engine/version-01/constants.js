@@ -13,7 +13,7 @@
 const DT             = new Number(1.0 / 60.0);
 const INV_DT         = new Number(1.0 / DT);
 const FPS            = new Number(60);
-const NUM_ITERATIONS = new Number(4);
+const NUM_ITERATIONS = new Number(8);
 const GRAVITY        = new Number(9.82); // 9.82
 
 const constants = {
