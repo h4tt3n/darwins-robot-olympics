@@ -7,9 +7,9 @@ import { LineSegment } from './lineSegment.js'
 
 class ParticleParticleCollisionObject {
     constructor(particleA, particleB, particleACollisionPoint, particleBCollisionPoint, distance, normal) {
-        this.stiffness = 0.0;
-        this.damping = 0.0;
-        this.warmStart = 0.0;
+        this.stiffness = 1.0;
+        this.damping = 0.8;
+        this.warmStart = 0.5;
         this.particleA = particleA;
         this.particleB = particleB;
         this.particleACollisionPoint = particleACollisionPoint;
@@ -49,7 +49,7 @@ class ParticleParticleCollisionObject {
     }
     computeReducedMass(){
         //var k = this.linearStateA.inverseMass + this.linearStateB.inverseMass;
-        var k = this.particleA.inverseMass + this.particleA.inverseMass;
+        var k = this.particleA.inverseMass + this.particleB.inverseMass;
         this.reducedMass = k > 0.0 ? 1.0 / k : 0.0;
     }
 }
@@ -57,8 +57,8 @@ class ParticleParticleCollisionObject {
 class LineSegmentParticleCollisionObject {
     constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
         this.stiffness = 1.0;
-        this.damping = 0.9;
-        this.warmStart = 1.0;
+        this.damping = 0.5;
+        this.warmStart = 0.5;
         this.lineSegment = lineSegment;
         this.particle = particle;
         this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
@@ -79,10 +79,11 @@ class LineSegmentParticleCollisionObject {
         const projectedPerpendicularVelocity = this.normal.perpDot(deltaVelocity);
         const perpendicularVelocitySquared = projectedPerpendicularVelocity * projectedPerpendicularVelocity;
 
-        let friction = perpendicularVelocitySquared < 2*2 ? 1.0 : 0.2;
+        //let friction = perpendicularVelocitySquared < 2*2 ? 1.0 : 0.2;
+        let friction = Math.abs(projectedPerpendicularVelocity) < 2 ? 1.0 : 0.2;
 
         const projectedNormalImpulse = this.normal.dot(deltaImpulse);
-        const projectedPerpendicularImpulse = this.normal.perpDot(deltaImpulse);
+        //const projectedPerpendicularImpulse = this.normal.perpDot(deltaImpulse);
 
         const normalImpulseError = projectedNormalImpulse - this.restImpulse;
         const perpendicularImpulseError = (projectedPerpendicularVelocity * friction);

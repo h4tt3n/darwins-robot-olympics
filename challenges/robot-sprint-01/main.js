@@ -487,21 +487,30 @@ function helmet() {
     // Params
     let levelCenter = new Vector2(1000, 0);
     let levelWidth = 3800;
-    let platformWidth = 1600;
+    let platformWidth = 1500;
     let pitWidth = (levelWidth-2*platformWidth)/3;
     let pitBottomMargin = 100;
-    let bottom = 1600;
+    let bottom = 2400;
     let left = levelCenter.x-levelWidth/2;
     
-    let pitDepth = 1200;
+    let pitDepth = 2000;
 
     let domeRadius = levelWidth/2;
     let domeWidth = domeRadius;
-    let domeHeight = 1400;
+    let domeHeight = domeRadius; //1400;
     let numDomeSegments = 8;
     let domeCenter = new Vector2(1000, -200);
     let firstDomePoint = null;
     let lastDomePoint = null;
+
+    // Create random particles with this.world.createParticle(position, 20, 25, randomColor);
+    // for(let i = 0; i < 500; i++) {
+    //     let randomPosition = new Vector2(Math.random() * levelWidth + left, Math.random() * bottom);
+    //     let randomColor = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
+    //     let randomRadius = 10 + Math.random() * 40;
+    //     let randomMass = randomRadius; //1 + Math.random() * 9;
+    //     simulation.world.createParticle(randomPosition, randomMass, randomRadius, randomColor);
+    // }
     
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {
