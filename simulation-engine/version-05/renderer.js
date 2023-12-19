@@ -394,21 +394,21 @@ class Renderer {
         }
 
         // Draw particles
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = "rgb(192, 192, 192)";
-        //this.ctx.lineJoin = "round";
+        // this.ctx.lineWidth = 1;
+        // this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        // //this.ctx.lineJoin = "round";
 
-        for (let i = 0; i < this.simulation.world.particles.length; i++) {
-            var particle = this.simulation.world.particles[i];
-            var x = particle.position.x;
-            var y = particle.position.y;
+        // for (let i = 0; i < this.simulation.world.particles.length; i++) {
+        //     var particle = this.simulation.world.particles[i];
+        //     var x = particle.position.x;
+        //     var y = particle.position.y;
 
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-            this.ctx.fillStyle = particle.color;
-            this.ctx.fill();
-            this.ctx.closePath();
-        }
+        //     this.ctx.beginPath();
+        //     this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
+        //     this.ctx.fillStyle = particle.color;
+        //     this.ctx.fill();
+        //     this.ctx.closePath();
+        // }
 
         // Draw LinearStates
         for (let i = 0; i < this.simulation.world.linearStates.length; i++) {

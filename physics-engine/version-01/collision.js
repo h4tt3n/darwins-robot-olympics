@@ -77,7 +77,7 @@ class LineSegmentParticleCollisionObject {
 
         const deltaVelocity = this.particle.velocity;
         const projectedPerpendicularVelocity = this.normal.perpDot(deltaVelocity);
-        const perpendicularVelocitySquared = projectedPerpendicularVelocity * projectedPerpendicularVelocity;
+        //const perpendicularVelocitySquared = projectedPerpendicularVelocity * projectedPerpendicularVelocity;
 
         //let friction = perpendicularVelocitySquared < 2*2 ? 1.0 : 0.2;
         let friction = Math.abs(projectedPerpendicularVelocity) < 2 ? 1.0 : 0.2;
