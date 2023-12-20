@@ -171,8 +171,8 @@ class Collision {
         if (denominator == 0) { return null; }  // Line segments are parallel
         const num_t = Vector2.perpDot(q.sub(p), s);
         const t = num_t / denominator;
-        const num_u = Vector2.perpDot(q.sub(p), r);
-        const u = num_u / denominator;
+        //const num_u = Vector2.perpDot(q.sub(p), r);
+        //const u = num_u / denominator;
         return p.add(r.mul(t)); // Return intersection point
     }
     closestPointToIntersection2(intersection, lineSegmentA, lineSegmentB) { // Here "Point" refers to Point class
