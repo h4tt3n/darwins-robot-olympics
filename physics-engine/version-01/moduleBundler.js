@@ -27,6 +27,7 @@ import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
 
 import { Particle } from './particle.js'
+import { Wheel } from './wheel.js'
 
 // Collision detection
 import { Collision } from './collision.js'
@@ -35,4 +36,4 @@ import { Collision } from './collision.js'
 import { World } from './world.js'
 
 // Export
-export { constants, Vector2, Point, LineSegment, LinearState, AngularState, LinearLink, LinearSpring, AngularSpring, Particle, Collision, World };
+export { constants, Vector2, Point, LineSegment, LinearState, AngularState, LinearLink, LinearSpring, AngularSpring, Particle, Wheel, Collision, World };

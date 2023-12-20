@@ -11,6 +11,7 @@ import { LinearLink } from './linearLink.js'
 import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
 import { Collision } from './collision.js'
+import { Wheel } from './wheel.js'
 
 class World {
     constructor(params = {}){
@@ -22,6 +23,7 @@ class World {
         this.linearSprings = [];
         this.angularSprings = [];
         this.particles = [];
+        this.wheels = [];
         this.collisions = new Map();
         this.objectIdCounter = 0;
         this.collisionHandler = new Collision(this);
@@ -35,6 +37,7 @@ class World {
         this.linearSprings = [];
         this.angularSprings = [];
         this.particles = [];
+        this.wheels = [];
         this.collisions = new Map();
         this.objectIdCounter = 0;
         this.collisionHandler = new Collision(this);
@@ -76,6 +79,7 @@ class World {
         this.linearStates.forEach(l => {l.computeNewState()});
         this.angularStates.forEach(a => {a.computeNewState()});
         this.particles.forEach(p => {p.computeNewState()});
+        this.wheels.forEach(w => {w.computeNewState()});
     }
     computeRestImpulse(){
         this.collisions.forEach(c => { c.computeRestImpulse() });
@@ -87,6 +91,7 @@ class World {
         this.linearStates.forEach(l => { l.addImpulse(new Vector2(0, constants.GRAVITY))});
         this.angularStates.forEach(a => { a.addImpulse(constants.GRAVITY)});
         this.particles.forEach(p => { p.addImpulse(new Vector2(0, constants.GRAVITY))});
+        this.wheels.forEach(w => { w.addImpulse(new Vector2(0, constants.GRAVITY))});
         
         // Collision detection and creation
         for (let i = 0; i < this.lineSegments.length; i++) {
@@ -200,6 +205,18 @@ class World {
         var index = this.particles.indexOf(particle);
         if (index > -1) {
             this.particles.splice(index, 1);
+        }
+    }
+    createWheel(position, mass, angle, inertia, radius){
+        var wheel = new Wheel(position, mass, angle, inertia, radius);
+        wheel.objectId = this.objectIdCounter++;
+        this.wheels.push(wheel);
+        return this.wheels[this.wheels.length - 1];
+    }
+    deleteWheel(wheel){
+        var index = this.wheels.indexOf(wheel);
+        if (index > -1) {
+            this.wheels.splice(index, 1);
         }
     }
 };

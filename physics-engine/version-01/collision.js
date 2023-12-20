@@ -56,8 +56,8 @@ class ParticleParticleCollisionObject {
 
 class LineSegmentParticleCollisionObject {
     constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
-        this.stiffness = 1.0;
-        this.damping = 0.5;
+        this.stiffness = 0.5;
+        this.damping = 0.8;
         this.warmStart = 0.5;
         this.lineSegment = lineSegment;
         this.particle = particle;
@@ -80,7 +80,7 @@ class LineSegmentParticleCollisionObject {
         //const perpendicularVelocitySquared = projectedPerpendicularVelocity * projectedPerpendicularVelocity;
 
         //let friction = perpendicularVelocitySquared < 2*2 ? 1.0 : 0.2;
-        let friction = Math.abs(projectedPerpendicularVelocity) < 2 ? 1.0 : 0.2;
+        let friction = Math.abs(projectedPerpendicularVelocity) < 10.0 ? 1.0 : 0.2;
 
         const projectedNormalImpulse = this.normal.dot(deltaImpulse);
         //const projectedPerpendicularImpulse = this.normal.perpDot(deltaImpulse);
@@ -160,7 +160,7 @@ class LineSegmentLinearSpringCollisionObject {
 class Collision {
     constructor(world) {
         this.world = world;
-        this.buffer = 0.2;
+        this.buffer = 0.0;
     }
     planePlaneIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;

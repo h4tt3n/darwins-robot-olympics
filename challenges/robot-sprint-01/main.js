@@ -504,13 +504,19 @@ function helmet() {
     let lastDomePoint = null;
 
     // Create random particles with this.world.createParticle(position, 20, 25, randomColor);
-    // for(let i = 0; i < 500; i++) {
-    //     let randomPosition = new Vector2(Math.random() * levelWidth + left, Math.random() * bottom);
+    // for(let i = 0; i < 300; i++) {
+    //     let randomPosition = new Vector2(Math.random() * levelWidth + left, Math.random() * bottom - 6000);
     //     let randomColor = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
     //     let randomRadius = 10 + Math.random() * 40;
     //     let randomMass = randomRadius; //1 + Math.random() * 9;
     //     simulation.world.createParticle(randomPosition, randomMass, randomRadius, randomColor);
     // }
+
+    // Create wheel
+    let wheel = simulation.world.createWheel(new Vector2(0, 0), 0, 0, 1000, 100);
+    console.log(wheel);
+
+    wheel.addAngularImpulse(1);
     
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {

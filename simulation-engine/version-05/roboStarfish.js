@@ -13,8 +13,8 @@ class RoboStarfish extends RoboBase {
         // Update eyes
 		
         // //const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
-        const angleVector = this.body.linearSprings[1].angleVector;
-        this.eyes.directionVector = angleVector.perp();
+        const angleVector = this.body.linearSprings[0].angleVector;
+        //this.eyes.directionVector = angleVector.perp();
         // //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
         this.eyes.origin = this.body.particles[0].position;
 
@@ -35,7 +35,7 @@ class RoboStarfish extends RoboBase {
 		let output = this.brain.getOutput();
 
         // let jointAngle = Math.PI * 2 * 0.15;
-        let legAngle = Math.PI * 2 * 0.15;
+        let legAngle = Math.PI * 2 * 0.166;
 
         // Update body
         let angle = ToolBox.map(output[0], -1, 1, -legAngle, legAngle);
