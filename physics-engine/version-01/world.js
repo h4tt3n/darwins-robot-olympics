@@ -10,7 +10,10 @@ import { Particle } from './particle.js'
 import { LinearLink } from './linearLink.js'
 import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
-import { Collision } from './collision.js'
+//import { Collision } from './collision.js'
+import { CollisionHandler } from './collision/collisionHandler.js'
+import { LineSegmentParticleCollision } from './collision/lineSegmentParticleCollision.js';
+import { ParticleParticleCollision } from './collision/particleParticleCollision.js';
 import { Wheel } from './wheel.js'
 
 class World {
@@ -26,7 +29,7 @@ class World {
         this.wheels = [];
         this.collisions = new Map();
         this.objectIdCounter = 0;
-        this.collisionHandler = new Collision(this);
+        this.collisionHandler = new CollisionHandler(this);
     }
     reset() {
         this.points = [];
@@ -40,7 +43,7 @@ class World {
         this.wheels = [];
         this.collisions = new Map();
         this.objectIdCounter = 0;
-        this.collisionHandler = new Collision(this);
+        this.collisionHandler = new CollisionHandler(this);
     }
     applyImpulses(){
         for(var i = 0; i < constants.NUM_ITERATIONS; i++){

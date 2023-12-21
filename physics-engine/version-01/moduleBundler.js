@@ -30,10 +30,27 @@ import { Particle } from './particle.js'
 import { Wheel } from './wheel.js'
 
 // Collision detection
-import { Collision } from './collision.js'
+import { CollisionHandler } from './collision/collisionHandler.js'
+import { LineSegmentParticleCollision } from './collision/lineSegmentParticleCollision.js';
+import { ParticleParticleCollision } from './collision/particleParticleCollision.js';
 
 // 
 import { World } from './world.js'
 
 // Export
-export { constants, Vector2, Point, LineSegment, LinearState, AngularState, LinearLink, LinearSpring, AngularSpring, Particle, Wheel, Collision, World };
+export { 
+    constants, 
+    Vector2, 
+    Point, 
+    LineSegment, 
+    LinearState, 
+    AngularState, 
+    LinearLink, 
+    LinearSpring, 
+    AngularSpring, 
+    Particle, 
+    Wheel, 
+    CollisionHandler,
+    LineSegmentParticleCollision,
+    ParticleParticleCollision,
+    World };

@@ -1,163 +1,11 @@
 "use strict";
 
-import { Vector2 } from '../../vector-library/version-01/vector2.js'
-import { constants } from './constants.js';
-import { Particle } from './particle.js'
-import { LineSegment } from './lineSegment.js'
+import { Vector2 } from '../../../vector-library/version-01/vector2.js'
+import { constants } from './../constants.js';
+import { LineSegmentParticleCollision } from './lineSegmentParticleCollision.js';
+import { ParticleParticleCollision } from './particleParticleCollision.js';
 
-class ParticleParticleCollisionObject {
-    constructor(particleA, particleB, particleACollisionPoint, particleBCollisionPoint, distance, normal) {
-        this.stiffness = 1.0;
-        this.damping = 0.8;
-        this.warmStart = 0.5;
-        this.particleA = particleA;
-        this.particleB = particleB;
-        this.particleACollisionPoint = particleACollisionPoint;
-        this.particleBCollisionPoint = particleBCollisionPoint;
-        this.distance = distance;
-        this.normal = normal;
-        this.reducedMass = 0.0;
-        this.restImpulse = new Vector2();
-        this.accumulatedImpulse = new Vector2();
-        this.objectId = null;
-        this.computeReducedMass();
-        //console.log(this.reducedMass);
-    }
-    applyCorrectiveImpulse() {
-        if (this.restImpulse == 0.0) { return; }
-        const deltaImpulse = this.particleB.impulse.sub(this.particleA.impulse);
-        const projectedImpulse = this.normal.dot(deltaImpulse);
-        const impulseError = projectedImpulse - this.restImpulse;
-        const correctiveImpulse = this.normal.mul(-impulseError * this.reducedMass); // TODO : Add reduced mass
-        this.particleA.addImpulse(correctiveImpulse.mul(-this.particleA.inverseMass));
-        this.particleB.addImpulse(correctiveImpulse.mul( this.particleB.inverseMass));
-
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
-    }
-    applyWarmStart() {
-
-    }
-    computeRestImpulse() {
-        //console.log("Rest impulse!");
-        const deltaPosition = this.particleBCollisionPoint.sub(this.particleACollisionPoint);
-        const deltaVelocity = this.particleB.velocity.sub(this.particleA.velocity);
-        let positionError = this.normal.dot(deltaPosition);
-        //if(positionError < 0.0) { positionError = 0; }
-        let velocityError = this.normal.dot(deltaVelocity);
-        //if(velocityError < 0.0) { velocityError = 0; }
-        this.restImpulse = -(positionError * this.stiffness * constants.INV_DT + velocityError * this.damping);
-    }
-    computeReducedMass(){
-        //var k = this.linearStateA.inverseMass + this.linearStateB.inverseMass;
-        var k = this.particleA.inverseMass + this.particleB.inverseMass;
-        this.reducedMass = k > 0.0 ? 1.0 / k : 0.0;
-    }
-}
-
-class LineSegmentParticleCollisionObject {
-    constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
-        this.stiffness = 0.5;
-        this.damping = 0.8;
-        this.warmStart = 0.5;
-        this.lineSegment = lineSegment;
-        this.particle = particle;
-        this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
-        this.particleCollisionPoint = particleCollisionPoint;
-        this.distance = distance;
-        this.normal = normal;
-        this.restImpulse = new Vector2();
-        this.accumulatedImpulse = new Vector2();
-        this.objectId = null;
-    }
-    applyCorrectiveImpulse() {
-        //console.log("Corrective impulse!");
-        // TODO: Refactor friction out of this function
-        if (this.restImpulse == 0.0) { return; }
-        const deltaImpulse = this.particle.impulse;
-
-        const deltaVelocity = this.particle.velocity;
-        const projectedPerpendicularVelocity = this.normal.perpDot(deltaVelocity);
-        //const perpendicularVelocitySquared = projectedPerpendicularVelocity * projectedPerpendicularVelocity;
-
-        //let friction = perpendicularVelocitySquared < 2*2 ? 1.0 : 0.2;
-        let friction = Math.abs(projectedPerpendicularVelocity) < 10.0 ? 1.0 : 0.2;
-
-        const projectedNormalImpulse = this.normal.dot(deltaImpulse);
-        //const projectedPerpendicularImpulse = this.normal.perpDot(deltaImpulse);
-
-        const normalImpulseError = projectedNormalImpulse - this.restImpulse;
-        const perpendicularImpulseError = (projectedPerpendicularVelocity * friction);
-
-        const correctiveNormalImpulse = this.normal.mul(-normalImpulseError * this.particle.mass);
-        const correctivePerpendicularImpulse = this.normal.perp().mul(-perpendicularImpulseError * this.particle.mass);
-
-        //const correctiveImpulse = this.normal.mul(-normalImpulseError * this.particle.mass);
-        const correctiveImpulse = correctiveNormalImpulse.add(correctivePerpendicularImpulse);
-        this.particle.addImpulse(correctiveImpulse.mul(this.particle.inverseMass));
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
-    }
-    applyWarmStart() {
-        // Temporarily disabled
-        // console.log("Warmstart!");
-        const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
-        if (projectedImpulse > 0.0) { return; }
-        const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
-        //console.log("Warmstart!");
-        this.particle.addImpulse(warmstartImpulse.mul(this.particle.inverseMass));
-        this.accumulatedImpulse = Vector2.zero;
-    }
-    computeRestImpulse() {
-        //console.log("Rest impulse!");
-        const deltaPosition = this.particleCollisionPoint.sub(this.lineSegmentCollisionPoint);
-        const deltaVelocity = this.particle.velocity;
-        let positionError = this.normal.dot(deltaPosition);
-        //if(positionError < 0.0) { positionError = 0; }
-        let velocityError = this.normal.dot(deltaVelocity);
-        //if(velocityError < 0.0) { velocityError = 0; }
-        this.restImpulse = -(positionError * this.stiffness * constants.INV_DT + velocityError * this.damping);
-    }
-}
-
-class LineSegmentLinearSpringCollisionObject {
-    constructor(lineSegment, linearSpring, lineSegmentCollisionPoint, linearSpringCollisionPoint, distance, normal) {
-        this.stiffness = 0.0;
-        this.damping = 1.0;
-        this.warmStart = 0.0;
-        this.lineSegment = lineSegment;
-        this.linearSpring = linearSpring;
-        this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
-        this.linearSpringCollisionPoint = linearSpringCollisionPoint;
-        this.distance = distance;
-        this.normal = normal;
-        this.restImpulse = new Vector2();
-        this.accumulatedImpulse = new Vector2();
-        this.objectId = null;
-    }
-    applyCorrectiveImpulse() {
-        //console.log("Corrective impulse!");
-        if (this.restImpulse == 0.0) { return; }
-        const deltaImpulse = this.linearSpringCollisionPoint.impulse;
-        const projectedImpulse = this.normal.dot(deltaImpulse);
-        const impulseError = projectedImpulse - this.restImpulse;
-        const correctiveImpulse = this.normal.mul(-impulseError * this.linearSpringCollisionPoint.mass);
-        this.linearSpringCollisionPoint.addImpulse(correctiveImpulse.mul(this.linearSpringCollisionPoint.inverseMass));
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
-    }
-    applyWarmStart() {
-
-    }
-    computeRestImpulse() {
-        const deltaPosition = this.linearSpringCollisionPoint.position.sub(this.lineSegmentCollisionPoint);
-        const deltaVelocity = this.linearSpringCollisionPoint.velocity;
-        let positionError = this.normal.dot(deltaPosition);
-        if(positionError < 0.0) { positionError = 0; }
-        let velocityError = this.normal.dot(deltaVelocity);
-        if(velocityError < 0.0) { velocityError = 0; }
-        this.restImpulse = -(positionError * this.stiffness * constants.INV_DT + velocityError * this.damping);
-    }
-}
-
-class Collision {
+class CollisionHandler {
     constructor(world) {
         this.world = world;
         this.buffer = 0.0;
@@ -271,43 +119,43 @@ class Collision {
         }  
     }
 
-    lineSegmentLinearSpringCollision(lineSegment, linearSpring) {
+    // lineSegmentLinearSpringCollision(lineSegment, linearSpring) {
         
-        //const intersectionPoint = this.lineSegmentLineSegmentIntersection(lineSegment, linearSpring);
-        // { isIntersecting : bool, intersectionPointA : ref, intersectionPointB : ref }
-        const intersectionPoint = this.lineSegmentWithRadiusIntersection(lineSegment, linearSpring)
-        const isActive = this.isCollisionActive(lineSegment, linearSpring);
+    //     //const intersectionPoint = this.lineSegmentLineSegmentIntersection(lineSegment, linearSpring);
+    //     // { isIntersecting : bool, intersectionPointA : ref, intersectionPointB : ref }
+    //     const intersectionPoint = this.lineSegmentWithRadiusIntersection(lineSegment, linearSpring)
+    //     const isActive = this.isCollisionActive(lineSegment, linearSpring);
 
-        // If collision object already exists
-        if (isActive) {
-            if (intersectionPoint.isIntersecting == true) {
-                const distanceVector = intersectionPoint.intersectionPointB.sub(intersectionPoint.intersectionPointA);
-                const distance = distanceVector.length();
-                const normal = distanceVector.div(distance);
-                const collision = this.world.collisions.get(this.createCollisionObjectId(lineSegment, linearSpring));
-                collision.lineSegmentCollisionPoint = intersectionPoint.intersectionPointA;
-                collision.linearSpringCollisionPoint = intersectionPoint.intersectionPointB;
-                collision.distance = distance;
-                collision.normal = normal;
-                console.log("Collision updated!");
-            } else {
-                this.world.collisions.delete(this.createCollisionObjectId(lineSegment, linearSpring));
-                console.log("Collision deleted!");
-            }
-            return;
-        // If collision object does not exist
-        } else {
-            if (intersectionPoint.isIntersecting == true) {
+    //     // If collision object already exists
+    //     if (isActive) {
+    //         if (intersectionPoint.isIntersecting == true) {
+    //             const distanceVector = intersectionPoint.intersectionPointB.sub(intersectionPoint.intersectionPointA);
+    //             const distance = distanceVector.length();
+    //             const normal = distanceVector.div(distance);
+    //             const collision = this.world.collisions.get(this.createCollisionObjectId(lineSegment, linearSpring));
+    //             collision.lineSegmentCollisionPoint = intersectionPoint.intersectionPointA;
+    //             collision.linearSpringCollisionPoint = intersectionPoint.intersectionPointB;
+    //             collision.distance = distance;
+    //             collision.normal = normal;
+    //             console.log("Collision updated!");
+    //         } else {
+    //             this.world.collisions.delete(this.createCollisionObjectId(lineSegment, linearSpring));
+    //             console.log("Collision deleted!");
+    //         }
+    //         return;
+    //     // If collision object does not exist
+    //     } else {
+    //         if (intersectionPoint.isIntersecting == true) {
                 
-                const distanceVector = intersectionPoint.intersectionPointB.sub(intersectionPoint.intersectionPointA);
-                const distance = distanceVector.length();
-                const normal = distanceVector.div(distance);
-                const collision = new LineSegmentLinearSpringCollisionObject(lineSegment, linearSpring, intersectionPoint.intersectionPointA, intersectionPoint.intersectionPointB, distance, normal);
-                collision.objectId = this.createCollisionObjectId(lineSegment, linearSpring);
-                this.world.collisions.set(collision.objectId, collision);
-                console.log("Collision created!");
-            }
-        }
+    //             const distanceVector = intersectionPoint.intersectionPointB.sub(intersectionPoint.intersectionPointA);
+    //             const distance = distanceVector.length();
+    //             const normal = distanceVector.div(distance);
+    //             const collision = new LineSegmentLinearSpringCollision(lineSegment, linearSpring, intersectionPoint.intersectionPointA, intersectionPoint.intersectionPointB, distance, normal);
+    //             collision.objectId = this.createCollisionObjectId(lineSegment, linearSpring);
+    //             this.world.collisions.set(collision.objectId, collision);
+    //             console.log("Collision created!");
+    //         }
+    //     }
 
 
         //if (intersectionPoint == null) { 
@@ -353,11 +201,11 @@ class Collision {
         //     const lineSegmentCollisionPoint = closestPointOnLineSegment.sub(normal.mul(lineSegment.radius));
         //     const linearSpringCollisionPoint = closestPoint;
 
-        //     const collision = new LineSegmentLinearSpringCollisionObject(lineSegment, linearSpring, lineSegmentCollisionPoint, linearSpringCollisionPoint, distance, normal);
+        //     const collision = new LineSegmentLinearSpringCollision(lineSegment, linearSpring, lineSegmentCollisionPoint, linearSpringCollisionPoint, distance, normal);
         //     collision.objectId = this.createCollisionObjectId(lineSegment, linearSpring);
         //     this.world.collisions.set(collision.objectId, collision);
         // }
-    }
+    //}
 
     lineSegmentParticleCollision(lineSegment, particle) {
         // console.log("LineSegmentParticleCollision");
@@ -396,7 +244,7 @@ class Collision {
             const normal = distanceVector.div(distance);
             const lineSegmentCollisionPoint = point.sub(normal.mul(lineSegment.radius));
             const particleCollisionPoint = particle.position.add(normal.mul(particle.radius));
-            const collision = new LineSegmentParticleCollisionObject(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal);
+            const collision = new LineSegmentParticleCollision(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal);
             collision.objectId = this.createCollisionObjectId(lineSegment, particle);
             this.world.collisions.set(collision.objectId, collision);
         }
@@ -436,7 +284,7 @@ class Collision {
                 const particleBCollisionPoint = particleB.position.add(normal.mul(-particleB.radius));
                 let distVector = particleBCollisionPoint.sub(particleACollisionPoint);
                 let dist = distVector.length();
-                const collision = new ParticleParticleCollisionObject(particleA, particleB, particleACollisionPoint, particleBCollisionPoint, dist, normal);
+                const collision = new ParticleParticleCollision(particleA, particleB, particleACollisionPoint, particleBCollisionPoint, dist, normal);
                 collision.objectId = this.createCollisionObjectId(particleA, particleB);
                 this.world.collisions.set(collision.objectId, collision);
                 //console.log("Circle-circle collision created!");
@@ -479,4 +327,4 @@ class Collision {
     }
 }
 
-export { Collision, ParticleParticleCollisionObject, LineSegmentParticleCollisionObject, LineSegmentLinearSpringCollisionObject };
+export { CollisionHandler };

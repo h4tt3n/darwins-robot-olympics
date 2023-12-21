@@ -1,10 +1,10 @@
 "use strict";
 
-// Version 0.4
+// Version 0.5
 
 import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { Camera } from './camera.js';
-import { Collision, ParticleParticleCollisionObject, LineSegmentParticleCollisionObject, LineSegmentLinearSpringCollisionObject  } from '../../physics-engine/version-01/collision.js';
+import { LineSegmentParticleCollision } from '../../physics-engine/version-01/collision/lineSegmentParticleCollision.js';
 
 class Renderer {
     constructor(canvasId, simulation) {
@@ -534,50 +534,50 @@ class Renderer {
 
         // Draw lineSegmentParticleCollisions for debugging
 
-        // for (let i = 0; i < this.simulation.world.collisions.size; i++) {
-        //     const keys = Array.from(this.simulation.world.collisions.keys());
-        //     // Get collision
-        //     if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentParticleCollisionObject) {
+        for (let i = 0; i < this.simulation.world.collisions.size; i++) {
+            const keys = Array.from(this.simulation.world.collisions.keys());
+            // Get collision
+            if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentParticleCollision) {
                     
-        //         let collision = this.simulation.world.collisions.get(keys[i]);
+                let collision = this.simulation.world.collisions.get(keys[i]);
 
-        //         // Draw collision points
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
-        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        //         this.ctx.fill();
-        //         this.ctx.closePath();
+                // Draw collision points
+                this.ctx.beginPath();
+                this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 255, 255)";
+                this.ctx.fill();
+                this.ctx.closePath();
 
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y, 4, 0, Math.PI * 2);
-        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        //         this.ctx.fill();
-        //         this.ctx.closePath();
+                this.ctx.beginPath();
+                this.ctx.arc(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 255, 255)";
+                this.ctx.fill();
+                this.ctx.closePath();
 
-        //         // Draw line between collision points
-        //         this.ctx.beginPath();
-        //         this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
-        //         this.ctx.lineTo(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y);
-        //         this.ctx.strokeStyle = "rgb(255, 255, 255)";
-        //         this.ctx.stroke();
-        //         this.ctx.closePath();
+                // Draw line between collision points
+                this.ctx.beginPath();
+                this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
+                this.ctx.lineTo(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y);
+                this.ctx.strokeStyle = "rgb(255, 255, 255)";
+                this.ctx.stroke();
+                this.ctx.closePath();
                 
-        //         // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
-        //         // var deltaVelocity = particle3.velocity;
-        //         // var positionError = collision.normal.dot(deltaPosition);
-        //         // var velocityError = collision.normal.dot(deltaVelocity);
-        //         // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
-        //         // particle3.addImpulse(collision.normal.mul(restImpulse));
-        //         //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
-        //     }
-        // }
+                // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
+                // var deltaVelocity = particle3.velocity;
+                // var positionError = collision.normal.dot(deltaPosition);
+                // var velocityError = collision.normal.dot(deltaVelocity);
+                // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
+                // particle3.addImpulse(collision.normal.mul(restImpulse));
+                //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
+            }
+        }
 
         // Draw ParticleParticleCollisions for debugging
 
         // for (let i = 0; i < this.simulation.world.collisions.size; i++) {
         //     const keys = Array.from(this.simulation.world.collisions.keys());
         //     // Get collision
-        //     if (this.simulation.world.collisions.get(keys[i]) instanceof ParticleParticleCollisionObject) {
+        //     if (this.simulation.world.collisions.get(keys[i]) instanceof ParticleParticleCollision) {
 
         //         let collision = this.simulation.world.collisions.get(keys[i]);
 
@@ -615,7 +615,7 @@ class Renderer {
         // for (let i = 0; i < this.simulation.world.collisions.size; i++) {
         //     const keys = Array.from(this.simulation.world.collisions.keys());
         //     //console.log(this.simulation.world.collisions.get(keys[i]))
-        //     if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentLinearSpringCollisionObject) {
+        //     if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentLinearSpringCollision) {
                     
         //         let collision = this.simulation.world.collisions.get(keys[i]);
 
