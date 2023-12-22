@@ -6,11 +6,11 @@ import { constants } from './../constants.js';
 class LineSegmentWheelCollision {
     constructor(lineSegment, wheel, lineSegmentCollisionPoint, wheelCollisionPoint, distance, normal) {
         this.stiffness = 1.0;
-        this.damping = 1.0;
+        this.damping = 0.7;
         this.warmStart = 0.5;
-        this.staticFrictionVelocity = 1.0;
+        this.staticFrictionVelocity = 10.0;
         this.staticFriction = 1.0;
-        this.dynamicFriction = 1.0;
+        this.dynamicFriction = 0.5;
         this.lineSegment = lineSegment;
         this.wheel = wheel;
         this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
@@ -35,7 +35,7 @@ class LineSegmentWheelCollision {
         const impulseErrorNormal = this.normal.dot(deltaImpulse.sub(this.restImpulse));
         const impulseErrorTangent = this.normal.perpDot(deltaImpulse.sub(this.restImpulse));
 
-        const correctiveImpulse = (this.normal.mul(-impulseErrorNormal * this.reducedMass).add(this.normal.perp().mul(-impulseErrorTangent)));
+        const correctiveImpulse = (this.normal.mul(-impulseErrorNormal * this.reducedMass).add(this.normal.perp().mul(-impulseErrorTangent * this.reducedMass)));
 
         //console.log({correctiveImpulse : correctiveImpulse});
 
@@ -70,7 +70,7 @@ class LineSegmentWheelCollision {
 
         const FrictionCoefficient = Math.abs(deltaVelocityTangent) < this.staticFrictionVelocity ? this.staticFriction : this.dynamicFriction;
 
-        //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(-restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
+        //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
         const restImpulseTangentWithFriction = restImpulseTangent * FrictionCoefficient;
 
         this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));

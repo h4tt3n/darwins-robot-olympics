@@ -47,9 +47,9 @@ class World {
     }
     applyImpulses(){
         for(var i = 0; i < constants.NUM_ITERATIONS; i++){
-            this.applyCorrectiveImpulsesToMap(this.collisions);
             this.applyCorrectiveImpulsestoArray(this.angularSprings);
             this.applyCorrectiveImpulsestoArray(this.linearSprings);
+            this.applyCorrectiveImpulsesToMap(this.collisions);
         }
     }
     applyCorrectiveImpulsestoArray(array){
@@ -70,9 +70,9 @@ class World {
         }
     }
     applyWarmStart(){
-        this.collisions.forEach(c => { c.applyWarmStart() });
         this.angularSprings.forEach(a => { a.applyWarmStart() });
         this.linearSprings.forEach(l => { l.applyWarmStart() });
+        this.collisions.forEach(c => { c.applyWarmStart() });
     }
     computeData(){
         this.linearSprings.forEach(l => { l.computeData() });
@@ -85,9 +85,9 @@ class World {
         this.wheels.forEach(w => {w.computeNewState()});
     }
     computeRestImpulse(){
-        this.collisions.forEach(c => { c.computeRestImpulse() });
         this.angularSprings.forEach(a => { a.computeRestImpulse() });
         this.linearSprings.forEach(l => { l.computeRestImpulse() });
+        this.collisions.forEach(c => { c.computeRestImpulse() });
     }
     update(){
         // Gravity

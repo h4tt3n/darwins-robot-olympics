@@ -9,7 +9,7 @@ import { LineSegmentWheelCollision } from './lineSegmentWheelCollision.js';
 class CollisionHandler {
     constructor(world) {
         this.world = world;
-        this.buffer = 0.1;
+        this.buffer = 0.0;
     }
     planePlaneIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;

@@ -513,11 +513,13 @@ function helmet() {
     // }
 
     // Create wheel
-    let wheel = simulation.world.createWheel(new Vector2(2500, 0), 10, 0, null, 100);
-    console.log(wheel);
+    let wheel1 = simulation.world.createWheel(new Vector2(2500, -800), 10, 0, null, 80);
+    let wheel2 = simulation.world.createWheel(new Vector2(2200, -800), 10, 0, null, 40);
+    let linearSpring = simulation.world.createLinearSpring(wheel1, wheel2, 0.5, 0.5, 0.5);
+    //console.log(wheel);
 
-    //wheel.addAngularImpulse(-30);
-    //wheel.addImpulse(new Vector2(-500, -1000));
+    // wheel.addAngularImpulse(-40);
+    // wheel.addImpulse(new Vector2(-500, 0));
     
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {
