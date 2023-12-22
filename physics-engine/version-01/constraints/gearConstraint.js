@@ -25,12 +25,6 @@ class GearConstraint {
         } else {    
             this.setGearRatio(1.0);
         }
-        
-        this.computeRestDeltaAngle();
-        this.computeReducedInertia();
-
-        console.log(this);
-
     }
     applyCorrectiveImpulse() {
         //console.log("GearConstraint Corrective impulse!")
@@ -100,9 +94,13 @@ class GearConstraint {
     }
     setGearRatio(gearRatio) {
         this.gearRatio = gearRatio != 0.0 ? gearRatio : 1.0;
+        this.computeReducedInertia();
+        this.computeRestDeltaAngle();
     }
     setRadii(radiusA, radiusB) {
         this.gearRatio = radiusA != 0.0 && radiusB != 0.0 ? radiusA / radiusB : 1.0;
+        this.computeReducedInertia();
+        this.computeRestDeltaAngle();
     }
 }
 

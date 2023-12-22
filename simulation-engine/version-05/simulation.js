@@ -221,37 +221,47 @@ class Simulation {
             particles : [],
             linearSprings : [],
             angularSprings : [],
+            gearConstraints : [],
             wheels : [],
         }
 
-        let position = new Vector2(0, 0); //new Vector2(0, 0);
+        let position = new Vector2(0, 200); //new Vector2(0, 0);
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
 
         // Wheels
         let wheelRadius = 40;
         let wheelMass = 10;
+        let engine = this.world.createWheel(position.add(new Vector2(0, -100)), wheelMass * 2, 0, null, wheelRadius);
         let wheel1 = this.world.createWheel(position.add(new Vector2(-100, 0)), wheelMass, 0, null, wheelRadius);
         let wheel2 = this.world.createWheel(position.add(new Vector2(100, 0)), wheelMass, 0, null, wheelRadius);
+        engine.color = randomColor;
         wheel1.color = randomColor;
         wheel2.color = randomColor;
+        bodyParts.wheels.push(engine);
         bodyParts.wheels.push(wheel1);
         bodyParts.wheels.push(wheel2);
+
+        // GearConstraint between engine and wheel
+        let engineToWheel1 = this.world.createGearConstraint(engine, wheel1, 1.0);
+        let engineToWheel2 = this.world.createGearConstraint(engine, wheel2, 1.0);
+        bodyParts.gearConstraints.push(engineToWheel1);
+        bodyParts.gearConstraints.push(engineToWheel2);
 
         // Body
         let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
         let btmRightParticle = this.world.createParticle(position.add(new Vector2(50, -50)), 10, 10, randomColor);
-        let topRightParticle = this.world.createParticle(position.add(new Vector2(50, -100)), 10, 10, randomColor);
-        let topLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -100)), 10, 10, randomColor);
+        let topRightParticle = this.world.createParticle(position.add(new Vector2(50, -150)), 10, 10, randomColor);
+        let topLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -150)), 10, 10, randomColor);
 
         bodyParts.particles.push(btmLeftParticle);
         bodyParts.particles.push(btmRightParticle);
         bodyParts.particles.push(topRightParticle);
         bodyParts.particles.push(topLeftParticle);
 
-        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 1.0, 1.0, 1.0);
-        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 1.0, 1.0, 1.0);
-        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 1.0, 1.0, 1.0);
+        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 1.0, 1.0, 0.5);
+        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 1.0, 1.0, 0.5);
+        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 1.0, 1.0, 0.5);
         let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 1.0, 1.0, 1.0);
         btmLeftToBtmRight.radius = 8;
         btmLeftToBtmRight.color = randomColor2;
@@ -269,18 +279,36 @@ class Simulation {
         bodyParts.linearSprings.push(topLeftToBtmLeft);
 
         // AngularSprings between body parts
-        let btmLeftToBtmRightAngular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToTopRight, 0.125, 1.0, 0.5);
-        let btmRightToTopRightAngular = this.world.createAngularSpring(btmRightToTopRight, topRightToTopLeft, 0.125, 1.0, 0.5);
-        let topRightToTopLeftAngular = this.world.createAngularSpring(topRightToTopLeft, topLeftToBtmLeft, 0.125, 1.0, 0.5);
-        let topLeftToBtmLeftAngular = this.world.createAngularSpring(topLeftToBtmLeft, btmLeftToBtmRight, 0.125, 1.0, 0.5);
+        // let btmLeftToBtmRightAngular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToTopRight, 0.125, 1.0, 0.5);
+        // let btmRightToTopRightAngular = this.world.createAngularSpring(btmRightToTopRight, topRightToTopLeft, 0.125, 1.0, 0.5);
+        // let topRightToTopLeftAngular = this.world.createAngularSpring(topRightToTopLeft, topLeftToBtmLeft, 0.125, 1.0, 0.5);
+        // let topLeftToBtmLeftAngular = this.world.createAngularSpring(topLeftToBtmLeft, btmLeftToBtmRight, 0.125, 1.0, 0.5);
 
-        bodyParts.angularSprings.push(btmLeftToBtmRightAngular);
-        bodyParts.angularSprings.push(btmRightToTopRightAngular);
-        bodyParts.angularSprings.push(topRightToTopLeftAngular);
-        bodyParts.angularSprings.push(topLeftToBtmLeftAngular);
+        // bodyParts.angularSprings.push(btmLeftToBtmRightAngular);
+        // bodyParts.angularSprings.push(btmRightToTopRightAngular);
+        // bodyParts.angularSprings.push(topRightToTopLeftAngular);
+        // bodyParts.angularSprings.push(topLeftToBtmLeftAngular);
 
-        let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.1, 0.1, 0.5);
-        let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.1, 0.1, 0.5);
+        let btmLeftToEngine = this.world.createLinearSpring(btmLeftParticle, engine, 1.0, 1.0, 0.5);
+        let btmRightToEngine = this.world.createLinearSpring(btmRightParticle, engine, 1.0, 1.0, 0.5);
+        let topLeftToEngine = this.world.createLinearSpring(topLeftParticle, engine, 1.0, 1.0, 0.5);
+        let topRightToEngine = this.world.createLinearSpring(topRightParticle, engine, 1.0, 1.0, 0.5);
+        btmLeftToEngine.radius = 8;
+        btmLeftToEngine.color = randomColor2;
+        btmRightToEngine.radius = 8;
+        btmRightToEngine.color = randomColor2;
+        topLeftToEngine.radius = 8;
+        topLeftToEngine.color = randomColor2;
+        topRightToEngine.radius = 8;
+        topRightToEngine.color = randomColor2;
+
+        bodyParts.linearSprings.push(btmLeftToEngine);
+        bodyParts.linearSprings.push(btmRightToEngine);
+        bodyParts.linearSprings.push(topLeftToEngine);
+        bodyParts.linearSprings.push(topRightToEngine);
+
+        let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.125, 0.5, 0.5);
+        let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.125, 0.5, 0.5);
         btmLeftToWheel1.radius = 8;
         btmLeftToWheel1.color = randomColor2;
         btmRightToWheel2.radius = 8;
@@ -289,8 +317,8 @@ class Simulation {
         bodyParts.linearSprings.push(btmLeftToWheel1);
         bodyParts.linearSprings.push(btmRightToWheel2);
 
-        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.1, 0.1, 0.5);
-        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.1, 0.1, 0.5);
+        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.125, 0.5, 0.5);
+        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.125, 0.5, 0.5);
 
         bodyParts.angularSprings.push(btmLeftToWheel1Angular);
         bodyParts.angularSprings.push(btmRightToWheel2Angular);

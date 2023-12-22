@@ -10,7 +10,7 @@ class LineSegmentWheelCollision {
         this.warmStart = 0.5;
         this.staticFrictionVelocity = 50.0;
         this.staticFriction = 1.0;
-        this.dynamicFriction = 0.6;
+        this.dynamicFriction = 1.0;
         this.lineSegment = lineSegment;
         this.wheel = wheel;
         this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
