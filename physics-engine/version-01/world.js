@@ -98,9 +98,15 @@ class World {
         
         // Collision detection and creation
         for (let i = 0; i < this.lineSegments.length; i++) {
+            
             for (let j = 0; j < this.particles.length; j++) {
                 this.collisionHandler.lineSegmentParticleCollision(this.lineSegments[i], this.particles[j]);
             }
+
+            for (let j = 0; j < this.wheels.length; j++) {
+                this.collisionHandler.lineSegmentWheelCollision(this.lineSegments[i], this.wheels[j]);
+            }
+
             // for (let j = 0; j < this.linearSprings.length; j++) {
             //     this.collisionHandler.lineSegmentLinearSpringCollision(this.lineSegments[i], this.linearSprings[j]);
             // }

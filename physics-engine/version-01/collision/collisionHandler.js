@@ -4,11 +4,12 @@ import { Vector2 } from '../../../vector-library/version-01/vector2.js'
 import { constants } from './../constants.js';
 import { LineSegmentParticleCollision } from './lineSegmentParticleCollision.js';
 import { ParticleParticleCollision } from './particleParticleCollision.js';
+import { LineSegmentWheelCollision } from './lineSegmentWheelCollision.js';
 
 class CollisionHandler {
     constructor(world) {
         this.world = world;
-        this.buffer = 0.0;
+        this.buffer = 0.1;
     }
     planePlaneIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;
@@ -55,14 +56,6 @@ class CollisionHandler {
         if (t > 1) { return lineSegment.pointB.position; }
         return p.add(s.mul(t));
     }
-    // function vec_pnt_lin(a1 as Vec_2DF, a2 as Vec_2DF, p1 as Vec_2DF) as Vec_2DF
-    // dim as Vec_2DF ab = a2-a1
-    // dim as Vec_2DF ap = p1-a1
-    // dim as Sca_Flt t = vec_dot(ap, ab)/vec_mag_sqa(ab)
-    // if t < 0 then t = 0
-    // if t > 1 then t = 1
-    // return a1+ab*t
-    // end function
     lineSegmentLineSegmentIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;
         const r = lineSegmentA.pointB.position.sub(p);
@@ -247,6 +240,49 @@ class CollisionHandler {
             const collision = new LineSegmentParticleCollision(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal);
             collision.objectId = this.createCollisionObjectId(lineSegment, particle);
             this.world.collisions.set(collision.objectId, collision);
+        }
+    }
+    lineSegmentWheelCollision(lineSegment, wheel) {
+        // console.log("LineSegmentwheelCollision");
+        const point = this.closestPointOnLineSegment(wheel.position, lineSegment);
+        const distanceVector = point.sub(wheel.position);
+        const distanceSquared = distanceVector.lengthSquared();
+        const radiiSquared = (wheel.radius + lineSegment.radius + this.buffer) * (wheel.radius + lineSegment.radius + this.buffer);
+
+        // Check if collision is active
+        if (this.isCollisionActive(lineSegment, wheel)) {
+            
+            if (distanceSquared > radiiSquared) {
+                // If objects no longer intersect, remove collision
+                //console.log("Collision deleted!");
+                this.world.collisions.delete(this.createCollisionObjectId(lineSegment, wheel));
+                return;
+            } else {
+                // If they still intersect, update collision
+                //console.log("Collision updated!");
+                const distance = Math.sqrt(distanceSquared);
+                const normal = distanceVector.div(distance);
+                const lineSegmentCollisionPoint = point.sub(normal.mul(lineSegment.radius));
+                const wheelCollisionPoint = wheel.position.add(normal.mul(wheel.radius));
+
+                const collision = this.world.collisions.get(this.createCollisionObjectId(lineSegment, wheel));
+                collision.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
+                collision.wheelCollisionPoint = wheelCollisionPoint;
+                collision.distance = distance;
+                collision.normal = normal;
+                return;
+            }
+        }
+        if (distanceSquared < radiiSquared) {
+            //console.log("Collision created!");
+            const distance = Math.sqrt(distanceSquared);
+            const normal = distanceVector.div(distance);
+            const lineSegmentCollisionPoint = point.sub(normal.mul(lineSegment.radius));
+            const wheelCollisionPoint = wheel.position.add(normal.mul(wheel.radius));
+            const collision = new LineSegmentWheelCollision(lineSegment, wheel, lineSegmentCollisionPoint, wheelCollisionPoint, distance, normal);
+            collision.objectId = this.createCollisionObjectId(lineSegment, wheel);
+            this.world.collisions.set(collision.objectId, collision);
+            console.log({collision : collision});
         }
     }
     particleParticleCollision(particleA, particleB) {

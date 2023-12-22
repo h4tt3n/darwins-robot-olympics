@@ -513,10 +513,11 @@ function helmet() {
     // }
 
     // Create wheel
-    let wheel = simulation.world.createWheel(new Vector2(0, 0), 0, 0, 1000, 100);
+    let wheel = simulation.world.createWheel(new Vector2(2500, 0), 10, 0, null, 100);
     console.log(wheel);
 
-    wheel.addAngularImpulse(1);
+    //wheel.addAngularImpulse(-30);
+    //wheel.addImpulse(new Vector2(-500, -1000));
     
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {
@@ -548,7 +549,7 @@ function helmet() {
     let topLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth, bottom - pitDepth));
     let bottomLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth - pitBottomMargin, bottom));
     let bottomRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth + pitBottomMargin, bottom));
-    let topRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth, bottom - pitDepth));
+    let topRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth, bottom - pitDepth+50));
     
     // Rightmost pit point
     let topLeftPoint3 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + 2 * platformWidth, bottom - pitDepth));

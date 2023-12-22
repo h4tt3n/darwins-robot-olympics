@@ -5,6 +5,8 @@
 import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { Camera } from './camera.js';
 import { LineSegmentParticleCollision } from '../../physics-engine/version-01/collision/lineSegmentParticleCollision.js';
+import { ParticleParticleCollision } from '../../physics-engine/version-01/collision/particleParticleCollision.js';
+import { LineSegmentWheelCollision } from '../../physics-engine/version-01/collision/lineSegmentWheelCollision.js';
 
 class Renderer {
     constructor(canvasId, simulation) {
@@ -418,7 +420,7 @@ class Renderer {
             var wheel = this.simulation.world.wheels[i];
             var x = wheel.position.x;
             var y = wheel.position.y;
-            var r = wheel.radius * 0.25;
+            var r = wheel.radius * 1;
 
             this.ctx.beginPath();
             this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
@@ -534,43 +536,43 @@ class Renderer {
 
         // Draw lineSegmentParticleCollisions for debugging
 
-        for (let i = 0; i < this.simulation.world.collisions.size; i++) {
-            const keys = Array.from(this.simulation.world.collisions.keys());
-            // Get collision
-            if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentParticleCollision) {
+        // for (let i = 0; i < this.simulation.world.collisions.size; i++) {
+        //     const keys = Array.from(this.simulation.world.collisions.keys());
+        //     // Get collision
+        //     if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentParticleCollision) {
                     
-                let collision = this.simulation.world.collisions.get(keys[i]);
+        //         let collision = this.simulation.world.collisions.get(keys[i]);
 
-                // Draw collision points
-                this.ctx.beginPath();
-                this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
-                this.ctx.fillStyle = "rgb(255, 255, 255)";
-                this.ctx.fill();
-                this.ctx.closePath();
+        //         // Draw collision points
+        //         this.ctx.beginPath();
+        //         this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
+        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
+        //         this.ctx.fill();
+        //         this.ctx.closePath();
 
-                this.ctx.beginPath();
-                this.ctx.arc(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y, 4, 0, Math.PI * 2);
-                this.ctx.fillStyle = "rgb(255, 255, 255)";
-                this.ctx.fill();
-                this.ctx.closePath();
+        //         this.ctx.beginPath();
+        //         this.ctx.arc(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y, 4, 0, Math.PI * 2);
+        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
+        //         this.ctx.fill();
+        //         this.ctx.closePath();
 
-                // Draw line between collision points
-                this.ctx.beginPath();
-                this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
-                this.ctx.lineTo(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y);
-                this.ctx.strokeStyle = "rgb(255, 255, 255)";
-                this.ctx.stroke();
-                this.ctx.closePath();
+        //         // Draw line between collision points
+        //         this.ctx.beginPath();
+        //         this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
+        //         this.ctx.lineTo(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y);
+        //         this.ctx.strokeStyle = "rgb(255, 255, 255)";
+        //         this.ctx.stroke();
+        //         this.ctx.closePath();
                 
-                // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
-                // var deltaVelocity = particle3.velocity;
-                // var positionError = collision.normal.dot(deltaPosition);
-                // var velocityError = collision.normal.dot(deltaVelocity);
-                // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
-                // particle3.addImpulse(collision.normal.mul(restImpulse));
-                //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
-            }
-        }
+        //         // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
+        //         // var deltaVelocity = particle3.velocity;
+        //         // var positionError = collision.normal.dot(deltaPosition);
+        //         // var velocityError = collision.normal.dot(deltaVelocity);
+        //         // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
+        //         // particle3.addImpulse(collision.normal.mul(restImpulse));
+        //         //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
+        //     }
+        // }
 
         // Draw ParticleParticleCollisions for debugging
 
@@ -648,6 +650,44 @@ class Renderer {
         //         this.ctx.closePath();
         //     }
         // }
+
+        // Draw LineSegmetWheelCollisions for debugging
+        for (let i = 0; i < this.simulation.world.collisions.size; i++) {
+            const keys = Array.from(this.simulation.world.collisions.keys());
+            //console.log(this.simulation.world.collisions.get(keys[i]))
+            if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentWheelCollision) {
+
+                let collision = this.simulation.world.collisions.get(keys[i]);
+
+                // Draw collision points
+                this.ctx.beginPath();
+                this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 0, 0)";
+                this.ctx.fill();
+                this.ctx.closePath();
+
+                this.ctx.beginPath();
+                this.ctx.arc(collision.wheelCollisionPoint.x, collision.wheelCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(0, 255, 0)";
+                this.ctx.fill();
+                this.ctx.closePath();
+
+                // Draw collsion normal as line
+                // this.ctx.beginPath();
+                // this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
+                // this.ctx.lineTo(collision.lineSegmentCollisionPoint.x+collision.normal.x * 100, collision.lineSegmentCollisionPoint.y+collision.normal.y * 100);
+                // this.ctx.strokeStyle = "rgb(255, 255, 255)";
+                // this.ctx.stroke();
+                // this.ctx.closePath();
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
+                this.ctx.lineTo(collision.wheelCollisionPoint.x, collision.wheelCollisionPoint.y);
+                this.ctx.strokeStyle = "rgb(255, 255, 255)";
+                this.ctx.stroke();
+                this.ctx.closePath();
+            }
+        }
 
         this.ctx.restore(); // Restore the context state
 

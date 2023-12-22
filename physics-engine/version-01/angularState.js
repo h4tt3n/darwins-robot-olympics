@@ -69,7 +69,7 @@ class AngularState extends LinearState {
             this.angularVelocity += this.angularImpulse;
             //this.computeAngularVelocityVector();
 
-            this.angle += this.angularVelocity * constants.DT;
+            this.angle -= this.angularVelocity * constants.DT;
             this.computeAngleVector(this.angle);
             
         }
