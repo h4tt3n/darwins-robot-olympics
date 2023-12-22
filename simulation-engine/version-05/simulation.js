@@ -74,6 +74,9 @@ class Simulation {
 
         this.roboStarfishes = [];
         this.deadRoboStarfishes = [];
+
+        this.roboCars = [];
+        this.deadRoboCars = [];
     }
     reset() {
         
@@ -121,6 +124,9 @@ class Simulation {
 
         this.roboStarfishes = [];
         this.deadRoboStarfishes = [];
+
+        this.roboCars = [];
+        this.deadRoboCars = [];
     }
     update() {
         // Physics
@@ -209,6 +215,84 @@ class Simulation {
     }
     deleteWaypoint(wayPoint) {
         this.wayPoints.splice(this.wayPoints.indexOf(wayPoint), 1);
+    }
+    createRoboCar(params = {}) {
+        let bodyParts = {
+            particles : [],
+            linearSprings : [],
+            angularSprings : [],
+            wheels : [],
+        }
+
+        let position = new Vector2(200, 0); //new Vector2(0, 0);
+        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+
+        // Wheels
+        let wheelRadius = 50;
+        let wheelMass = 10;
+        let wheel1 = this.world.createWheel(position.add(new Vector2(-100, 100)), wheelMass, 0, null, wheelRadius);
+        let wheel2 = this.world.createWheel(position.add(new Vector2(100, 100)), wheelMass, 0, null, wheelRadius);
+        bodyParts.wheels.push(wheel1);
+        bodyParts.wheels.push(wheel2);
+
+        // Body
+        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-100, 0)), 10, 10, randomColor);
+        let btmRightParticle = this.world.createParticle(position.add(new Vector2(100, 0)), 10, 10, randomColor);
+        let topRightParticle = this.world.createParticle(position.add(new Vector2(100, -100)), 10, 10, randomColor);
+        let topLeftParticle = this.world.createParticle(position.add(new Vector2(-100, -100)), 10, 10, randomColor);
+
+        bodyParts.particles.push(btmLeftParticle);
+        bodyParts.particles.push(btmRightParticle);
+        bodyParts.particles.push(topRightParticle);
+        bodyParts.particles.push(topLeftParticle);
+
+        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 1.0, 1.0, 1.0);
+        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 1.0, 1.0, 1.0);
+        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 1.0, 1.0, 1.0);
+        let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 1.0, 1.0, 1.0);
+        btmLeftToBtmRight.radius = 8;
+        btmRightToTopRight.radius = 8;
+        topRightToTopLeft.radius = 8;
+        topLeftToBtmLeft.radius = 8;
+
+        bodyParts.linearSprings.push(btmLeftToBtmRight);
+        bodyParts.linearSprings.push(btmRightToTopRight);
+        bodyParts.linearSprings.push(topRightToTopLeft);
+        bodyParts.linearSprings.push(topLeftToBtmLeft);
+
+        // AngularSprings between body parts
+        let btmLeftToBtmRightAngular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToTopRight, 0.125, 1.0, 0.5);
+        let btmRightToTopRightAngular = this.world.createAngularSpring(btmRightToTopRight, topRightToTopLeft, 0.125, 1.0, 0.5);
+        let topRightToTopLeftAngular = this.world.createAngularSpring(topRightToTopLeft, topLeftToBtmLeft, 0.125, 1.0, 0.5);
+        let topLeftToBtmLeftAngular = this.world.createAngularSpring(topLeftToBtmLeft, btmLeftToBtmRight, 0.125, 1.0, 0.5);
+
+        bodyParts.angularSprings.push(btmLeftToBtmRightAngular);
+        bodyParts.angularSprings.push(btmRightToTopRightAngular);
+        bodyParts.angularSprings.push(topRightToTopLeftAngular);
+        bodyParts.angularSprings.push(topLeftToBtmLeftAngular);
+
+        let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.1, 0.1, 0.5);
+        let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.1, 0.1, 0.5);
+        btmLeftToWheel1.radius = 8;
+        btmRightToWheel2.radius = 8;
+
+        bodyParts.linearSprings.push(btmLeftToWheel1);
+        bodyParts.linearSprings.push(btmRightToWheel2);
+
+        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.1, 0.1, 0.5);
+        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.1, 0.1, 0.5);
+
+        bodyParts.angularSprings.push(btmLeftToWheel1Angular);
+        bodyParts.angularSprings.push(btmRightToWheel2Angular);
+
+        // Create brain
+        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+
+        let car = new RoboCar(brain, bodyParts, eyes);
+        this.roboWorms.push(car); // Wrong, for testing
+        return car;
     }
     createRoboGuy(params = {}) {
         let bodyParts = {
@@ -1232,6 +1316,9 @@ class Simulation {
         }
         for (let i = 0; i < worm.body.particles.length; i++) {
             this.world.deleteParticle(worm.body.particles[i]);
+        }
+        for (let i = 0; i < worm.body.wheels.length; i++) {
+            this.world.deleteWheel(worm.body.wheels[i]);
         }
         this.roboWorms.splice(this.roboWorms.indexOf(worm), 1);
         this.deadRoboWorms.push(worm);

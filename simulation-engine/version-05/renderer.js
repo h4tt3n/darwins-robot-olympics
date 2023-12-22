@@ -206,6 +206,68 @@ class Renderer {
                 this.ctx.closePath();
             }
 
+            // Draw wheels
+            if (roboWorm.body.wheels) {
+
+                this.ctx.lineWidth = 8;
+                this.ctx.strokeStyle = "rgb(192, 192, 192)";
+
+                for (let i = 0; i < this.simulation.world.wheels.length; i++) {
+                    var wheel = this.simulation.world.wheels[i];
+                    var x = wheel.position.x;
+                    var y = wheel.position.y;
+                    var r = wheel.radius * 0.5;
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
+                    //this.ctx.fillStyle = wheel.color;
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+
+                    var pos = wheel.position;
+
+                    // Light gray line in direction of angle
+                    var x2 = pos.x + wheel.angleVector.x * r;
+                    var y2 = pos.y + wheel.angleVector.y * r;
+                    var direction = new Vector2(x2 - x, y2 - y);
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(pos.x, pos.y);
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.strokeStyle = "rgb(192, 192, 192)";
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+
+                    // Green line in direction of right perpendicular of angle
+                    var right = pos.add(wheel.angleVector.perp().mul(r));
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(pos.x, pos.y);
+                    this.ctx.lineTo(right.x, right.y);
+                    this.ctx.strokeStyle = "rgb(32, 255, 32)";
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+
+                    // Red line in direction of left perpendicular of angle
+                    var right = pos.add(wheel.angleVector.perp().mul(-r));
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(pos.x, pos.y);
+                    this.ctx.lineTo(right.x, right.y);
+                    this.ctx.strokeStyle = "rgb(255, 32, 32)";
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+
+                    // Dot in center
+                    this.ctx.beginPath();
+                    this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
+                    this.ctx.fillStyle = "rgb(128, 128, 128)";
+                    this.ctx.fill();
+                    this.ctx.closePath();
+                }
+
+            }
+
             // Write index above head
             this.ctx.font = "24px Arial";
             this.ctx.fillStyle = "rgb(255, 255, 255)";
@@ -413,62 +475,62 @@ class Renderer {
         // }
 
         // Draw wheels
-        this.ctx.lineWidth = 8;
-        this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        // this.ctx.lineWidth = 8;
+        // this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
-        for (let i = 0; i < this.simulation.world.wheels.length; i++) {
-            var wheel = this.simulation.world.wheels[i];
-            var x = wheel.position.x;
-            var y = wheel.position.y;
-            var r = wheel.radius * 1;
+        // for (let i = 0; i < this.simulation.world.wheels.length; i++) {
+        //     var wheel = this.simulation.world.wheels[i];
+        //     var x = wheel.position.x;
+        //     var y = wheel.position.y;
+        //     var r = wheel.radius * 0.5;
 
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
-            //this.ctx.fillStyle = wheel.color;
-            this.ctx.stroke();
-            this.ctx.closePath();
+        //     this.ctx.beginPath();
+        //     this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
+        //     //this.ctx.fillStyle = wheel.color;
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
 
-            var pos = wheel.position;
+        //     var pos = wheel.position;
 
-            // Light gray line in direction of angle
-            var x2 = pos.x + wheel.angleVector.x * r;
-            var y2 = pos.y + wheel.angleVector.y * r;
-            var direction = new Vector2(x2 - x, y2 - y);
+        //     // Light gray line in direction of angle
+        //     var x2 = pos.x + wheel.angleVector.x * r;
+        //     var y2 = pos.y + wheel.angleVector.y * r;
+        //     var direction = new Vector2(x2 - x, y2 - y);
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(pos.x, pos.y);
-            this.ctx.lineTo(x2, y2);
-            this.ctx.strokeStyle = "rgb(192, 192, 192)";
-            this.ctx.stroke();
-            this.ctx.closePath();
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(pos.x, pos.y);
+        //     this.ctx.lineTo(x2, y2);
+        //     this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
 
-            // Green line in direction of right perpendicular of angle
-            var right = pos.add(wheel.angleVector.perp().mul(r));
+        //     // Green line in direction of right perpendicular of angle
+        //     var right = pos.add(wheel.angleVector.perp().mul(r));
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(pos.x, pos.y);
-            this.ctx.lineTo(right.x, right.y);
-            this.ctx.strokeStyle = "rgb(32, 255, 32)";
-            this.ctx.stroke();
-            this.ctx.closePath();
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(pos.x, pos.y);
+        //     this.ctx.lineTo(right.x, right.y);
+        //     this.ctx.strokeStyle = "rgb(32, 255, 32)";
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
 
-            // Red line in direction of left perpendicular of angle
-            var right = pos.add(wheel.angleVector.perp().mul(-r));
+        //     // Red line in direction of left perpendicular of angle
+        //     var right = pos.add(wheel.angleVector.perp().mul(-r));
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(pos.x, pos.y);
-            this.ctx.lineTo(right.x, right.y);
-            this.ctx.strokeStyle = "rgb(255, 32, 32)";
-            this.ctx.stroke();
-            this.ctx.closePath();
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(pos.x, pos.y);
+        //     this.ctx.lineTo(right.x, right.y);
+        //     this.ctx.strokeStyle = "rgb(255, 32, 32)";
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
 
-            // Dot in center
-            this.ctx.beginPath();
-            this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
-            this.ctx.fillStyle = "rgb(128, 128, 128)";
-            this.ctx.fill();
-            this.ctx.closePath();
-        }
+        //     // Dot in center
+        //     this.ctx.beginPath();
+        //     this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
+        //     this.ctx.fillStyle = "rgb(128, 128, 128)";
+        //     this.ctx.fill();
+        //     this.ctx.closePath();
+        // }
 
         // Draw LinearStates
         for (let i = 0; i < this.simulation.world.linearStates.length; i++) {
@@ -536,82 +598,82 @@ class Renderer {
 
         // Draw lineSegmentParticleCollisions for debugging
 
-        // for (let i = 0; i < this.simulation.world.collisions.size; i++) {
-        //     const keys = Array.from(this.simulation.world.collisions.keys());
-        //     // Get collision
-        //     if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentParticleCollision) {
+        for (let i = 0; i < this.simulation.world.collisions.size; i++) {
+            const keys = Array.from(this.simulation.world.collisions.keys());
+            // Get collision
+            if (this.simulation.world.collisions.get(keys[i]) instanceof LineSegmentParticleCollision) {
                     
-        //         let collision = this.simulation.world.collisions.get(keys[i]);
+                let collision = this.simulation.world.collisions.get(keys[i]);
 
-        //         // Draw collision points
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
-        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        //         this.ctx.fill();
-        //         this.ctx.closePath();
+                // Draw collision points
+                this.ctx.beginPath();
+                this.ctx.arc(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 255, 255)";
+                this.ctx.fill();
+                this.ctx.closePath();
 
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y, 4, 0, Math.PI * 2);
-        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        //         this.ctx.fill();
-        //         this.ctx.closePath();
+                this.ctx.beginPath();
+                this.ctx.arc(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 255, 255)";
+                this.ctx.fill();
+                this.ctx.closePath();
 
-        //         // Draw line between collision points
-        //         this.ctx.beginPath();
-        //         this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
-        //         this.ctx.lineTo(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y);
-        //         this.ctx.strokeStyle = "rgb(255, 255, 255)";
-        //         this.ctx.stroke();
-        //         this.ctx.closePath();
+                // Draw line between collision points
+                this.ctx.beginPath();
+                this.ctx.moveTo(collision.lineSegmentCollisionPoint.x, collision.lineSegmentCollisionPoint.y);
+                this.ctx.lineTo(collision.particleCollisionPoint.x, collision.particleCollisionPoint.y);
+                this.ctx.strokeStyle = "rgb(255, 255, 255)";
+                this.ctx.stroke();
+                this.ctx.closePath();
                 
-        //         // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
-        //         // var deltaVelocity = particle3.velocity;
-        //         // var positionError = collision.normal.dot(deltaPosition);
-        //         // var velocityError = collision.normal.dot(deltaVelocity);
-        //         // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
-        //         // particle3.addImpulse(collision.normal.mul(restImpulse));
-        //         //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
-        //     }
-        // }
+                // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
+                // var deltaVelocity = particle3.velocity;
+                // var positionError = collision.normal.dot(deltaPosition);
+                // var velocityError = collision.normal.dot(deltaVelocity);
+                // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
+                // particle3.addImpulse(collision.normal.mul(restImpulse));
+                //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
+            }
+        }
 
         // Draw ParticleParticleCollisions for debugging
 
-        // for (let i = 0; i < this.simulation.world.collisions.size; i++) {
-        //     const keys = Array.from(this.simulation.world.collisions.keys());
-        //     // Get collision
-        //     if (this.simulation.world.collisions.get(keys[i]) instanceof ParticleParticleCollision) {
+        for (let i = 0; i < this.simulation.world.collisions.size; i++) {
+            const keys = Array.from(this.simulation.world.collisions.keys());
+            // Get collision
+            if (this.simulation.world.collisions.get(keys[i]) instanceof ParticleParticleCollision) {
 
-        //         let collision = this.simulation.world.collisions.get(keys[i]);
+                let collision = this.simulation.world.collisions.get(keys[i]);
 
-        //         // Draw collision points
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(collision.particleACollisionPoint.x, collision.particleACollisionPoint.y, 4, 0, Math.PI * 2);
-        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        //         this.ctx.fill();
-        //         this.ctx.closePath();
+                // Draw collision points
+                this.ctx.beginPath();
+                this.ctx.arc(collision.particleACollisionPoint.x, collision.particleACollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 255, 255)";
+                this.ctx.fill();
+                this.ctx.closePath();
 
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(collision.particleBCollisionPoint.x, collision.particleBCollisionPoint.y, 4, 0, Math.PI * 2);
-        //         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        //         this.ctx.fill();
-        //         this.ctx.closePath();
+                this.ctx.beginPath();
+                this.ctx.arc(collision.particleBCollisionPoint.x, collision.particleBCollisionPoint.y, 4, 0, Math.PI * 2);
+                this.ctx.fillStyle = "rgb(255, 255, 255)";
+                this.ctx.fill();
+                this.ctx.closePath();
 
-        //         this.ctx.beginPath();
-        //         this.ctx.moveTo(collision.particleACollisionPoint.x, collision.particleACollisionPoint.y);
-        //         this.ctx.lineTo(collision.particleACollisionPoint.x - collision.normal.x * collision.distance, collision.particleACollisionPoint.y - collision.normal.y * collision.distance);
-        //         this.ctx.strokeStyle = "rgb(255, 255, 255)";
-        //         this.ctx.stroke();
-        //         this.ctx.closePath();
+                this.ctx.beginPath();
+                this.ctx.moveTo(collision.particleACollisionPoint.x, collision.particleACollisionPoint.y);
+                this.ctx.lineTo(collision.particleACollisionPoint.x - collision.normal.x * collision.distance, collision.particleACollisionPoint.y - collision.normal.y * collision.distance);
+                this.ctx.strokeStyle = "rgb(255, 255, 255)";
+                this.ctx.stroke();
+                this.ctx.closePath();
                 
-        //         // Draw line between collision points
-        //         // this.ctx.beginPath();
-        //         // this.ctx.moveTo(collision.particleACollisionPoint.x, collision.particleACollisionPoint.y);
-        //         // this.ctx.lineTo(collision.particleBCollisionPoint.x, collision.particleBCollisionPoint.y);
-        //         // this.ctx.strokeStyle = "rgb(255, 255, 255)";
-        //         // this.ctx.stroke();
-        //         // this.ctx.closePath();
-        //     }
-        // }
+                // Draw line between collision points
+                // this.ctx.beginPath();
+                // this.ctx.moveTo(collision.particleACollisionPoint.x, collision.particleACollisionPoint.y);
+                // this.ctx.lineTo(collision.particleBCollisionPoint.x, collision.particleBCollisionPoint.y);
+                // this.ctx.strokeStyle = "rgb(255, 255, 255)";
+                // this.ctx.stroke();
+                // this.ctx.closePath();
+            }
+        }
 
         // Draw LineSegmetLinearSpringCollisions for debugging
         // for (let i = 0; i < this.simulation.world.collisions.size; i++) {

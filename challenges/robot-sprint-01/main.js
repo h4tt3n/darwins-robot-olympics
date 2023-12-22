@@ -92,6 +92,7 @@ const createRobotFuncs = {
     "RoboCrab" : createRoboCrabs,
     "RoboStarfish" : createRoboStarfishes,
     "RoboGuy" : createRoboGuys,
+    "RoboCar" : createRoboCars,
 }
 
 const createChallengeFuncs = { 
@@ -317,6 +318,20 @@ function deleteRoboGuys() {
     }
 }
 
+function createRoboCars(numRobots = 50, params = {}, genome = null) {
+    for (let i = 0; i < numRobots; i++) {
+        params.body.position = new Vector2(0, 200);
+        params.brain.genome = genome ? genome[i].genome : null;
+        simulation.createRoboCar(params);
+    }
+}
+
+function deleteRoboCars() {
+    for (let i = 0; i < simulation.roboCars; i++) {
+        simulation.deleteRoboCar(simulation.roboCars[i]);
+    }
+}
+
 function createWorld() {
     // Params
     let top = -400;
@@ -513,12 +528,12 @@ function helmet() {
     // }
 
     // Create wheel
-    let wheel1 = simulation.world.createWheel(new Vector2(2500, -800), 10, 0, null, 80);
-    let wheel2 = simulation.world.createWheel(new Vector2(2200, -800), 10, 0, null, 40);
+    let wheel1 = simulation.world.createWheel(new Vector2(2500, -800), 10, 0, null, 50);
+    let wheel2 = simulation.world.createWheel(new Vector2(2300, -800), 10, 0, null, 50);
     let linearSpring = simulation.world.createLinearSpring(wheel1, wheel2, 0.5, 0.5, 0.5);
     //console.log(wheel);
 
-    // wheel.addAngularImpulse(-40);
+    wheel1.addAngularImpulse(-30);
     // wheel.addImpulse(new Vector2(-500, 0));
     
     // Create dome Points
