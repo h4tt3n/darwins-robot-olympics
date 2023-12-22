@@ -25,6 +25,7 @@ import { AngularState } from './angularState.js'
 import { LinearLink } from './linearLink.js'
 import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
+import { GearConstraint } from './constraints/gearConstraint.js'
 
 import { Particle } from './particle.js'
 import { Wheel } from './wheel.js'
@@ -47,7 +48,8 @@ export {
     AngularState, 
     LinearLink, 
     LinearSpring, 
-    AngularSpring, 
+    AngularSpring,
+    GearConstraint,
     Particle, 
     Wheel, 
     CollisionHandler,

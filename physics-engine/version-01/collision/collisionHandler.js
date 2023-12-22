@@ -282,7 +282,7 @@ class CollisionHandler {
             const collision = new LineSegmentWheelCollision(lineSegment, wheel, lineSegmentCollisionPoint, wheelCollisionPoint, distance, normal);
             collision.objectId = this.createCollisionObjectId(lineSegment, wheel);
             this.world.collisions.set(collision.objectId, collision);
-            console.log({collision : collision});
+            //console.log({collision : collision});
         }
     }
     particleParticleCollision(particleA, particleB) {

@@ -8,9 +8,9 @@ class LineSegmentWheelCollision {
         this.stiffness = 0.25;
         this.damping = 0.5;
         this.warmStart = 0.5;
-        this.staticFrictionVelocity = 10.0;
+        this.staticFrictionVelocity = 50.0;
         this.staticFriction = 1.0;
-        this.dynamicFriction = 0.5;
+        this.dynamicFriction = 0.6;
         this.lineSegment = lineSegment;
         this.wheel = wheel;
         this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
@@ -45,6 +45,18 @@ class LineSegmentWheelCollision {
         this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
     }
     applyWarmStart() {
+        const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
+
+        if (projectedImpulse > 0.0) { return; }
+
+        const relativeCollisionPoint = this.wheelCollisionPoint.sub(this.wheel.position);
+        const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
+        //console.log("Warmstart!");
+
+        this.wheel.addImpulse(warmstartImpulse.mul(this.wheel.inverseMass));
+        this.wheel.addAngularImpulse(warmstartImpulse.perpDot(relativeCollisionPoint) * this.wheel.inverseInertia);
+
+        this.accumulatedImpulse = Vector2.zero;
     }
     computeRestImpulse() {
         //console.log("Rest impulse!");
@@ -77,7 +89,7 @@ class LineSegmentWheelCollision {
         //console.log({restImpulse : this.restImpulse});
     }
     computeReducedMass(){
-        console.log("Reduced mass!");
+        //console.log("Reduced mass!");
         const k1 = this.wheel.inverseMass;
         const k2 = this.wheel.radius * this.wheel.radius * this.wheel.inverseInertia;
         const k = k1 + k2;

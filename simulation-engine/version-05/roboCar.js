@@ -1,5 +1,6 @@
 "use strict";
 
+import { ToolBox } from "../../toolbox/version-01/toolbox.js";
 import { Vector2 } from "../../vector-library/version-01/vector2.js";
 import { RoboBase } from "./roboBase.js";
 
@@ -35,10 +36,24 @@ class RoboCar extends RoboBase {
 		let output = this.brain.getOutput();
 
         //console.log(output);
-        
+        let minAngleLeft = Math.PI * 2 * (0.375 - 0.125);
+        let maxAngleLeft = Math.PI * 2 * (0.375 + 0.125);
+        let minAngleRight = Math.PI * 2 * (0.125 - 0.125);
+        let maxAngleRight = Math.PI * 2 * (0.125 + 0.125);
+
         // Apply output to wheels
-        this.body.wheels[0].addAngularImpulse(output[0] * 0.1);
-        this.body.wheels[1].addAngularImpulse(output[1] * 0.1);
+        this.body.wheels[0].addAngularImpulse(output[0] * 0.5);
+        this.body.wheels[1].addAngularImpulse(output[1] * 0.5);
+        this.body.angularSprings[4].setRestAngleVector( ToolBox.map(output[2], -1, 1, minAngleLeft, maxAngleLeft));
+        this.body.angularSprings[5].setRestAngleVector( ToolBox.map(output[3], -1, 1, minAngleRight, maxAngleRight));
+
+        // Brake both weels
+        if(output[4] > 0.0){
+            this.body.wheels[0].angularVelocity = 0.0;
+            this.body.wheels[0].angularImpulse = 0.0;
+            this.body.wheels[1].angularVelocity = 0.0;
+            this.body.wheels[1].angularImpulse = 0.0;
+        }
     }
 }
 

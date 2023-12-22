@@ -207,29 +207,36 @@ class Renderer {
             }
 
             // Draw wheels
-            if (roboWorm.body.wheels) {
+            if (roboWorm.body.wheels != undefined) {
 
-                this.ctx.lineWidth = 8;
+                this.ctx.lineWidth = 10;
                 this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
-                for (let i = 0; i < this.simulation.world.wheels.length; i++) {
-                    var wheel = this.simulation.world.wheels[i];
+                for (let i = 0; i < roboWorm.body.wheels.length; i++) {
+                    var wheel = roboWorm.body.wheels[i];
                     var x = wheel.position.x;
                     var y = wheel.position.y;
                     var r = wheel.radius * 0.5;
 
                     this.ctx.beginPath();
-                    this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
+                    this.ctx.arc(x, y, wheel.radius - 5, 0, Math.PI * 2);
                     //this.ctx.fillStyle = wheel.color;
+                    this.ctx.strokeStyle = wheel.color; //"rgb(192, 192, 192)";
                     this.ctx.stroke();
                     this.ctx.closePath();
+
+                    // this.ctx.beginPath();
+                    // this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
+                    // this.ctx.fillStyle = wheel.color;
+                    // this.ctx.fill();
+                    // this.ctx.closePath();
 
                     var pos = wheel.position;
 
                     // Light gray line in direction of angle
                     var x2 = pos.x + wheel.angleVector.x * r;
                     var y2 = pos.y + wheel.angleVector.y * r;
-                    var direction = new Vector2(x2 - x, y2 - y);
+                    //var direction = new Vector2(x2 - x, y2 - y);
 
                     this.ctx.beginPath();
                     this.ctx.moveTo(pos.x, pos.y);
@@ -249,19 +256,19 @@ class Renderer {
                     this.ctx.closePath();
 
                     // Red line in direction of left perpendicular of angle
-                    var right = pos.add(wheel.angleVector.perp().mul(-r));
+                    var left = pos.add(wheel.angleVector.perp().mul(-r));
 
                     this.ctx.beginPath();
                     this.ctx.moveTo(pos.x, pos.y);
-                    this.ctx.lineTo(right.x, right.y);
+                    this.ctx.lineTo(left.x, left.y);
                     this.ctx.strokeStyle = "rgb(255, 32, 32)";
                     this.ctx.stroke();
                     this.ctx.closePath();
 
                     // Dot in center
                     this.ctx.beginPath();
-                    this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
-                    this.ctx.fillStyle = "rgb(128, 128, 128)";
+                    this.ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+                    this.ctx.fillStyle = wheel.color; //"rgb(128, 128, 128)";
                     this.ctx.fill();
                     this.ctx.closePath();
                 }

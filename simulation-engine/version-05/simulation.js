@@ -224,23 +224,25 @@ class Simulation {
             wheels : [],
         }
 
-        let position = new Vector2(200, 0); //new Vector2(0, 0);
+        let position = new Vector2(0, 0); //new Vector2(0, 0);
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
 
         // Wheels
-        let wheelRadius = 50;
+        let wheelRadius = 40;
         let wheelMass = 10;
-        let wheel1 = this.world.createWheel(position.add(new Vector2(-100, 100)), wheelMass, 0, null, wheelRadius);
-        let wheel2 = this.world.createWheel(position.add(new Vector2(100, 100)), wheelMass, 0, null, wheelRadius);
+        let wheel1 = this.world.createWheel(position.add(new Vector2(-100, 0)), wheelMass, 0, null, wheelRadius);
+        let wheel2 = this.world.createWheel(position.add(new Vector2(100, 0)), wheelMass, 0, null, wheelRadius);
+        wheel1.color = randomColor;
+        wheel2.color = randomColor;
         bodyParts.wheels.push(wheel1);
         bodyParts.wheels.push(wheel2);
 
         // Body
-        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-100, 0)), 10, 10, randomColor);
-        let btmRightParticle = this.world.createParticle(position.add(new Vector2(100, 0)), 10, 10, randomColor);
-        let topRightParticle = this.world.createParticle(position.add(new Vector2(100, -100)), 10, 10, randomColor);
-        let topLeftParticle = this.world.createParticle(position.add(new Vector2(-100, -100)), 10, 10, randomColor);
+        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
+        let btmRightParticle = this.world.createParticle(position.add(new Vector2(50, -50)), 10, 10, randomColor);
+        let topRightParticle = this.world.createParticle(position.add(new Vector2(50, -100)), 10, 10, randomColor);
+        let topLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -100)), 10, 10, randomColor);
 
         bodyParts.particles.push(btmLeftParticle);
         bodyParts.particles.push(btmRightParticle);
@@ -252,9 +254,14 @@ class Simulation {
         let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 1.0, 1.0, 1.0);
         let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 1.0, 1.0, 1.0);
         btmLeftToBtmRight.radius = 8;
+        btmLeftToBtmRight.color = randomColor2;
         btmRightToTopRight.radius = 8;
+        btmRightToTopRight.color = randomColor2;
         topRightToTopLeft.radius = 8;
+        topRightToTopLeft.color = randomColor2;
         topLeftToBtmLeft.radius = 8;
+        topLeftToBtmLeft.color = randomColor2;
+
 
         bodyParts.linearSprings.push(btmLeftToBtmRight);
         bodyParts.linearSprings.push(btmRightToTopRight);
@@ -275,7 +282,9 @@ class Simulation {
         let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.1, 0.1, 0.5);
         let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.1, 0.1, 0.5);
         btmLeftToWheel1.radius = 8;
+        btmLeftToWheel1.color = randomColor2;
         btmRightToWheel2.radius = 8;
+        btmRightToWheel2.color = randomColor2;
 
         bodyParts.linearSprings.push(btmLeftToWheel1);
         bodyParts.linearSprings.push(btmRightToWheel2);
@@ -1317,8 +1326,10 @@ class Simulation {
         for (let i = 0; i < worm.body.particles.length; i++) {
             this.world.deleteParticle(worm.body.particles[i]);
         }
-        for (let i = 0; i < worm.body.wheels.length; i++) {
-            this.world.deleteWheel(worm.body.wheels[i]);
+        if (worm.body.wheels != undefined) {
+            for (let i = 0; i < worm.body.wheels.length; i++) {
+                this.world.deleteWheel(worm.body.wheels[i]);
+            }
         }
         this.roboWorms.splice(this.roboWorms.indexOf(worm), 1);
         this.deadRoboWorms.push(worm);
