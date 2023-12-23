@@ -10,9 +10,9 @@ class GearConstraint {
         this.radiusA = params.radiusA || null;
         this.radiusB = params.radiusB || null;
 
-        this.stiffness = -1.0;
+        this.stiffness = -0.5;
         this.damping = 1.0;
-        this.warmStart = 1.0;        
+        this.warmStart = 0.5;        
         this.reducedInertia = 0.0;
         this.restImpulse = 0.0;
         this.accumulatedImpulse = 0.0;
@@ -51,17 +51,17 @@ class GearConstraint {
 
     }
     applyWarmStart() {
-        // if (this.accumulatedImpulse == 0.0) { return; }
+        if (this.accumulatedImpulse == 0.0) { return; }
 
-        // // State
-        // const warmstartImpulse = this.accumulatedImpulse * this.warmStart;
+        // State
+        const warmstartImpulse = this.accumulatedImpulse * this.warmStart;
 
-        // // Apply
-        // this.angularStateA.addAngularImpulse(-warmstartImpulse * this.angularStateA.inverseInertia * this.gearRatio);
-        // this.angularStateB.addAngularImpulse( warmstartImpulse * this.angularStateB.inverseInertia);
+        // Apply
+        this.angularStateA.addAngularImpulse(-warmstartImpulse * this.angularStateA.inverseInertia * this.gearRatio);
+        this.angularStateB.addAngularImpulse( warmstartImpulse * this.angularStateB.inverseInertia);
 
-        // // Reset
-        // this.accumulatedImpulse = 0.0;
+        // Reset
+        this.accumulatedImpulse = 0.0;
     }
     computeData() {
         this.computeRestImpulse();

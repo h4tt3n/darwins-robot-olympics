@@ -8,9 +8,9 @@ class LineSegmentWheelCollision {
         this.stiffness = 0.25;
         this.damping = 0.5;
         this.warmStart = 0.5;
-        this.staticFrictionVelocity = 50.0;
-        this.staticFriction = 1.0;
-        this.dynamicFriction = 1.0;
+        this.staticFrictionVelocity = 1.0;
+        this.staticFriction = 0.9;
+        this.dynamicFriction = 0.1;
         this.lineSegment = lineSegment;
         this.wheel = wheel;
         this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
@@ -78,11 +78,11 @@ class LineSegmentWheelCollision {
         const velocityErrorTangent = deltaVelocityTangent;
 
         const restImpulseNormal = -(positionErrorNormal * this.stiffness * constants.INV_DT + velocityErrorNormal * this.damping);
-        const restImpulseTangent = -(velocityErrorTangent * 0.1);
+        const restImpulseTangent = -velocityErrorTangent;
 
         const FrictionCoefficient = Math.abs(deltaVelocityTangent) < this.staticFrictionVelocity ? this.staticFriction : this.dynamicFriction;
 
-        //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
+        //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(-restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
         const restImpulseTangentWithFriction = restImpulseTangent * FrictionCoefficient;
 
         this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
