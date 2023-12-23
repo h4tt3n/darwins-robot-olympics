@@ -102,6 +102,7 @@ const createChallengeFuncs = {
     "Pitfall" : pitFall,
     "Pitfall2" : pitFall2,
     "Helmet" : helmet,
+    "Thunder-Dome" : thunderDome,
 }
 
 let createRobotFunc = createRobotFuncs["RoboWorm"];
@@ -627,6 +628,31 @@ function helmet() {
     // simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
 
 };
+
+function thunderDome() {
+    // Params
+    let levelCenter = new Vector2(0, 500);
+
+    let point1 = simulation.world.createPoint(levelCenter.add(new Vector2(-1000, 0)));
+    let point2 = simulation.world.createPoint(levelCenter.add(new Vector2(500, -200)));
+    let point3 = simulation.world.createPoint(levelCenter.add(new Vector2(500, -1000)));
+    let point4 = simulation.world.createPoint(levelCenter.add(new Vector2(-2000, -1200)));
+    let point5 = simulation.world.createPoint(levelCenter.add(new Vector2(-4000, 0)));
+    let point6 = simulation.world.createPoint(levelCenter.add(new Vector2(-1500, 400)));
+    let point7 = simulation.world.createPoint(levelCenter.add(new Vector2(500, 400)));
+    let point8 = simulation.world.createPoint(levelCenter.add(new Vector2(3000, -200)));
+    let point9 = simulation.world.createPoint(levelCenter.add(new Vector2(3000, -1000)));
+
+    let segment1 = simulation.world.createLineSegment(point1, point2);
+    let segment2 = simulation.world.createLineSegment(point2, point3);
+    let segment3 = simulation.world.createLineSegment(point3, point4);
+    let segment4 = simulation.world.createLineSegment(point4, point5);
+    let segment5 = simulation.world.createLineSegment(point5, point6);
+    let segment6 = simulation.world.createLineSegment(point6, point7);
+    let segment7 = simulation.world.createLineSegment(point7, point8);
+    let segment8 = simulation.world.createLineSegment(point8, point9);
+    let segment9 = simulation.world.createLineSegment(point9, point3);
+}
 
 function deleteWorld() {
     simulation.world.lineSegments = [];

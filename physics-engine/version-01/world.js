@@ -56,20 +56,14 @@ class World {
             this.applyCorrectiveImpulsesToMap(this.collisions);
         }
     }
-    applyCorrectiveImpulsestoArray(array){
-        // for(var j = array.length-1; j >= 0; j--){
-        //     array[j].applyCorrectiveImpulse();
-        // }
-        for(var j = 0; j < array.length; j++){
+    applyCorrectiveImpulsestoArray(array) {
+        for(var j = 0; j < array.length; j++) {
             array[j].applyCorrectiveImpulse();
         }
     }
-    applyCorrectiveImpulsesToMap(map){
+    applyCorrectiveImpulsesToMap(map) {
         const keys = Array.from(map.keys());
-        // for(var j = keys.length-1; j >= 0; j--){
-        //     map.get(keys[j]).applyCorrectiveImpulse();
-        // }
-        for(var j = 0; j < keys.length; j++){
+        for(var j = 0; j < keys.length; j++) {
             map.get(keys[j]).applyCorrectiveImpulse();
         }
     }

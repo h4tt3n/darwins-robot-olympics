@@ -89,6 +89,43 @@ class Renderer {
         // Global settings
         this.ctx.lineCap = "round";
 
+        // Draw waypoints
+        for (let i = 0; i < this.simulation.wayPoints.length; i++) {
+            var wayPoint = this.simulation.wayPoints[i];
+            var x = wayPoint.position.x;
+            var y = wayPoint.position.y;
+
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, wayPoint.radius * 1.0, 0, Math.PI * 2);
+            this.ctx.fillStyle = "white";
+            this.ctx.fill();
+            this.ctx.closePath();
+
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, wayPoint.radius * 0.8, 0, Math.PI * 2);
+            this.ctx.fillStyle = "blue";
+            this.ctx.fill();
+            this.ctx.closePath();
+
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, wayPoint.radius * 0.4, 0, Math.PI * 2);
+            this.ctx.fillStyle = "white";
+            this.ctx.fill();
+            this.ctx.closePath();
+
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, wayPoint.radius * 0.2, 0, Math.PI * 2);
+            this.ctx.fillStyle = "red";
+            this.ctx.fill();
+            this.ctx.closePath();
+
+            // Write index above waypoint
+            this.ctx.font = "24px Arial";
+            this.ctx.fillStyle = "rgb(255, 255, 255)";
+            this.ctx.fillText(i+1, x-6, y-wayPoint.radius-16);
+
+        }
+
         // Draw rays
         if (this.simulation.renderRaycasts) {
 
@@ -170,7 +207,8 @@ class Renderer {
         }
 
         // Draw RoboWorms
-        for (let i = 0; i < this.simulation.roboWorms.length; i++) {
+        //for (let i = 0; i < this.simulation.roboWorms.length; i++) {
+        for (let i = this.simulation.roboWorms.length-1; i >= 0; i--) {
             var roboWorm = this.simulation.roboWorms[i];
 
             // Draw linear springs
@@ -370,43 +408,6 @@ class Renderer {
             this.ctx.fillStyle = "rgb(255, 255, 255)";
             this.ctx.fillText(i, roboStarfish.body.particles[0].position.x-12, roboStarfish.body.particles[0].position.y-40);
             //this.ctx.fillText(i, roboStarfish.body.particles[0].position.x-12, 0);
-
-        }
-
-        // Draw waypoints
-        for (let i = 0; i < this.simulation.wayPoints.length; i++) {
-            var wayPoint = this.simulation.wayPoints[i];
-            var x = wayPoint.position.x;
-            var y = wayPoint.position.y;
-
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, wayPoint.radius * 1.0, 0, Math.PI * 2);
-            this.ctx.fillStyle = "white";
-            this.ctx.fill();
-            this.ctx.closePath();
-
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, wayPoint.radius * 0.8, 0, Math.PI * 2);
-            this.ctx.fillStyle = "blue";
-            this.ctx.fill();
-            this.ctx.closePath();
-
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, wayPoint.radius * 0.4, 0, Math.PI * 2);
-            this.ctx.fillStyle = "white";
-            this.ctx.fill();
-            this.ctx.closePath();
-
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, wayPoint.radius * 0.2, 0, Math.PI * 2);
-            this.ctx.fillStyle = "red";
-            this.ctx.fill();
-            this.ctx.closePath();
-
-            // Write index above waypoint
-            this.ctx.font = "24px Arial";
-            this.ctx.fillStyle = "rgb(255, 255, 255)";
-            this.ctx.fillText(i+1, x-6, y-wayPoint.radius-16);
 
         }
 

@@ -245,8 +245,10 @@ class Simulation {
         // GearConstraint between engine and wheel
         let engineToWheel1 = this.world.createGearConstraint(engine, wheel1, 1.0);
         let engineToWheel2 = this.world.createGearConstraint(engine, wheel2, 1.0);
+        let wheel1ToWheel2 = this.world.createGearConstraint(wheel1, wheel2, 1.0);
         bodyParts.gearConstraints.push(engineToWheel1);
         bodyParts.gearConstraints.push(engineToWheel2);
+        bodyParts.gearConstraints.push(wheel1ToWheel2);
 
         // Body
         let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
@@ -307,6 +309,7 @@ class Simulation {
         bodyParts.linearSprings.push(topLeftToEngine);
         bodyParts.linearSprings.push(topRightToEngine);
 
+        // Wheel
         let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.125, 0.5, 0.5);
         let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.125, 0.5, 0.5);
         btmLeftToWheel1.radius = 8;
