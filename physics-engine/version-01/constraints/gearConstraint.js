@@ -10,7 +10,7 @@ class GearConstraint {
         this.radiusA = params.radiusA || null;
         this.radiusB = params.radiusB || null;
 
-        this.stiffness = -0.5;
+        this.stiffness = -1.0;
         this.damping = 1.0;
         this.warmStart = 0.5;        
         this.reducedInertia = 0.0;

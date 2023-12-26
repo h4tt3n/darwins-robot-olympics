@@ -5,7 +5,7 @@ import { constants } from './../constants.js';
 
 class LineSegmentWheelCollision {
     constructor(lineSegment, wheel, lineSegmentCollisionPoint, wheelCollisionPoint, distance, normal) {
-        this.stiffness = 0.5;
+        this.stiffness = 1.0;
         this.damping = 0.5;
         this.warmStart = 0.5;
         this.staticFrictionVelocity = 1.0;

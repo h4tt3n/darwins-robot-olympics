@@ -9,7 +9,7 @@ import { LineSegmentWheelCollision } from './lineSegmentWheelCollision.js';
 class CollisionHandler {
     constructor(world) {
         this.world = world;
-        this.buffer = 0.0;
+        this.buffer = 0;
     }
     planePlaneIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;
@@ -97,7 +97,7 @@ class CollisionHandler {
         //let intersection = this.lineSegmentLineSegmentIntersection2(lineSegmentA, lineSegmentB);
         let intersection = this.planePlaneIntersection(lineSegmentA, lineSegmentB);
         // Find the minimum allowed distance between any two points on the line segments
-        let radiiSquared = (lineSegmentA.radius + lineSegmentB.radius + this.buffer) * (lineSegmentA.radius + lineSegmentB.radius + this.buffer);
+        let radiiSquaredBuffer = (lineSegmentA.radius + lineSegmentB.radius + this.buffer) * (lineSegmentA.radius + lineSegmentB.radius + this.buffer);
         // Find the closest of the four points defining the line segments
         let closestPointOnLineSegmentA = this.closestPointOnLineSegment(intersection, lineSegmentA);
         let closestPointOnLineSegmentB = this.closestPointOnLineSegment(intersection, lineSegmentB);
@@ -105,7 +105,7 @@ class CollisionHandler {
         // Find the distance between the closest points
         let distanceSquared = Vector2.distanceSquared(closestPointOnLineSegmentA, closestPointOnLineSegmentB);
         // If the distance is less than the minimum allowed distance, return pair of intersection points
-        if (distanceSquared < radiiSquared) {
+        if (distanceSquared < radiiSquaredBuffer) {
             return { isIntersecting : true, intersectionPointA : closestPointOnLineSegmentA, intersectionPointB : closestPointOnLineSegmentB };
         } else {
             return { isIntersecting : false, intersectionPointA : null, intersectionPointB : null };
@@ -168,7 +168,7 @@ class CollisionHandler {
         //     const closestPointOnLineSegment = this.closestPointOnLineSegment(closestPoint.position, lineSegment);
         //     const distanceVector = closestPoint.position.sub(closestPointOnLineSegment);
         //     const distanceSquared = distanceVector.lengthSquared();
-        //     const radiiSquared = (lineSegment.radius + linearSpring.radius + this.buffer) * (lineSegment.radius + linearSpring.radius + this.buffer);
+        //     const radiiSquaredBuffer = (lineSegment.radius + linearSpring.radius + this.buffer) * (lineSegment.radius + linearSpring.radius + this.buffer);
             
         //     const distance = Math.sqrt(distanceSquared);
         //     const normal = distanceVector.div(distance);
@@ -205,18 +205,21 @@ class CollisionHandler {
         const point = this.closestPointOnLineSegment(particle.position, lineSegment);
         const distanceVector = point.sub(particle.position);
         const distanceSquared = distanceVector.lengthSquared();
-        const radiiSquared = (particle.radius + lineSegment.radius + this.buffer) * (particle.radius + lineSegment.radius + this.buffer);
+        const radiiSquared = (particle.radius + lineSegment.radius) * (particle.radius + lineSegment.radius);
+        const radiiSquaredBuffer = (particle.radius + lineSegment.radius + this.buffer) * (particle.radius + lineSegment.radius + this.buffer);
 
         // Check if collision is active
         if (this.isCollisionActive(lineSegment, particle)) {
             
-            if (distanceSquared > radiiSquared) {
-                // If objects no longer intersect, remove collision
+            // If objects no longer intersect, remove collision
+            if (distanceSquared > radiiSquaredBuffer) {
                 //console.log("Collision deleted!");
                 this.world.collisions.delete(this.createCollisionObjectId(lineSegment, particle));
                 return;
-            } else {
-                // If they still intersect, update collision
+            }
+
+            // If they still intersect, update collision
+            if (distanceSquared <= radiiSquared) {
                 //console.log("Collision updated!");
                 const distance = Math.sqrt(distanceSquared);
                 const normal = distanceVector.div(distance);
@@ -230,29 +233,36 @@ class CollisionHandler {
                 collision.normal = normal;
                 return;
             }
+        
+        // If collision is not active
+        } else { 
+            // Create new collision
+            if (distanceSquared <= radiiSquared) {
+                //console.log("Collision created!");
+                const distance = Math.sqrt(distanceSquared);
+                const normal = distanceVector.div(distance);
+                const lineSegmentCollisionPoint = point.sub(normal.mul(lineSegment.radius));
+                const particleCollisionPoint = particle.position.add(normal.mul(particle.radius));
+                
+                const collision = new LineSegmentParticleCollision(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal);
+                collision.objectId = this.createCollisionObjectId(lineSegment, particle);
+                this.world.collisions.set(collision.objectId, collision);
+                return;
+            }
         }
-        if (distanceSquared < radiiSquared) {
-            //console.log("Collision created!");
-            const distance = Math.sqrt(distanceSquared);
-            const normal = distanceVector.div(distance);
-            const lineSegmentCollisionPoint = point.sub(normal.mul(lineSegment.radius));
-            const particleCollisionPoint = particle.position.add(normal.mul(particle.radius));
-            const collision = new LineSegmentParticleCollision(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal);
-            collision.objectId = this.createCollisionObjectId(lineSegment, particle);
-            this.world.collisions.set(collision.objectId, collision);
-        }
+
     }
     lineSegmentWheelCollision(lineSegment, wheel) {
         // console.log("LineSegmentwheelCollision");
         const point = this.closestPointOnLineSegment(wheel.position, lineSegment);
         const distanceVector = point.sub(wheel.position);
         const distanceSquared = distanceVector.lengthSquared();
-        const radiiSquared = (wheel.radius + lineSegment.radius + this.buffer) * (wheel.radius + lineSegment.radius + this.buffer);
+        const radiiSquaredBuffer = (wheel.radius + lineSegment.radius + this.buffer) * (wheel.radius + lineSegment.radius + this.buffer);
 
         // Check if collision is active
         if (this.isCollisionActive(lineSegment, wheel)) {
             
-            if (distanceSquared > radiiSquared) {
+            if (distanceSquared > radiiSquaredBuffer) {
                 // If objects no longer intersect, remove collision
                 //console.log("Collision deleted!");
                 this.world.collisions.delete(this.createCollisionObjectId(lineSegment, wheel));
@@ -273,7 +283,7 @@ class CollisionHandler {
                 return;
             }
         }
-        if (distanceSquared < radiiSquared) {
+        if (distanceSquared < radiiSquaredBuffer) {
             //console.log("Collision created!");
             const distance = Math.sqrt(distanceSquared);
             const normal = distanceVector.div(distance);
@@ -290,11 +300,11 @@ class CollisionHandler {
         const isActive = this.isCollisionActive(particleA, particleB);
         const distanceVector = particleB.position.sub(particleA.position);
         const distanceSquared = distanceVector.lengthSquared();
-        const radiiSquared = (particleA.radius + particleB.radius + this.buffer) * (particleA.radius + particleB.radius + this.buffer);
+        const radiiSquaredBuffer = (particleA.radius + particleB.radius + this.buffer) * (particleA.radius + particleB.radius + this.buffer);
 
         // If collision object already exists
         if (isActive) {
-            if (distanceSquared > radiiSquared) {
+            if (distanceSquared > radiiSquaredBuffer) {
                 this.world.collisions.delete(this.createCollisionObjectId(particleA, particleB));
                 //console.log("Circle-circle collision deleted!");
             } else {
@@ -313,7 +323,7 @@ class CollisionHandler {
             }
             return;
         } else if (isActive == false) {
-            if (distanceSquared < radiiSquared) {
+            if (distanceSquared < radiiSquaredBuffer) {
                 const distance = Math.sqrt(distanceSquared);
                 const normal = distanceVector.div(distance);
                 const particleACollisionPoint = particleA.position.add(normal.mul(particleA.radius));
