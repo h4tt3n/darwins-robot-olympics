@@ -9,9 +9,8 @@ import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/ver
 import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
-import { RoboCar } from './roboCar.js';
+import { Robot } from './robot.js';
 import { RoboCrab } from './roboCrab.js';
-import { RoboWorm } from './roboWorm.js';
 import { RoboStarfish } from './roboStarfish.js';
 import { RoboGuy } from './roboGuy.js';
 
@@ -422,7 +421,7 @@ class Simulation {
             this.body.angularSprings[1].setRestAngleVector( ToolBox.map(output[3], -1, 1, maxAngleRight, minAngleRight));
         }
 
-        let car = new RoboCar(brain, body, eyes, update);
+        let car = new Robot(brain, body, eyes, update);
         this.roboWorms.push(car); // Wrong, for testing
         return car;
     }
@@ -1430,7 +1429,49 @@ class Simulation {
         let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
         let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
-        let worm = new RoboWorm(brain, body, eyes);
+        let update = function update() {
+            // Update eyes
+            
+            const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
+            this.eyes.directionVector = angleVector;
+            //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
+            this.eyes.origin = this.body.particles[0].position;
+    
+            this.eyes.update();
+    
+            // Update brain
+            let inputs = [];
+    
+            let intersections = this.eyes.getOutput();
+            //console.log(intersections)
+            
+            for (let i = 0; i < intersections.length; i++) {
+            //for (let i = 0; i < 9; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+            }
+    
+            // console.log(inputs);
+    
+            this.brain.setInput(inputs);
+            //this.brain.recur(7);
+    
+            //console.log(this.brain.getInputs());
+            
+            this.brain.run();
+            let output = this.brain.getOutput();
+    
+            //console.log(output);
+    
+            // Update body
+            for (let i = 0; i < this.body.angularSprings.length; i++) {
+            //for (let i = 0; i < 8; i++) {
+                this.body.angularSprings[i].setRestAngleVector(output[i] * Math.PI * 2 * 0.125);
+                //this.body.angularSprings[i].setRestAngleVector(Math.PI * 2 * 0.125);
+            }
+    
+        }
+
+        let worm = new Robot(brain, body, eyes, update);
         this.roboWorms.push(worm);
         return worm;
     }

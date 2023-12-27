@@ -7,10 +7,11 @@
 import { Vector2 } from "../../vector-library/version-01/vector2.js";
 
 class Robot {
-    constructor(params = {}) {
-        this.brain = params.brain;
-        this.body = params.body;
-        this.sensors = params.sensors;
+    constructor(brain, body, eyes, update) {
+        this.brain = brain;
+        this.body = body;
+        this.eyes = eyes;
+        this.update = update;
         this.fitness = 0;
         this.ticksAlive = 0;
     }
