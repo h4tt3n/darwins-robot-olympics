@@ -9,11 +9,8 @@ import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/ver
 import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
-import { RoboBlob } from './roboBlob.js';
 import { RoboCar } from './roboCar.js';
 import { RoboCrab } from './roboCrab.js';
-import { RoboDog } from './roboDog.js';
-import { RoboRocket } from './roboRocket.js';
 import { RoboWorm } from './roboWorm.js';
 import { RoboStarfish } from './roboStarfish.js';
 import { RoboGuy } from './roboGuy.js';

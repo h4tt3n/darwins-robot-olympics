@@ -7,38 +7,6 @@ class RoboWorm extends RoboBase {
     constructor(brain, body, eyes) {
 		super(brain, body, eyes);
     }
-    // calculateFitness() {
-        
-    //     // Update fitness
-    //     let position = 0;
-    //     let fitness = 0;
-
-    //     // Average position of all particles
-    //     for (let i = 0; i < this.body.particles.length; i++) {
-    //         position += this.body.particles[i].position.x;
-    //     }
-
-    //     this.averagePosition = position / this.body.particles.length;
-
-    //     fitness = -(position - 2000);
-
-    //     // Addition to original simulation
-    //     fitness += this.ticksAlive;
-
-    //     this.fitness = fitness;
-    // }
-    // calculateScore() {
-    //     // Update fitness
-    //     let position = 0;
-    //     let fitness = 0;
-
-    //     // Average position of all particles
-    //     for (let i = 0; i < this.body.particles.length; i++) {
-    //         position += this.body.particles[i].position.x;
-    //     }
-
-    //     this.averagePosition = position / this.body.particles.length;
-    // }
     update() {
         // Update eyes
 		
@@ -80,9 +48,6 @@ class RoboWorm extends RoboBase {
         }
 
     }
-    // timeouts(timeLimit = 500) {
-	// 	return this.ticksAlive > timeLimit;
-	// }
 }
 
 export { RoboWorm };

@@ -8,26 +8,6 @@ class RoboCrab extends RoboBase {
     constructor(brain, body, eyes) {
 		    super(brain, body, eyes);
     }
-    calculateFitness() {
-        // Update fitness
-        let position = 0;
-        let fitness = 0;
-
-        for (let i = 0; i < this.body.particles.length; i++) {
-            position += this.body.particles[i].position.x;
-        }
-
-        position /= this.body.particles.length;
-
-        fitness = -(position - 4000);
-
-        this.fitness = fitness;
-    }
-    calculateScore() {
-        // Update score
-        let score = 0;
-        this.score = score;
-    }
     update() {
         // Update eyes
 		
