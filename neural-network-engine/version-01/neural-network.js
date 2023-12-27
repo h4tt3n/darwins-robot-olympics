@@ -256,6 +256,10 @@ class ActivationFunctions {
         return x;
     }
 
+    static parametricIdentity(x, a = 0.01) {
+        return a * x;
+    }
+
 
     // ******************************************************
     //   Nonlinear functions
@@ -337,7 +341,7 @@ class ActivationFunctions {
         return 0;
     }
 
-    // Leaky ReLU
+    // Leaky ReLU 
     static leakyRelu(x) {
         return Math.max(0.1 * x, x);
     }
@@ -347,7 +351,7 @@ class ActivationFunctions {
         return 0.1;
     }
 
-    // Parametric ReLU
+    // Parametric ReLU (PReLU)
     static parametricRelu(x, a = 0.01) {
         return Math.max(a * x, x);
     }
@@ -367,6 +371,30 @@ class ActivationFunctions {
         if (x >= 0) return 1;
         return a * Math.exp(x); // ?
     }
+
+    static softmax(arr) {
+        return arr.map(function(value, index) {
+            return Math.exp(value) / arr.map(function(y) {
+                return Math.exp(y);
+            }).reduce(function(a, b) {
+                return a + b;
+            });
+        });
+    }
+
+    static swish(x) {
+        return x / (1 + Math.exp(-x));
+    }
+
+    static swishDerivative(x) {
+        let y = x / (1 + Math.exp(-x));
+        return y + (1 - y) / (1 + Math.exp(-x));
+    }
+
+    static swishLike(x) {
+        return x * (0.5 + 0.5 * x / (1 + Math.abs(x)));
+    }
+     
 
 
     // ******************************************************

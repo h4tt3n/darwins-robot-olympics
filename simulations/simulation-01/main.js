@@ -30,7 +30,6 @@ let numRobots = 50;
 const nnParams = {
 	layers : [7, 24, 8], // Number of neurons in each layer: [input, hidden1, (hidden2, ...) output]
 	activation : {
-		//func : ActivationFunctions.sigmoidLike2,
 		func : ActivationFunctions.tanhLike2,
 	},
 }
@@ -566,10 +565,10 @@ function helmet() {
     let topRightPoint1 = simulation.world.createPoint(new Vector2(left + pitWidth, bottom - pitDepth));
 
     // Center pit point
-    let topLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth, bottom - pitDepth));
+    let topLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth, bottom - pitDepth + 100));
     let bottomLeftPoint2 = simulation.world.createPoint(new Vector2(left + pitWidth + platformWidth - pitBottomMargin, bottom));
     let bottomRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth + pitBottomMargin, bottom));
-    let topRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth, bottom - pitDepth+50));
+    let topRightPoint2 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + platformWidth, bottom - pitDepth - 100));
     
     // Rightmost pit point
     let topLeftPoint3 = simulation.world.createPoint(new Vector2(left + 2 * pitWidth + 2 * platformWidth, bottom - pitDepth));
