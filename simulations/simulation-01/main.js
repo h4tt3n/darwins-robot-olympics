@@ -188,7 +188,8 @@ function evaluate() {
         if (creatureTimeouts(robot, 1000) || hasReachedTarget(robot, target)) {
             calculateFitness(robot, target);
             console.log("fitness " + robot.fitness);
-            simulation.deleteRoboWorm(robot);
+            //simulation.deleteRoboWorm(robot);
+            simulation.deleteRobot(robot, simulation.roboWorms, simulation.deadRoboWorms);
         } else {
             robot.ticksAlive++;
         }
@@ -227,7 +228,7 @@ function evaluate() {
 
         // Reset simulation
         simulation.deadRoboWorms = [];
-        simulation.world.collisions = new Map();
+        //simulation.world.collisions = new Map();
         simulation.generationTicks = 0;
         simulation.generation++;
     }

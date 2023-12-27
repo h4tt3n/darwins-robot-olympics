@@ -190,23 +190,57 @@ class Simulation {
         // Run genetic algorithm
         this.individuals = this.geneticAlgorithm.step(this.deadIndividuals);
     }
-    deleteRobot(robot) {
+    deleteRobot(robot, array, deadArray) {
+        // Delete collisions
+        const collisionKeys = Array.from(this.world.collisions.keys());
+        for (let i = 0; i < collisionKeys.length; i++) {
+            const collisionKey = collisionKeys[i];
+            const collision = this.world.collisions.get(collisionKey);
+            const objectIds = this.world.collisionHandler.getObjectIdsFromCollisionObjectId(collision.objectId);
+            for (let i = 0; i < robot.body.wheels.length; i++) {         
+                if (objectIds.includes(robot.body.wheels[i].objectId)) {
+                    this.world.collisions.delete(collisionKey);
+                }
+            }
+            for (let i = 0; i < robot.body.particles.length; i++) {
+                if (objectIds.includes(robot.body.particles[i].objectId)) {
+                    this.world.collisions.delete(collisionKey);
+                }
+            }
+        }
         // Delete brain
         this.deleteNeuralNetwork(robot.brain);
         // Delete senses
         this.deleteRayCamera(robot.eyes);
         // Delete body
-        for (let i = 0; i < robot.body.angularSprings.length; i++) {
-            this.world.deleteAngularSpring(robot.body.angularSprings[i]);
+        if (robot.body.angularSprings != undefined) {
+            for (let i = 0; i < robot.body.angularSprings.length; i++) {
+                this.world.deleteAngularSpring(robot.body.angularSprings[i]);
+            }
         }
-        for (let i = 0; i < robot.body.linearSprings.length; i++) {
-            this.world.deleteLinearSpring(robot.body.linearSprings[i]);
+        if (robot.body.linearSprings != undefined) {
+            for (let i = 0; i < robot.body.linearSprings.length; i++) {
+                this.world.deleteLinearSpring(robot.body.linearSprings[i]);
+            }
         }
-        for (let i = 0; i < robot.body.particles.length; i++) {
-            this.world.deleteParticle(robot.body.particles[i]);
+        if (robot.body.gearConstraints != undefined) {
+            for (let i = 0; i < robot.body.gearConstraints.length; i++) {
+                this.world.deleteGearConstraint(robot.body.gearConstraints[i]);
+            }
         }
-        this.robotArrayRef.splice(this.robotArrayRef.indexOf(robot), 1);
-        this.deadRobotArrayRef.push(robot);
+        if (robot.body.wheels != undefined) {
+            for (let i = 0; i < robot.body.wheels.length; i++) {
+                this.world.deleteWheel(robot.body.wheels[i]);
+            }
+        }
+        if (robot.body.particles != undefined) {
+            for (let i = 0; i < robot.body.particles.length; i++) {
+                this.world.deleteParticle(robot.body.particles[i]);
+            }
+        }
+        // Delete robot
+        array.splice(array.indexOf(robot), 1);
+        deadArray.push(robot);
     }
     createWaypoint(position, radius, color) {
         let wayPoint = new WayPoint(position, radius, color);
