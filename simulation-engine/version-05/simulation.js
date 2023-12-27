@@ -197,14 +197,18 @@ class Simulation {
             const collisionKey = collisionKeys[i];
             const collision = this.world.collisions.get(collisionKey);
             const objectIds = this.world.collisionHandler.getObjectIdsFromCollisionObjectId(collision.objectId);
-            for (let i = 0; i < robot.body.wheels.length; i++) {         
-                if (objectIds.includes(robot.body.wheels[i].objectId)) {
-                    this.world.collisions.delete(collisionKey);
+            if (robot.body.wheels != undefined) {
+                for (let i = 0; i < robot.body.wheels.length; i++) {         
+                    if (objectIds.includes(robot.body.wheels[i].objectId)) {
+                        this.world.collisions.delete(collisionKey);
+                    }
                 }
             }
-            for (let i = 0; i < robot.body.particles.length; i++) {
-                if (objectIds.includes(robot.body.particles[i].objectId)) {
-                    this.world.collisions.delete(collisionKey);
+            if (robot.body.particles != undefined) {
+                for (let i = 0; i < robot.body.particles.length; i++) {
+                    if (objectIds.includes(robot.body.particles[i].objectId)) {
+                        this.world.collisions.delete(collisionKey);
+                    }
                 }
             }
         }
@@ -251,7 +255,7 @@ class Simulation {
         this.wayPoints.splice(this.wayPoints.indexOf(wayPoint), 1);
     }
     createRoboCar(params = {}) {
-        let bodyParts = {
+        let body = {
             particles : [],
             linearSprings : [],
             angularSprings : [],
@@ -272,17 +276,17 @@ class Simulation {
         engine.color = randomColor;
         wheel1.color = randomColor;
         wheel2.color = randomColor;
-        bodyParts.wheels.push(engine);
-        bodyParts.wheels.push(wheel1);
-        bodyParts.wheels.push(wheel2);
+        body.wheels.push(engine);
+        body.wheels.push(wheel1);
+        body.wheels.push(wheel2);
 
         // GearConstraint between engine and wheel
         let engineToWheel1 = this.world.createGearConstraint(engine, wheel1, 1.0);
         let engineToWheel2 = this.world.createGearConstraint(engine, wheel2, 1.0);
         let wheel1ToWheel2 = this.world.createGearConstraint(wheel1, wheel2, 1.0);
-        bodyParts.gearConstraints.push(engineToWheel1);
-        bodyParts.gearConstraints.push(engineToWheel2);
-        bodyParts.gearConstraints.push(wheel1ToWheel2);
+        body.gearConstraints.push(engineToWheel1);
+        body.gearConstraints.push(engineToWheel2);
+        body.gearConstraints.push(wheel1ToWheel2);
 
         // Body
         let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
@@ -290,10 +294,10 @@ class Simulation {
         let topRightParticle = this.world.createParticle(position.add(new Vector2(50, -150)), 10, 10, randomColor);
         let topLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -150)), 10, 10, randomColor);
 
-        bodyParts.particles.push(btmLeftParticle);
-        bodyParts.particles.push(btmRightParticle);
-        bodyParts.particles.push(topRightParticle);
-        bodyParts.particles.push(topLeftParticle);
+        body.particles.push(btmLeftParticle);
+        body.particles.push(btmRightParticle);
+        body.particles.push(topRightParticle);
+        body.particles.push(topLeftParticle);
 
         let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 0.5, 0.5, 0.5);
         let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 0.5, 0.5, 0.5);
@@ -309,10 +313,10 @@ class Simulation {
         topLeftToBtmLeft.color = randomColor2;
 
 
-        bodyParts.linearSprings.push(btmLeftToBtmRight);
-        bodyParts.linearSprings.push(btmRightToTopRight);
-        bodyParts.linearSprings.push(topRightToTopLeft);
-        bodyParts.linearSprings.push(topLeftToBtmLeft);
+        body.linearSprings.push(btmLeftToBtmRight);
+        body.linearSprings.push(btmRightToTopRight);
+        body.linearSprings.push(topRightToTopLeft);
+        body.linearSprings.push(topLeftToBtmLeft);
 
         // AngularSprings between body parts
         // let btmLeftToBtmRightAngular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToTopRight, 0.125, 1.0, 0.5);
@@ -320,10 +324,10 @@ class Simulation {
         // let topRightToTopLeftAngular = this.world.createAngularSpring(topRightToTopLeft, topLeftToBtmLeft, 0.125, 1.0, 0.5);
         // let topLeftToBtmLeftAngular = this.world.createAngularSpring(topLeftToBtmLeft, btmLeftToBtmRight, 0.125, 1.0, 0.5);
 
-        // bodyParts.angularSprings.push(btmLeftToBtmRightAngular);
-        // bodyParts.angularSprings.push(btmRightToTopRightAngular);
-        // bodyParts.angularSprings.push(topRightToTopLeftAngular);
-        // bodyParts.angularSprings.push(topLeftToBtmLeftAngular);
+        // body.angularSprings.push(btmLeftToBtmRightAngular);
+        // body.angularSprings.push(btmRightToTopRightAngular);
+        // body.angularSprings.push(topRightToTopLeftAngular);
+        // body.angularSprings.push(topLeftToBtmLeftAngular);
 
         let btmLeftToEngine = this.world.createLinearSpring(btmLeftParticle, engine, 0.5, 0.5, 0.5);
         let btmRightToEngine = this.world.createLinearSpring(btmRightParticle, engine, 0.5, 0.5, 0.5);
@@ -338,10 +342,10 @@ class Simulation {
         topRightToEngine.radius = 8;
         topRightToEngine.color = randomColor2;
 
-        bodyParts.linearSprings.push(btmLeftToEngine);
-        bodyParts.linearSprings.push(btmRightToEngine);
-        bodyParts.linearSprings.push(topLeftToEngine);
-        bodyParts.linearSprings.push(topRightToEngine);
+        body.linearSprings.push(btmLeftToEngine);
+        body.linearSprings.push(btmRightToEngine);
+        body.linearSprings.push(topLeftToEngine);
+        body.linearSprings.push(topRightToEngine);
 
         // Wheel
         let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.125, 0.5, 0.5);
@@ -351,20 +355,77 @@ class Simulation {
         btmRightToWheel2.radius = 8;
         btmRightToWheel2.color = randomColor2;
 
-        bodyParts.linearSprings.push(btmLeftToWheel1);
-        bodyParts.linearSprings.push(btmRightToWheel2);
+        body.linearSprings.push(btmLeftToWheel1);
+        body.linearSprings.push(btmRightToWheel2);
 
         let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.125, 0.5, 0.5);
         let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.125, 0.5, 0.5);
 
-        bodyParts.angularSprings.push(btmLeftToWheel1Angular);
-        bodyParts.angularSprings.push(btmRightToWheel2Angular);
+        body.angularSprings.push(btmLeftToWheel1Angular);
+        body.angularSprings.push(btmRightToWheel2Angular);
 
         // Create brain
         let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
         let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
-        let car = new RoboCar(brain, bodyParts, eyes);
+        let update = function update() {
+        
+            // Update camera position and angle
+            const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
+            this.eyes.directionVector = angleVector.perp();
+            this.eyes.origin = this.body.wheels[0].position;
+    
+            // Update camera
+            this.eyes.update();
+            let intersections = this.eyes.getOutput();
+    
+            // Input camera data to neural network
+            let inputs = [];
+            
+            for (let i = 0; i < intersections.length; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+            }
+    
+            this.brain.setInput(inputs);
+    
+            // Run neural network
+            this.brain.run();
+    
+            // Get output from neural network
+            let output = this.brain.getOutput();
+    
+            // Acceleration
+            this.body.wheels[0].addAngularImpulse(output[0] * 0.2);
+    
+            // Brake
+            // TODO: Model as constraint, and make gradual, not binary
+            if(output[1] > 0.0){
+                this.body.wheels[0].angularImpulse = 0.0;
+                this.body.wheels[0].angularVelocity = 0.0;
+            }
+    
+            // Gearing
+            let gearing = 1.0;
+    
+            if      (output[2] >= -1.00 && output[2] < -0.33) { gearing = 0.25; } 
+            else if (output[2] >= -0.33 && output[2] <  0.33) { gearing = 1.0; } 
+            else if (output[2] >=  0.33 && output[2] <= 1.00) { gearing = 4.0; }
+    
+            this.body.gearConstraints[0].setGearRatio(gearing);
+            this.body.gearConstraints[1].setGearRatio(gearing);
+    
+            // Set steering constraint min/max angles
+            let minAngleLeft = Math.PI * 2 * (0.375 - 0.125);
+            let maxAngleLeft = Math.PI * 2 * (0.375 + 0.125);
+            let minAngleRight = Math.PI * 2 * (0.125 - 0.125);
+            let maxAngleRight = Math.PI * 2 * (0.125 + 0.125);
+    
+            // Set rest angles of steering constraints
+            this.body.angularSprings[0].setRestAngleVector( ToolBox.map(output[3], -1, 1, minAngleLeft, maxAngleLeft));
+            this.body.angularSprings[1].setRestAngleVector( ToolBox.map(output[3], -1, 1, maxAngleRight, minAngleRight));
+        }
+
+        let car = new RoboCar(brain, body, eyes, update);
         this.roboWorms.push(car); // Wrong, for testing
         return car;
     }
