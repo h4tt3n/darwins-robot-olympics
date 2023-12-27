@@ -9,7 +9,7 @@ import { LineSegmentWheelCollision } from './lineSegmentWheelCollision.js';
 class CollisionHandler {
     constructor(world) {
         this.world = world;
-        this.buffer = 0;
+        this.buffer = 0.0;
     }
     planePlaneIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;
@@ -216,10 +216,7 @@ class CollisionHandler {
                 //console.log("Collision deleted!");
                 this.world.collisions.delete(this.createCollisionObjectId(lineSegment, particle));
                 return;
-            }
-
-            // If they still intersect, update collision
-            if (distanceSquared <= radiiSquared) {
+            } else {
                 //console.log("Collision updated!");
                 const distance = Math.sqrt(distanceSquared);
                 const normal = distanceVector.div(distance);
@@ -233,9 +230,9 @@ class CollisionHandler {
                 collision.normal = normal;
                 return;
             }
-        
+        }
         // If collision is not active
-        } else { 
+        if (distanceSquared < radiiSquaredBuffer) {
             // Create new collision
             if (distanceSquared <= radiiSquared) {
                 //console.log("Collision created!");

@@ -295,10 +295,10 @@ class Simulation {
         bodyParts.particles.push(topRightParticle);
         bodyParts.particles.push(topLeftParticle);
 
-        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 1.0, 1.0, 0.5);
-        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 1.0, 1.0, 0.5);
-        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 1.0, 1.0, 0.5);
-        let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 1.0, 1.0, 1.0);
+        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 0.5, 0.5, 0.5);
+        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 0.5, 0.5, 0.5);
+        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 0.5, 0.5, 0.5);
+        let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 0.5, 0.5, 0.5);
         btmLeftToBtmRight.radius = 8;
         btmLeftToBtmRight.color = randomColor2;
         btmRightToTopRight.radius = 8;
@@ -325,10 +325,10 @@ class Simulation {
         // bodyParts.angularSprings.push(topRightToTopLeftAngular);
         // bodyParts.angularSprings.push(topLeftToBtmLeftAngular);
 
-        let btmLeftToEngine = this.world.createLinearSpring(btmLeftParticle, engine, 1.0, 1.0, 0.5);
-        let btmRightToEngine = this.world.createLinearSpring(btmRightParticle, engine, 1.0, 1.0, 0.5);
-        let topLeftToEngine = this.world.createLinearSpring(topLeftParticle, engine, 1.0, 1.0, 0.5);
-        let topRightToEngine = this.world.createLinearSpring(topRightParticle, engine, 1.0, 1.0, 0.5);
+        let btmLeftToEngine = this.world.createLinearSpring(btmLeftParticle, engine, 0.5, 0.5, 0.5);
+        let btmRightToEngine = this.world.createLinearSpring(btmRightParticle, engine, 0.5, 0.5, 0.5);
+        let topLeftToEngine = this.world.createLinearSpring(topLeftParticle, engine, 0.5, 0.5, 0.5);
+        let topRightToEngine = this.world.createLinearSpring(topRightParticle, engine, 0.5, 0.5, 0.5);
         btmLeftToEngine.radius = 8;
         btmLeftToEngine.color = randomColor2;
         btmRightToEngine.radius = 8;

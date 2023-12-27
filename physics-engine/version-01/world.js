@@ -91,10 +91,10 @@ class World {
     }
     update(){
         // Gravity
-        this.linearStates.forEach(l => { l.addImpulse(new Vector2(0, constants.GRAVITY))});
+        this.linearStates.forEach(l => { l.addImpulse(constants.GRAVITY)});
         this.angularStates.forEach(a => { a.addImpulse(constants.GRAVITY)});
-        this.particles.forEach(p => { p.addImpulse(new Vector2(0, constants.GRAVITY))});
-        this.wheels.forEach(w => { w.addImpulse(new Vector2(0, constants.GRAVITY))});
+        this.particles.forEach(p => { p.addImpulse(constants.GRAVITY)});
+        this.wheels.forEach(w => { w.addImpulse(constants.GRAVITY)});
         
         // Collision detection and creation
         for (let i = 0; i < this.lineSegments.length; i++) {
