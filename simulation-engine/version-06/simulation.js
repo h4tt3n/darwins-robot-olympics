@@ -4,7 +4,7 @@
 import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { ToolBox } from '../../toolbox/version-01/toolbox.js';
 import { SquishyPlanet } from '../../physics-engine/version-01/squishyPlanet.js';
-import { Network } from "../../neural-network-engine/version-01/neural-network.js";
+import { Network, ActivationFunctions } from "../../neural-network-engine/version-01/neural-network.js";
 import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
@@ -29,7 +29,7 @@ class Simulation {
         this.isPaused = false;
         this.generation = 0;
         this.generationTicks = 0;
-        this.generationsMaxTicks = 1000;
+        this.generationMaxTicks = 1000;
         this.setIntervalId = null;
 
         this.robotSpawner = {
@@ -69,7 +69,7 @@ class Simulation {
         this.isPaused = false;
         this.generation = 0;
         this.generationTicks = 0;
-        this.generationsMaxTicks = 1000;
+        this.generationMaxTicks = 1000;
         this.setIntervalId = null;
 
         this.rays = [];
@@ -88,17 +88,18 @@ class Simulation {
 
         this.generationTicks++;
 
-        // Physics
+        // Physics (Robot body)
         this.world.update();
 
-        // Robot brains
+        // Neural network (Robot brain)
         this.robots.forEach(robot => { robot.update(); });
 
+        // Raycasting (Robot vision)
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
-
         this.rayCameras.forEach(rayCamera => { rayCamera.castAll(raycastableSegments) });
         this.rayCameras.forEach(rayCamera => { rayCamera.update() });
 
+        // Evaluate population
         this.evaluate();
     }
     evaluate() {
@@ -108,10 +109,10 @@ class Simulation {
             
             let robot = this.robots[i];
             
-            if (this.creatureTimeouts(robot, 1000) || this.hasReachedTarget(robot, this.wayPoints[0])) {
+            if (this.creatureTimeouts(robot, this.generationMaxTicks) || this.hasReachedTarget(robot, this.wayPoints[0])) {
                 this.calculateFitness(robot, this.wayPoints[0]);
                 console.log("fitness " + robot.fitness);
-                this.deleteRobot(robot, this.robots, this.deadRobots);
+                this.deleteRobot(robot);
             } else {
                 robot.ticksAlive++;
             }
@@ -132,7 +133,7 @@ class Simulation {
             
             // Reset simulation
             this.deadRobots = [];
-            this.world.collisions = new Map();
+            //this.world.collisions = new Map();
             this.generationTicks = 0;
             this.generation++;
         }
@@ -178,7 +179,7 @@ class Simulation {
         // Run genetic algorithm
         this.individuals = this.geneticAlgorithm.step(this.deadIndividuals);
     }
-    deleteRobot(robot, array, deadArray) {
+    deleteRobot(robot) {
         // Delete collisions
         const collisionKeys = Array.from(this.world.collisions.keys());
         for (let i = 0; i < collisionKeys.length; i++) {
@@ -231,8 +232,8 @@ class Simulation {
             }
         }
         // Delete robot
-        array.splice(array.indexOf(robot), 1);
-        deadArray.push(robot);
+        this.robots.splice(this.robots.indexOf(robot), 1);
+        this.deadRobots.push(robot);
     }
     createWaypoint(position, radius, color) {
         let wayPoint = new WayPoint(position, radius, color);
@@ -353,9 +354,28 @@ class Simulation {
         body.angularSprings.push(btmRightToWheel2Angular);
 
         // Create brain
-        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        let brainParams = {
+            layers : [12, 24, 8],
+            activation : {
+                func : ActivationFunctions.tanhLike2,
+            },
+        }
 
+        //let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        
+        // Create vision
+        let visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : 12,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/12), //Math.PI * 2 * 0.625, // For roboCrabs // Math.PI * 2 * 0.25, // For roboWorms
+        }
+
+        //let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
+
+        // Update function
         let update = function update() {
         
             // Update camera position and angle

@@ -26,14 +26,6 @@ import { SimulationEngine } from '../../simulation-engine/version-06/simulationE
 
 let numRobots = 50;
 
-// Neural network parameters
-const nnParams = {
-	layers : [7, 24, 8], // Number of neurons in each layer: [input, hidden1, (hidden2, ...) output]
-	activation : {
-		func : ActivationFunctions.tanhLike2,
-	},
-}
-
 //Genetic algorithm parameters
 const gaParams = {
     gemmationRate : 0.0, // Fraction of next generation created through asexual reproduction.
@@ -70,8 +62,13 @@ const robotParams = {
         mass : 2,
     },
     brain : {
-        genome : null, // genome ? genome[i].genome : null,
-        params : nnParams
+        genome : null,
+        params : {
+            layers : [7, 24, 8],
+            activation : {
+                func : ActivationFunctions.tanhLike2,
+            },
+        },
     },
     eyes : {
         position : new Vector2(0, 200),
