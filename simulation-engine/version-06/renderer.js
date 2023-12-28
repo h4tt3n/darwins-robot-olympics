@@ -62,9 +62,9 @@ class Renderer {
             this.camera.restPosition = this.simulation.selectedCreature.body.particles[0].position;
 
         }
-        // // Make camera follow roboworm
-        // if (this.simulation.roboWorms.length > 0) {
-        //     this.camera.restPosition = this.simulation.roboWorms[0].body.particles[0].position;
+        // // Make camera follow robot
+        // if (this.simulation.robots.length > 0) {
+        //     this.camera.restPosition = this.simulation.robots[0].body.particles[0].position;
         // }
 
         // if (this.simulation.roboCrabs.length > 0) {
@@ -206,14 +206,13 @@ class Renderer {
             }
         }
 
-        // Draw RoboWorms
-        //for (let i = 0; i < this.simulation.roboWorms.length; i++) {
-        for (let i = this.simulation.roboWorms.length-1; i >= 0; i--) {
-            var roboWorm = this.simulation.roboWorms[i];
+        // Draw robots
+        for (let i = this.simulation.robots.length-1; i >= 0; i--) {
+            var robot = this.simulation.robots[i];
 
             // Draw linear springs
-            for (let j = 0; j < roboWorm.body.linearSprings.length; j++) {
-                var linearSpring = roboWorm.body.linearSprings[j];
+            for (let j = 0; j < robot.body.linearSprings.length; j++) {
+                var linearSpring = robot.body.linearSprings[j];
 
                 var x1 = linearSpring.pointA.position.x;
                 var y1 = linearSpring.pointA.position.y;
@@ -232,8 +231,8 @@ class Renderer {
             }
 
             // Draw body
-            for (let j = 0; j < roboWorm.body.particles.length; j++) {
-                var particle = roboWorm.body.particles[j];
+            for (let j = 0; j < robot.body.particles.length; j++) {
+                var particle = robot.body.particles[j];
                 var x = particle.position.x;
                 var y = particle.position.y;
 
@@ -245,13 +244,13 @@ class Renderer {
             }
 
             // Draw wheels
-            if (roboWorm.body.wheels != undefined) {
+            if (robot.body.wheels != undefined) {
 
                 this.ctx.lineWidth = 10;
                 this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
-                for (let i = 0; i < roboWorm.body.wheels.length; i++) {
-                    var wheel = roboWorm.body.wheels[i];
+                for (let i = 0; i < robot.body.wheels.length; i++) {
+                    var wheel = robot.body.wheels[i];
                     var x = wheel.position.x;
                     var y = wheel.position.y;
                     var r = wheel.radius * 0.5;
@@ -316,99 +315,8 @@ class Renderer {
             // Write index above head
             this.ctx.font = "24px Arial";
             this.ctx.fillStyle = "rgb(255, 255, 255)";
-            this.ctx.fillText(i, roboWorm.body.particles[0].position.x-12, roboWorm.body.particles[0].position.y-40);
-            //this.ctx.fillText(Math.floor(roboWorm.averagePosition), roboWorm.body.particles[0].position.x-12, roboWorm.body.particles[0].position.y-80);
-        }
-
-        // Draw RoboCrabs
-        for (let i = 0; i < this.simulation.roboCrabs.length; i++) {
-            var roboCrab = this.simulation.roboCrabs[i];
-
-            // Draw linear springs
-            for (let j = 0; j < roboCrab.body.linearSprings.length; j++) {
-                var linearSpring = roboCrab.body.linearSprings[j];
-
-                var x1 = linearSpring.pointA.position.x;
-                var y1 = linearSpring.pointA.position.y;
-                var x2 = linearSpring.pointB.position.x;
-                var y2 = linearSpring.pointB.position.y;
-
-                this.ctx.lineWidth = linearSpring.radius * 2;
-                this.ctx.strokeStyle = linearSpring.color;
-                //console.log(linearSpring.color);
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(x1, y1);
-                this.ctx.lineTo(x2, y2);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            }
-
-            // Draw body
-            for (let j = 0; j < roboCrab.body.particles.length; j++) {
-                var particle = roboCrab.body.particles[j];
-                var x = particle.position.x;
-                var y = particle.position.y;
-
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-                this.ctx.fillStyle = particle.color;
-                this.ctx.fill();
-                this.ctx.closePath();
-            }
-
-            // Write index above head
-            this.ctx.font = "24px Arial";
-            this.ctx.fillStyle = "rgb(255, 255, 255)";
-            this.ctx.fillText(i, roboCrab.body.particles[0].position.x-12, roboCrab.body.particles[0].position.y-40);
-            //this.ctx.fillText(i, roboCrab.body.particles[0].position.x-12, 0);
-
-        }
-
-        // Draw RoboStarfishes
-        for (let i = 0; i < this.simulation.roboStarfishes.length; i++) {
-
-            var roboStarfish = this.simulation.roboStarfishes[i];
-
-            // Draw linear springs
-            for (let j = 0; j < roboStarfish.body.linearSprings.length; j++) {
-                var linearSpring = roboStarfish.body.linearSprings[j];
-
-                var x1 = linearSpring.pointA.position.x;
-                var y1 = linearSpring.pointA.position.y;
-                var x2 = linearSpring.pointB.position.x;
-                var y2 = linearSpring.pointB.position.y;
-
-                this.ctx.lineWidth = linearSpring.radius * 2;
-                this.ctx.strokeStyle = linearSpring.color;
-                //console.log(linearSpring.color);
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(x1, y1);
-                this.ctx.lineTo(x2, y2);
-                this.ctx.stroke();
-                this.ctx.closePath();
-            }
-
-            // Draw body
-            for (let j = 0; j < roboStarfish.body.particles.length; j++) {
-                var particle = roboStarfish.body.particles[j];
-                var x = particle.position.x;
-                var y = particle.position.y;
-
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-                this.ctx.fillStyle = particle.color;
-                this.ctx.fill();
-                this.ctx.closePath();
-            }
-
-            // Write index above head
-            this.ctx.font = "24px Arial";
-            this.ctx.fillStyle = "rgb(255, 255, 255)";
-            this.ctx.fillText(i, roboStarfish.body.particles[0].position.x-12, roboStarfish.body.particles[0].position.y-40);
-            //this.ctx.fillText(i, roboStarfish.body.particles[0].position.x-12, 0);
-
+            this.ctx.fillText(i, robot.body.particles[0].position.x-12, robot.body.particles[0].position.y-40);
+            //this.ctx.fillText(Math.floor(robot.averagePosition), robot.body.particles[0].position.x-12, robot.body.particles[0].position.y-80);
         }
 
         // Draw linear springs

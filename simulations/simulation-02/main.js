@@ -171,8 +171,7 @@ function update() {
     // Update simulation, except if paused
     if (simulation.isPaused) { return; }
     simulation.generationTicks++;
-    simulation.roboWorms.forEach(w => { w.update(); });
-    simulation.roboCrabs.forEach(c => { c.update(); });
+    simulation.robots.forEach(w => { w.update(); });
     simulation.update();
     //simulation.evaluate();
     evaluate();
@@ -181,22 +180,22 @@ function update() {
 function evaluate() {
     
     // Check if robot has completed challenge, using challenge-specific functions
-    for (let i = 0; i < simulation.roboWorms.length; i++) {
+    for (let i = 0; i < simulation.robots.length; i++) {
         
-        let robot = simulation.roboWorms[i];
+        let robot = simulation.robots[i];
         
         if (creatureTimeouts(robot, 1000) || hasReachedTarget(robot, target)) {
             calculateFitness(robot, target);
             console.log("fitness " + robot.fitness);
             //simulation.deleteRoboWorm(robot);
-            simulation.deleteRobot(robot, simulation.roboWorms, simulation.deadRoboWorms);
+            simulation.deleteRobot(robot, simulation.robots, simulation.deadRobots);
         } else {
             robot.ticksAlive++;
         }
     }
 
     // When all robots are disabled, create new generation
-    if (simulation.roboWorms.length === 0) {
+    if (simulation.robots.length === 0) {
 
         console.log("\n");
         console.log("generation " + simulation.generation + " completed!");
@@ -213,21 +212,21 @@ function evaluate() {
         // let stringifiedRobots = [];
 
         // // Stringify all newly created robotsand save in array
-        // for (let i = 0; i < simulation.roboWorms.length; i++) {
-        //     let stringifiedRobot = JSON.stringify(simulation.roboWorms[i]);
+        // for (let i = 0; i < simulation.robots.length; i++) {
+        //     let stringifiedRobot = JSON.stringify(simulation.robots[i]);
         //     stringifiedRobots.push(stringifiedRobot);
         // }
 
-        // simulation.roboWorms = [];
+        // simulation.robots = [];
 
-        // // De-stringify all robots and save in simulation.roboWorms;
+        // // De-stringify all robots and save in simulation.robots;
         // for (let i = 0; i < stringifiedRobots.length; i++) {
         //     let robot = JSON.parse(stringifiedRobots[i]);
-        //     simulation.roboWorms[i] = robot;
+        //     simulation.robots[i] = robot;
         // }
 
         // Reset simulation
-        simulation.deadRoboWorms = [];
+        simulation.deadRobots = [];
         //simulation.world.collisions = new Map();
         simulation.generationTicks = 0;
         simulation.generation++;
@@ -271,23 +270,11 @@ function createRoboWorms(numRobots = 50, params = {}, genome = null) {
     }
 }
 
-function deleteRoboWorms() {
-    for (let i = 0; i < simulation.roboWorms; i++) {
-        simulation.deleteRoboWorm(simulation.roboWorms[i]);
-    }
-}
-
 function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboCrab(params);
-    }
-}
-
-function deleteRoboCrabs() {
-    for (let i = 0; i < simulation.roboCrabs; i++) {
-        simulation.deleteRoboCrab(simulation.roboCrabs[i]);
     }
 }
 
@@ -299,12 +286,6 @@ function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
     }
 }
 
-function deleteRoboStarfishes() {
-    for (let i = 0; i < simulation.roboStarfishes; i++) {
-        simulation.deleteRoboStarfish(simulation.roboStarfishes[i]);
-    }
-}
-
 function createRoboGuys(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         params.body.position = new Vector2(0, 200);
@@ -313,23 +294,11 @@ function createRoboGuys(numRobots = 50, params = {}, genome = null) {
     }
 }
 
-function deleteRoboGuys() {
-    for (let i = 0; i < simulation.roboGuys; i++) {
-        simulation.deleteRoboGuy(simulation.roboGuys[i]);
-    }
-}
-
 function createRoboCars(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboCar(params);
-    }
-}
-
-function deleteRoboCars() {
-    for (let i = 0; i < simulation.roboCars; i++) {
-        simulation.deleteRoboCar(simulation.roboCars[i]);
     }
 }
 
@@ -885,7 +854,7 @@ function createMenu() {
         var nearestCreature = null;
         var smallestDistance = 50;
        
-        simulation.roboWorms.forEach((robot) => {
+        simulation.robots.forEach((robot) => {
            var roboWormPos = new Vector2(robot.body.particles[0].position.x, robot.body.particles[0].position.y);
            var distance = mousePos.distance(roboWormPos);
        

@@ -47,9 +47,6 @@ class Simulation {
             params : null,
         };
 
-        this.robotArrayRef = null;
-        this.deadRobotArrayRef = null;
-
         this.rays = [];
         this.rayCameras = [];
         this.neuralNetworks = [];
@@ -59,17 +56,20 @@ class Simulation {
         this.individuals = [];
         this.deadIndividuals = [];
 
-        this.roboCrabs = [];
-        this.deadRoboCrabs = [];
+        this.robots = [];
+        this.deadRobots = [];
 
-        this.roboWorms = [];
-        this.deadRoboWorms = [];
+        // this.roboCrabs = [];
+        // this.deadRoboCrabs = [];
 
-        this.roboStarfishes = [];
-        this.deadRoboStarfishes = [];
+        // this.roboWorms = [];
+        // this.deadRoboWorms = [];
 
-        this.roboCars = [];
-        this.deadRoboCars = [];
+        // this.roboStarfishes = [];
+        // this.deadRoboStarfishes = [];
+
+        // this.roboCars = [];
+        // this.deadRoboCars = [];
     }
     reset() {
         
@@ -109,24 +109,27 @@ class Simulation {
         this.individuals = [];
         this.deadIndividuals = [];
 
-        this.roboCrabs = [];
-        this.deadRoboCrabs = [];
+        this.robots = [];
+        this.deadRobots = [];
 
-        this.roboWorms = [];
-        this.deadRoboWorms = [];
+        // this.roboCrabs = [];
+        // this.deadRoboCrabs = [];
 
-        this.roboStarfishes = [];
-        this.deadRoboStarfishes = [];
+        // this.roboWorms = [];
+        // this.deadRoboWorms = [];
 
-        this.roboCars = [];
-        this.deadRoboCars = [];
+        // this.roboStarfishes = [];
+        // this.deadRoboStarfishes = [];
+
+        // this.roboCars = [];
+        // this.deadRoboCars = [];
     }
     update() {
         // Physics
         this.world.update();
 
         // Robot brains
-        this.roboWorms.forEach(worm => { worm.update(); });
+        this.robots.forEach(worm => { worm.update(); });
 
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
 
@@ -136,9 +139,9 @@ class Simulation {
     evaluate() {
     
         // Check if robot has completed challenge, using challenge-specific functions
-        for (let i = 0; i < this.roboWorms.length; i++) {
+        for (let i = 0; i < this.robots.length; i++) {
             
-            let worm = this.roboWorms[i];
+            let worm = this.robots[i];
             
             if (creatureTimeouts(worm, 1000) || hasReachedTarget(worm, target)) {
                 calculateFitness(worm, target);
@@ -150,7 +153,7 @@ class Simulation {
         }
     
         // When all robots are disabled, create new generation
-        if (this.roboWorms.length === 0) {
+        if (this.robots.length === 0) {
             
             // Run genetic algorithm
             this.runGeneticAlgorithm();
@@ -159,7 +162,7 @@ class Simulation {
             this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             
             // Reset simulation
-            this.deadRoboWorms = [];
+            this.deadRobots = [];
             this.world.collisions = new Map();
             this.generationTicks = 0;
             this.generation++;
@@ -170,10 +173,10 @@ class Simulation {
         this.deadIndividuals = [];
 
         // Create genetic algorithm individuals from disabled robots
-        for (let i = 0; i < this.deadRoboWorms.length; i++) {
+        for (let i = 0; i < this.deadRobots.length; i++) {
             let individualParams = {
-                genome : this.deadRoboWorms[i].brain.encode(),
-                fitness : this.deadRoboWorms[i].fitness,
+                genome : this.deadRobots[i].brain.encode(),
+                fitness : this.deadRobots[i].fitness,
             }
             this.createIndividual(individualParams);
         }
@@ -417,7 +420,7 @@ class Simulation {
         }
 
         let car = new Robot(brain, body, eyes, update);
-        this.roboWorms.push(car); // Wrong, for testing
+        this.robots.push(car); // Wrong, for testing
         return car;
     }
     createRoboGuy(params = {}) {
@@ -712,7 +715,7 @@ class Simulation {
         }
 
         let guy = new Robot(brain, bodyParts, eyes, update);
-        this.roboWorms.push(guy); // Wrong, for testing
+        this.robots.push(guy); // Wrong, for testing
         return guy;
     }
     createRoboStarfish(params = {}) {
@@ -843,7 +846,7 @@ class Simulation {
         }
 
         let starfish = new Robot(brain, bodyParts, eyes, update);
-        this.roboWorms.push(starfish); // Wrong, for testing
+        this.robots.push(starfish); // Wrong, for testing
         return starfish;
     }
     // createRoboStarfish(params = {}) {
@@ -1032,7 +1035,7 @@ class Simulation {
 
     //     let starfish = new RoboStarfish(brain, bodyParts, eyes);
     //     //this.roboCrabs.push(crab);
-    //     this.roboWorms.push(starfish); // Wrong, for testing
+    //     this.robots.push(starfish); // Wrong, for testing
     //     return starfish;
     // }
 
@@ -1284,7 +1287,7 @@ class Simulation {
         }
 
         let crab = new Robot(brain, bodyParts, eyes, update);
-        this.roboWorms.push(crab); // Wrong, for testing
+        this.robots.push(crab); // Wrong, for testing
         return crab;
     }
     createRoboCrabOld(params = {}) {
@@ -1534,7 +1537,7 @@ class Simulation {
         }
         
         let crab = new Robot(brain, bodyParts, eyes, update);
-        this.roboWorms.push(crab); // Wrong, for testing
+        this.robots.push(crab); // Wrong, for testing
         return crab;
     }
     createRobWorm(params = {}) {
@@ -1601,7 +1604,7 @@ class Simulation {
         }
 
         let worm = new Robot(brain, body, eyes, update);
-        this.roboWorms.push(worm);
+        this.robots.push(worm);
         return worm;
     }
     createIndividual(params = {}) {
