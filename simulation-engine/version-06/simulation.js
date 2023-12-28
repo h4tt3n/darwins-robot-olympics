@@ -10,9 +10,6 @@ import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
 import { Robot } from './robot.js';
-import { RoboCrab } from './roboCrab.js';
-import { RoboStarfish } from './roboStarfish.js';
-import { RoboGuy } from './roboGuy.js';
 
 class Simulation {
     constructor(params = {}) {
@@ -129,9 +126,7 @@ class Simulation {
         this.world.update();
 
         // Robot brains
-        this.roboCrabs.forEach(crab => { crab.update(); });
         this.roboWorms.forEach(worm => { worm.update(); });
-        //this.roboStarfishes.forEach(starfish => { starfish.update(); });
 
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
 
@@ -667,29 +662,58 @@ class Simulation {
         let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
         let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
-        let guy = new RoboGuy(brain, bodyParts, eyes);
+        let update = function update() {
+
+            // Update eyes
+            
+            // // //const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
+            const angleVector = this.body.linearSprings[1].angleVector;
+            this.eyes.directionVector = angleVector.perp();
+            // // //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
+            this.eyes.origin = this.body.particles[0].position;
+    
+            this.eyes.update();
+    
+            // Update brain
+            let inputs = [];
+    
+            let intersections = this.eyes.getOutput();
+            // // //console.log(intersections)
+            
+            for (let i = 0; i < intersections.length; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+            }
+    
+            this.brain.setInput(inputs);
+            this.brain.run();
+            let output = this.brain.getOutput();
+    
+            let minShoulderAngle = Math.PI * 2 * 0.0;
+            let maxShoulderAngle = -Math.PI * 2 * 0.5;
+    
+            let minElbowAngle = Math.PI * 2 * 0.0;
+            let maxElbowAngle = Math.PI * 2 * 0.3;
+    
+            let hipAngle = Math.PI * 2 * 0.5;
+            let kneeAngle = -Math.PI * 2 * 0.6;
+            let jointAngle = Math.PI * 2 * 0.25;
+            let legAngle = Math.PI * 2 * 0.25;
+    
+            // Update body
+            this.body.leftUpperArmAngular.setRestAngleVector( ToolBox.map(output[0], -1, 1, minShoulderAngle, maxShoulderAngle));
+            this.body.leftLowerArmAngular.setRestAngleVector( ToolBox.map(output[1], -1, 1, minElbowAngle, maxElbowAngle));
+            this.body.rightUpperArmAngular.setRestAngleVector( ToolBox.map(output[2], -1, 1, minShoulderAngle, maxShoulderAngle));
+            this.body.rightLowerArmAngular.setRestAngleVector( ToolBox.map(output[3], -1, 1, minElbowAngle, maxElbowAngle));
+            this.body.leftUpperLegAngular.setRestAngleVector( ToolBox.map(output[4], -1, 1, 0, hipAngle));
+            this.body.leftLowerLegAngular.setRestAngleVector( ToolBox.map(output[5], -1, 1, 0, kneeAngle));
+            this.body.rightUpperLegAngular.setRestAngleVector( ToolBox.map(output[6], -1, 1, 0, hipAngle));
+            this.body.rightLowerLegAngular.setRestAngleVector( ToolBox.map(output[7], -1, 1, 0, kneeAngle));
+            
+        }
+
+        let guy = new Robot(brain, bodyParts, eyes, update);
         this.roboWorms.push(guy); // Wrong, for testing
         return guy;
-    }
-    deleteRoboGuy(guy) {
-        //this.world.deleteParticle(worm.body);
-        this.deleteNeuralNetwork(guy.brain);
-        this.deleteRayCamera(guy.eyes);
-        // Delete body
-        //console.log(crab.body)
-        for (let i = 0; i < guy.body.angularSprings.length; i++) {
-            this.world.deleteAngularSpring(guy.body.angularSprings[i]);
-        }
-        for (let i = 0; i < guy.body.linearSprings.length; i++) {
-            this.world.deleteLinearSpring(guy.body.linearSprings[i]);
-        }
-        for (let i = 0; i < guy.body.particles.length; i++) {
-            this.world.deleteParticle(guy.body.particles[i]);
-        }
-        // this.roboCrabs.splice(this.roboCrabs.indexOf(crab), 1);
-        // this.deadRoboCrabs.push(crab);
-        this.roboWorms.splice(this.roboWorms.indexOf(guy), 1); // Wrong, for testing
-        this.deadRoboWorms.push(guy); // Wrong, for testing
     }
     createRoboStarfish(params = {}) {
         let bodyParts = {
@@ -774,8 +798,51 @@ class Simulation {
         let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
         let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
-        let starfish = new RoboStarfish(brain, bodyParts, eyes);
-        //this.roboCrabs.push(crab);
+        let update = function update() {
+            // Update eyes
+            const angleVector = this.body.linearSprings[0].angleVector;
+            this.eyes.origin = this.body.particles[0].position;
+    
+            this.eyes.update();
+    
+            // Update brain
+            let inputs = [];
+    
+            let intersections = this.eyes.getOutput();
+            // //console.log(intersections)
+            
+            for (let i = 0; i < intersections.length; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+            }
+    
+            this.brain.setInput(inputs);
+            this.brain.run();
+            let output = this.brain.getOutput();
+    
+            // let jointAngle = Math.PI * 2 * 0.15;
+            let legAngle = Math.PI * 2 * 0.166;
+    
+            // Update body
+            let angle = ToolBox.map(output[0], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leg1AngularSprings.length; i++) {
+                this.body.leg1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[1], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leg2AngularSprings.length; i++) {
+                this.body.leg2AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[2], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leg3AngularSprings.length; i++) {
+                this.body.leg3AngularSprings[i].setRestAngleVector(angle);
+            }
+        }
+
+        let starfish = new Robot(brain, bodyParts, eyes, update);
         this.roboWorms.push(starfish); // Wrong, for testing
         return starfish;
     }
@@ -968,26 +1035,6 @@ class Simulation {
     //     this.roboWorms.push(starfish); // Wrong, for testing
     //     return starfish;
     // }
-    deleteRoboStarfish(starfish) {
-        //this.world.deleteParticle(worm.body);
-        this.deleteNeuralNetwork(starfish.brain);
-        this.deleteRayCamera(starfish.eyes);
-        // Delete body
-        //console.log(crab.body)
-        for (let i = 0; i < starfish.body.angularSprings.length; i++) {
-            this.world.deleteAngularSpring(starfish.body.angularSprings[i]);
-        }
-        for (let i = 0; i < starfish.body.linearSprings.length; i++) {
-            this.world.deleteLinearSpring(starfish.body.linearSprings[i]);
-        }
-        for (let i = 0; i < starfish.body.particles.length; i++) {
-            this.world.deleteParticle(starfish.body.particles[i]);
-        }
-        // this.roboCrabs.splice(this.roboCrabs.indexOf(crab), 1);
-        // this.deadRoboCrabs.push(crab);
-        this.roboWorms.splice(this.roboWorms.indexOf(starfish), 1); // Wrong, for testing
-        this.deadRoboWorms.push(starfish); // Wrong, for testing
-    }
 
     createRoboCrab(params = {}) {
 
@@ -1177,8 +1224,66 @@ class Simulation {
         let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
         let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
-        let crab = new RoboCrab(brain, bodyParts, eyes);
-        //this.roboCrabs.push(crab);
+        let update = function update() {
+            // Update eyes
+            
+            //const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
+            const angleVector = this.body.linearSprings[1].angleVector;
+            this.eyes.directionVector = angleVector.perp();
+            //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
+            this.eyes.origin = this.body.particles[0].position;
+    
+            this.eyes.update();
+    
+            // Update brain
+            let inputs = [];
+    
+            let intersections = this.eyes.getOutput();
+            //console.log(intersections)
+            
+            for (let i = 0; i < intersections.length; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+            }
+    
+            this.brain.setInput(inputs);
+            this.brain.run();
+            let output = this.brain.getOutput();
+    
+            let jointAngle = Math.PI * 2 * 0.15;
+            let legAngle = Math.PI * 2 * 0.15;
+    
+            // Update body
+            let angle = ToolBox.map(output[0], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leftLeg1AngularSprings.length; i++) {
+                this.body.leftLeg1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[1], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leftLeg2AngularSprings.length; i++) {
+                this.body.leftLeg2AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[2], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.rightLeg1AngularSprings.length; i++) {
+                this.body.rightLeg1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[3], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.rightLeg2AngularSprings.length; i++) {
+                this.body.rightLeg2AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            this.body.leftLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, -jointAngle, jointAngle));
+            this.body.leftLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[5], -1, 1, -jointAngle, jointAngle));
+            this.body.rightLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, -jointAngle, jointAngle));
+            this.body.rightLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[7], -1, 1, -jointAngle, jointAngle));
+        }
+
+        let crab = new Robot(brain, bodyParts, eyes, update);
         this.roboWorms.push(crab); // Wrong, for testing
         return crab;
     }
@@ -1369,32 +1474,69 @@ class Simulation {
         let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
         let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
-        let crab = new RoboCrab(brain, bodyParts, eyes);
-        //this.roboCrabs.push(crab);
+        let update = function update() {
+            // Update eyes
+            
+            //const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
+            const angleVector = this.body.linearSprings[1].angleVector;
+            this.eyes.directionVector = angleVector.perp();
+            //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
+            this.eyes.origin = this.body.particles[0].position;
+    
+            this.eyes.update();
+    
+            // Update brain
+            let inputs = [];
+    
+            let intersections = this.eyes.getOutput();
+            //console.log(intersections)
+            
+            for (let i = 0; i < intersections.length; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+            }
+    
+            this.brain.setInput(inputs);
+            this.brain.run();
+            let output = this.brain.getOutput();
+    
+            let jointAngle = Math.PI * 2 * 0.15;
+            let legAngle = Math.PI * 2 * 0.15;
+    
+            // Update body
+            let angle = ToolBox.map(output[0], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leftLeg1AngularSprings.length; i++) {
+                this.body.leftLeg1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[1], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.leftLeg2AngularSprings.length; i++) {
+                this.body.leftLeg2AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[2], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.rightLeg1AngularSprings.length; i++) {
+                this.body.rightLeg1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[3], -1, 1, -legAngle, legAngle);
+    
+            for (let i = 0; i < this.body.rightLeg2AngularSprings.length; i++) {
+                this.body.rightLeg2AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            this.body.leftLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, -jointAngle, jointAngle));
+            this.body.leftLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[5], -1, 1, -jointAngle, jointAngle));
+            this.body.rightLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, -jointAngle, jointAngle));
+            this.body.rightLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[7], -1, 1, -jointAngle, jointAngle));
+        }
+        
+        let crab = new Robot(brain, bodyParts, eyes, update);
         this.roboWorms.push(crab); // Wrong, for testing
         return crab;
     }
-    deleteRoboCrab(crab) {
-        //this.world.deleteParticle(worm.body);
-        this.deleteNeuralNetwork(crab.brain);
-        this.deleteRayCamera(crab.eyes);
-        // Delete body
-        //console.log(crab.body)
-        for (let i = 0; i < crab.body.angularSprings.length; i++) {
-            this.world.deleteAngularSpring(crab.body.angularSprings[i]);
-        }
-        for (let i = 0; i < crab.body.linearSprings.length; i++) {
-            this.world.deleteLinearSpring(crab.body.linearSprings[i]);
-        }
-        for (let i = 0; i < crab.body.particles.length; i++) {
-            this.world.deleteParticle(crab.body.particles[i]);
-        }
-        // this.roboCrabs.splice(this.roboCrabs.indexOf(crab), 1);
-        // this.deadRoboCrabs.push(crab);
-        this.roboWorms.splice(this.roboWorms.indexOf(crab), 1); // Wrong, for testing
-        this.deadRoboWorms.push(crab); // Wrong, for testing
-    }
-
     createRobWorm(params = {}) {
         let body = {
             particles : [],
@@ -1405,7 +1547,6 @@ class Simulation {
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         
         for (let i = 0; i < params.body.numSegments; i++) {
-            //let particle = this.world.createParticle(params.body.position, params.body.mass, params.body.radius, params.body.color);
             let particle = this.world.createParticle(params.body.position, params.body.mass, params.body.radius, randomColor);
             params.body.position = params.body.position.sub(new Vector2(params.body.radius * 2.2, 0));
             body.particles.push(particle);
@@ -1422,7 +1563,6 @@ class Simulation {
         // Connect linearSprings with angular springs
         for (let i = 0; i < body.linearSprings.length - 1; i++) {
             let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.125, 0.25, 0.5);
-            //angularSpring.setRestAngleVector(Math.random() * Math.PI * 1 - Math.PI * 1);
             body.angularSprings.push(angularSpring);
         }
         
@@ -1431,10 +1571,8 @@ class Simulation {
 
         let update = function update() {
             // Update eyes
-            
             const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
             this.eyes.directionVector = angleVector;
-            //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
             this.eyes.origin = this.body.particles[0].position;
     
             this.eyes.update();
@@ -1443,24 +1581,15 @@ class Simulation {
             let inputs = [];
     
             let intersections = this.eyes.getOutput();
-            //console.log(intersections)
             
             for (let i = 0; i < intersections.length; i++) {
-            //for (let i = 0; i < 9; i++) {
                 inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
             }
     
-            // console.log(inputs);
-    
             this.brain.setInput(inputs);
-            //this.brain.recur(7);
-    
-            //console.log(this.brain.getInputs());
             
             this.brain.run();
             let output = this.brain.getOutput();
-    
-            //console.log(output);
     
             // Update body
             for (let i = 0; i < this.body.angularSprings.length; i++) {
@@ -1474,45 +1603,6 @@ class Simulation {
         let worm = new Robot(brain, body, eyes, update);
         this.roboWorms.push(worm);
         return worm;
-    }
-    deleteRoboWorm(worm) {
-        // Delete brain
-        this.deleteNeuralNetwork(worm.brain);
-        // Delete senses
-        this.deleteRayCamera(worm.eyes);
-        // Delete body
-        for (let i = 0; i < worm.body.angularSprings.length; i++) {
-            this.world.deleteAngularSpring(worm.body.angularSprings[i]);
-        }
-        for (let i = 0; i < worm.body.linearSprings.length; i++) {
-            this.world.deleteLinearSpring(worm.body.linearSprings[i]);
-        }
-        for (let i = 0; i < worm.body.particles.length; i++) {
-            this.world.deleteParticle(worm.body.particles[i]);
-        }
-        if (worm.body.wheels != undefined) {
-            for (let i = 0; i < worm.body.wheels.length; i++) {
-                this.world.deleteWheel(worm.body.wheels[i]);
-            }
-        }
-        this.roboWorms.splice(this.roboWorms.indexOf(worm), 1);
-        this.deadRoboWorms.push(worm);
-    }
-    createRoboBlob(params = {}) {
-        let body = this.world.createParticle(params.body.position, params.body.mass, params.body.radius, params.body.color);
-        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
-
-        let blob = new RoboBlob(brain, body, eyes);
-        this.roboBlobs.push(blob);
-        return blob;
-    }
-    deleteRoboBlob(blob) {
-        this.world.deleteParticle(blob.body);
-        this.deleteNeuralNetwork(blob.brain);
-        this.deleteRayCamera(blob.eyes);
-        this.roboBlobs.splice(this.roboBlobs.indexOf(blob), 1);
-        this.deadRoboBlobs.push(blob);
     }
     createIndividual(params = {}) {
         let individual = new Individual(params.genome, params.fitness);
