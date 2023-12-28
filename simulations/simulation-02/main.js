@@ -111,44 +111,33 @@ let createChallengeFunc = createChallengeFuncs["100-meter Sprint"];
 const simulation = new SimulationEngine.Simulation(simParams);
 
 simulation.robotSpawner = {
-    func : createRobotFunc, //createRoboCrabs, //createRoboWorms,
+    func : createRobotFunc,
     numRobots : numRobots,
     robotParams : robotParams,
     genome : null,
 }
 
 simulation.challengeSpawner = {
-    func : createChallengeFunc, //createWorld,
+    func : createChallengeFunc,
 }
 
 // Create menu and eventlisteners
 createMenu();
 
-// Create challenge
-// createWorld();
-// const target = simulation.createWaypoint(new Vector2(2000, 200), 70, "black");
+
 let target = null;
-// // Create robots
-// //createRoboWorms(numRobots, robotParams, null);
-// simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
 
 simulation.isInitiated = false;
 
 window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
-    // if (simulation.isInitiated) { return; }
-    // simulation.isInitiated = true;
-    // Create challenge
-    //createWorld();
     simulation.challengeSpawner.func();
     target = simulation.createWaypoint(new Vector2(2000, 200), 70, "black");
     // Create robots
-    //createRoboWorms(numRobots, robotParams, null);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     // Run simulation
-    simulation.setIntervalId = setInterval(update, 0);  // Physics
-    //simulation.setIntervalId = setInterval(update, 0.005)
+    simulation.setIntervalId = setInterval(update, 0);
 }
 
 function stopSimulation() {
@@ -157,116 +146,23 @@ function stopSimulation() {
     deleteWorld();
 }
 
-// Run simulation
-//setInterval(update, 1000/60);  // Physics
-// setInterval(update, 0);  // Physics
-// window.requestAnimationFrame(render); // Rendering
-
 function render() {
     simulation.renderer.update();
     window.requestAnimationFrame(render);
 }
 
 function update() {
-    // Update simulation, except if paused
-    if (simulation.isPaused) { return; }
-    simulation.generationTicks++;
-    simulation.robots.forEach(w => { w.update(); });
     simulation.update();
-    //simulation.evaluate();
-    evaluate();
 }
 
-function evaluate() {
-    
-    // Check if robot has completed challenge, using challenge-specific functions
-    for (let i = 0; i < simulation.robots.length; i++) {
-        
-        let robot = simulation.robots[i];
-        
-        if (creatureTimeouts(robot, 1000) || hasReachedTarget(robot, target)) {
-            calculateFitness(robot, target);
-            console.log("fitness " + robot.fitness);
-            //simulation.deleteRoboWorm(robot);
-            simulation.deleteRobot(robot, simulation.robots, simulation.deadRobots);
-        } else {
-            robot.ticksAlive++;
-        }
-    }
 
-    // When all robots are disabled, create new generation
-    if (simulation.robots.length === 0) {
-
-        console.log("\n");
-        console.log("generation " + simulation.generation + " completed!");
-        console.log("\n");
-
-        //console.log({simulation : simulation});
-        
-        // Run genetic algorithm
-        simulation.runGeneticAlgorithm();
-        
-        // Create new robots
-        simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.individuals);
-
-        // let stringifiedRobots = [];
-
-        // // Stringify all newly created robotsand save in array
-        // for (let i = 0; i < simulation.robots.length; i++) {
-        //     let stringifiedRobot = JSON.stringify(simulation.robots[i]);
-        //     stringifiedRobots.push(stringifiedRobot);
-        // }
-
-        // simulation.robots = [];
-
-        // // De-stringify all robots and save in simulation.robots;
-        // for (let i = 0; i < stringifiedRobots.length; i++) {
-        //     let robot = JSON.parse(stringifiedRobots[i]);
-        //     simulation.robots[i] = robot;
-        // }
-
-        // Reset simulation
-        simulation.deadRobots = [];
-        //simulation.world.collisions = new Map();
-        simulation.generationTicks = 0;
-        simulation.generation++;
-    }
-}
-
-function distanceToTarget(creature, target) {
-    let position = creature.body.particles[0].position;
-    let distance = position.distance(target.position);
-    return distance;
-}
-
-function hasReachedTarget(creature, target) {
-    let distance = distanceToTarget(creature, target);
-    if (distance < target.radius + creature.body.particles[0].radius) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-function calculateFitness(creature, target) {
-    let fitness = 0;
-    fitness += distanceToTarget(creature, target);
-    fitness += creature.ticksAlive;
-    if (hasReachedTarget(creature, target)) {
-        fitness *= 0.5;
-    }
-    creature.fitness = fitness;
-}
-
-function creatureTimeouts(creature, timeout) {
-    return (creature.ticksAlive > timeout);
-}
+// Robot creation functions
 
 function createRoboWorms(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createRobWorm(params);
+        simulation.createRoboWorm(params);
     }
 }
 
@@ -301,6 +197,9 @@ function createRoboCars(numRobots = 50, params = {}, genome = null) {
         simulation.createRoboCar(params);
     }
 }
+
+
+// Level creation functions
 
 function createWorld() {
     // Params
@@ -349,23 +248,12 @@ function createWorld2() {
     let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
     let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom + 600));
     let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
-
-    // let edgeBtmLft = simulation.world.createPoint(new Vector2(1600, bottom));
-    // let edgeTopLft = simulation.world.createPoint(new Vector2(1600, bottom - 50));
-    // let edgeTopRgt = simulation.world.createPoint(new Vector2(1650, bottom - 50));
-    // let edgeBtmRgt = simulation.world.createPoint(new Vector2(1650, bottom + 400));
     let edgeCenterTop = simulation.world.createPoint(new Vector2(1600, bottom ));
     let edgeCenterBtm = simulation.world.createPoint(new Vector2(1600, bottom + 300));
-
 
     simulation.world.createLineSegment(topLeftPoint, topRightPoint);
     simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
     simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
-    //simulation.world.createLineSegment(bottomLeftPoint, edgeBtmLft);
-    // simulation.world.createLineSegment(edgeBtmLft, edgeTopLft);
-    // simulation.world.createLineSegment(edgeTopLft, edgeTopRgt);
-    // simulation.world.createLineSegment(edgeTopRgt, edgeBtmRgt);
-    // simulation.world.createLineSegment(edgeBtmRgt, bottomRightPoint);
     simulation.world.createLineSegment(bottomLeftPoint, edgeCenterTop);
     simulation.world.createLineSegment(edgeCenterTop, edgeCenterBtm);
     simulation.world.createLineSegment(edgeCenterBtm, bottomRightPoint);
@@ -423,7 +311,6 @@ function pitFall() {
     simulation.world.createLineSegment(pitBottomLeftPoint, pitBottomRightPoint);
     simulation.world.createLineSegment(pitBottomRightPoint, pitTopRightPoint);
     simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
-
 };
 
 function pitFall2() {
@@ -445,7 +332,6 @@ function pitFall2() {
 
     segment.radius = 24;
 
-
     let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
     let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
     let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
@@ -455,7 +341,6 @@ function pitFall2() {
     let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + 100, pitBottom));
     let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom));
 
-
     simulation.world.createLineSegment(topLeftPoint, topRightPoint);
     simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
     simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
@@ -464,7 +349,6 @@ function pitFall2() {
     simulation.world.createLineSegment(pitBottomLeftPoint, pitBottomRightPoint);
     simulation.world.createLineSegment(pitBottomRightPoint, pitTopRightPoint);
     simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
-
 };
 
 function helmet() {
@@ -487,26 +371,6 @@ function helmet() {
     let domeCenter = new Vector2(1000, -200);
     let firstDomePoint = null;
     let lastDomePoint = null;
-
-    // Create random particles with this.world.createParticle(position, 20, 25, randomColor);
-    // for(let i = 0; i < 300; i++) {
-    //     let randomPosition = new Vector2(Math.random() * levelWidth + left, Math.random() * bottom - 6000);
-    //     let randomColor = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
-    //     let randomRadius = 10 + Math.random() * 40;
-    //     let randomMass = randomRadius; //1 + Math.random() * 9;
-    //     simulation.world.createParticle(randomPosition, randomMass, randomRadius, randomColor);
-    // }
-
-    // Create wheel
-    //let wheel1 = simulation.world.createWheel(new Vector2(300, -100), 0, 0, 1000, 50);
-    //let wheel2 = simulation.world.createWheel(new Vector2(500, -100), 0, 0, 1000, 50);
-    // let linearSpring = simulation.world.createLinearSpring(wheel1, wheel2, 0.5, 0.5, 0.5);
-    //console.log(wheel);
-
-    //let gear = simulation.world.createGearConstraint(wheel1, wheel2, -0.2);
-
-    //wheel1.addAngularImpulse(10);
-    // wheel.addImpulse(new Vector2(-500, 0));
     
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {
@@ -564,38 +428,6 @@ function helmet() {
     simulation.world.createLineSegment(bottomLeftPoint3, bottomRightPoint3);
     simulation.world.createLineSegment(bottomRightPoint3, topRightPoint3);
     simulation.world.createLineSegment(topRightPoint3, firstDomePoint);
-
-
-    // Params
-    // let top = -400;
-    // let bottom = 400;
-    // let left = -800;
-    // let right = 2400;
-
-    // let pitLeft = 800;
-    // let pitRight = 1000;
-    // let pitBottom = 2000;
-
-    // // Create world
-    // let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
-    // let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
-    // let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
-    // let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
-    // let pitTopLeftPoint = simulation.world.createPoint(new Vector2(pitLeft, bottom));
-    // let pitBottomLeftPoint = simulation.world.createPoint(new Vector2(pitLeft - 100, pitBottom));
-    // let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + 100, pitBottom));
-    // let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom));
-
-
-    // simulation.world.createLineSegment(topLeftPoint, topRightPoint);
-    // simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
-    // simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
-    // simulation.world.createLineSegment(bottomLeftPoint, pitTopLeftPoint);
-    // simulation.world.createLineSegment(pitTopLeftPoint, pitBottomLeftPoint);
-    // simulation.world.createLineSegment(pitBottomLeftPoint, pitBottomRightPoint);
-    // simulation.world.createLineSegment(pitBottomRightPoint, pitTopRightPoint);
-    // simulation.world.createLineSegment(pitTopRightPoint, bottomRightPoint);
-
 };
 
 function thunderDome() {

@@ -32,11 +32,6 @@ class Simulation {
         this.generationsMaxTicks = 1000;
         this.setIntervalId = null;
 
-        this.robotCreationFunc = {
-            func : null,
-            params : null,
-        };
-
         this.robotSpawner = {
             func : null,
             params : null,
@@ -58,18 +53,6 @@ class Simulation {
 
         this.robots = [];
         this.deadRobots = [];
-
-        // this.roboCrabs = [];
-        // this.deadRoboCrabs = [];
-
-        // this.roboWorms = [];
-        // this.deadRoboWorms = [];
-
-        // this.roboStarfishes = [];
-        // this.deadRoboStarfishes = [];
-
-        // this.roboCars = [];
-        // this.deadRoboCars = [];
     }
     reset() {
         
@@ -89,18 +72,6 @@ class Simulation {
         this.generationsMaxTicks = 1000;
         this.setIntervalId = null;
 
-        this.robotCreationFunc = {
-            func : null,
-            params : null,
-        };
-
-        this.robotArrayRef = null;
-        this.deadRobotArrayRef = null;
-
-        //
-        this.robotArrayRef = null;
-        this.deadRobotArrayRef = null;
-
         this.rays = [];
         this.rayCameras = [];
         this.neuralNetworks = [];
@@ -111,49 +82,47 @@ class Simulation {
 
         this.robots = [];
         this.deadRobots = [];
-
-        // this.roboCrabs = [];
-        // this.deadRoboCrabs = [];
-
-        // this.roboWorms = [];
-        // this.deadRoboWorms = [];
-
-        // this.roboStarfishes = [];
-        // this.deadRoboStarfishes = [];
-
-        // this.roboCars = [];
-        // this.deadRoboCars = [];
     }
     update() {
+        if (this.isPaused) { return; }
+
+        this.generationTicks++;
+
         // Physics
         this.world.update();
 
         // Robot brains
-        this.robots.forEach(worm => { worm.update(); });
+        this.robots.forEach(robot => { robot.update(); });
 
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
 
         this.rayCameras.forEach(rayCamera => { rayCamera.castAll(raycastableSegments) });
         this.rayCameras.forEach(rayCamera => { rayCamera.update() });
+
+        this.evaluate();
     }
     evaluate() {
     
         // Check if robot has completed challenge, using challenge-specific functions
         for (let i = 0; i < this.robots.length; i++) {
             
-            let worm = this.robots[i];
+            let robot = this.robots[i];
             
-            if (creatureTimeouts(worm, 1000) || hasReachedTarget(worm, target)) {
-                calculateFitness(worm, target);
-                console.log("fitness " + worm.fitness);
-                this.deleteRoboWorm(worm);
+            if (this.creatureTimeouts(robot, 1000) || this.hasReachedTarget(robot, this.wayPoints[0])) {
+                this.calculateFitness(robot, this.wayPoints[0]);
+                console.log("fitness " + robot.fitness);
+                this.deleteRobot(robot, this.robots, this.deadRobots);
             } else {
-                worm.ticksAlive++;
+                robot.ticksAlive++;
             }
         }
     
         // When all robots are disabled, create new generation
         if (this.robots.length === 0) {
+
+            console.log("\n");
+            console.log("generation " + this.generation + " completed!");
+            console.log("\n");
             
             // Run genetic algorithm
             this.runGeneticAlgorithm();
@@ -167,6 +136,31 @@ class Simulation {
             this.generationTicks = 0;
             this.generation++;
         }
+    }
+    distanceToTarget(creature, target) {
+        let position = creature.body.particles[0].position;
+        let distance = position.distance(target.position);
+        return distance;
+    }
+    hasReachedTarget(creature, target) {
+        let distance = this.distanceToTarget(creature, target);
+        if (distance < target.radius + creature.body.particles[0].radius) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    calculateFitness(creature, target) {
+        let fitness = 0;
+        fitness += this.distanceToTarget(creature, target);
+        fitness += creature.ticksAlive;
+        if (this.hasReachedTarget(creature, target)) {
+            fitness *= 0.5;
+        }
+        creature.fitness = fitness;
+    }
+    creatureTimeouts(creature, timeout) {
+        return (creature.ticksAlive > timeout);
     }
     runGeneticAlgorithm() {
         // Clear old individuals
@@ -1034,7 +1028,6 @@ class Simulation {
     //     let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
     //     let starfish = new RoboStarfish(brain, bodyParts, eyes);
-    //     //this.roboCrabs.push(crab);
     //     this.robots.push(starfish); // Wrong, for testing
     //     return starfish;
     // }
@@ -1540,7 +1533,7 @@ class Simulation {
         this.robots.push(crab); // Wrong, for testing
         return crab;
     }
-    createRobWorm(params = {}) {
+    createRoboWorm(params = {}) {
         let body = {
             particles : [],
             linearSprings : [],
@@ -1603,9 +1596,9 @@ class Simulation {
     
         }
 
-        let worm = new Robot(brain, body, eyes, update);
-        this.robots.push(worm);
-        return worm;
+        let robot = new Robot(brain, body, eyes, update);
+        this.robots.push(robot);
+        return robot;
     }
     createIndividual(params = {}) {
         let individual = new Individual(params.genome, params.fitness);

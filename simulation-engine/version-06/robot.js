@@ -4,8 +4,6 @@
 
 */
 
-import { Vector2 } from "../../vector-library/version-01/vector2.js";
-
 class Robot {
     constructor(brain, body, eyes, update) {
         this.brain = brain;
