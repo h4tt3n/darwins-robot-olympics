@@ -10,14 +10,16 @@ import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
 import { Robot } from './robot.js';
+import { FitnessEvaluator } from './fitnessEvaluator.js';
 
 class Simulation {
     constructor(params = {}) {
-        this.gaParams = params.gaParams;
+        this.params = params;
 
         this.world = new SquishyPlanet.World();
         this.renderer = new Renderer('canvas', this);
         this.geneticAlgorithm = new GeneticAlgorithm(params.gaParams);
+        this.fitnessEvaluator = new FitnessEvaluator();
 
         // Render, UI and mouse / keyboard control
         this.renderRaycasts = false;
