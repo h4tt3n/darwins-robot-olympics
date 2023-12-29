@@ -610,12 +610,10 @@ function createMenu() {
     startStopButton.textContent = 'Start Challenge!';
 
     // Add an onclick event handler to the button
-    startStopButton.onclick = function() {
-        simulation.isInitiated = !simulation.isInitiated;
-        toggleSimulation();
-    }
-
+    startStopButton.onclick = toggleSimulation;
+    
     function toggleSimulation() {
+        simulation.isInitiated = !simulation.isInitiated;
         if (simulation.isInitiated) {
             startStopButton.textContent = 'Stop Challenge';
             select.disabled = true;

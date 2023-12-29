@@ -91,13 +91,13 @@ class Simulation {
         // Physics (Robot body)
         this.world.update();
 
-        // Neural network (Robot brain)
-        this.robots.forEach(robot => { robot.update(); });
-
         // Raycasting (Robot vision)
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
         this.rayCameras.forEach(rayCamera => { rayCamera.castAll(raycastableSegments) });
         this.rayCameras.forEach(rayCamera => { rayCamera.update() });
+
+        // Neural network (Robot brain)
+        this.robots.forEach(robot => { robot.update(); });
 
         // Evaluate population
         this.evaluate();
@@ -355,7 +355,7 @@ class Simulation {
 
         // Create brain
         let brainParams = {
-            layers : [12, 24, 8],
+            layers : [7, 24, 8],
             activation : {
                 func : ActivationFunctions.tanhLike2,
             },
@@ -368,8 +368,8 @@ class Simulation {
         let visionParams = {
             position : new Vector2(0, 200),
             direction : Math.PI * 2 * 0,
-            numRays : 12,
-            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/12), //Math.PI * 2 * 0.625, // For roboCrabs // Math.PI * 2 * 0.25, // For roboWorms
+            numRays : 7,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/7), //Math.PI * 2 * 0.625, // For roboCrabs // Math.PI * 2 * 0.25, // For roboWorms
         }
 
         //let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
@@ -384,7 +384,8 @@ class Simulation {
             this.eyes.origin = this.body.wheels[0].position;
     
             // Update camera
-            this.eyes.update();
+            //this.eyes.castAll(this.world.lineSegments);
+            //this.eyes.update();
             let intersections = this.eyes.getOutput();
     
             // Input camera data to neural network
