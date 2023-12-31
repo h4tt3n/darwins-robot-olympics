@@ -210,6 +210,27 @@ class Renderer {
         for (let i = this.simulation.robots.length-1; i >= 0; i--) {
             var robot = this.simulation.robots[i];
 
+            // Draw FixedSprings
+            if(robot.body.fixedSprings != undefined) {
+                for (let j = 0; j < robot.body.fixedSprings.length; j++) {
+                    var fixedSpring = robot.body.fixedSprings[j];
+
+                    var x1 = fixedSpring.pointA.position.x;
+                    var y1 = fixedSpring.pointA.position.y;
+                    var x2 = fixedSpring.pointB.position.x;
+                    var y2 = fixedSpring.pointB.position.y;
+
+                    this.ctx.lineWidth = fixedSpring.radius * 2;
+                    this.ctx.strokeStyle = fixedSpring.color;
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                }
+            }
+
             // Draw linear springs
             if(robot.body.linearSprings != undefined) {
                 for (let j = 0; j < robot.body.linearSprings.length; j++) {
@@ -231,7 +252,8 @@ class Renderer {
                     this.ctx.closePath();
                 }
             }
-            // Draw body
+
+            // Draw particles
             if (robot.body.particles != undefined) {
                 for (let j = 0; j < robot.body.particles.length; j++) {
                     var particle = robot.body.particles[j];
@@ -245,6 +267,7 @@ class Renderer {
                     this.ctx.closePath();
                 }
             }
+
             // Draw wheels
             if (robot.body.wheels != undefined) {
 
@@ -317,7 +340,7 @@ class Renderer {
             // Write index above head
             this.ctx.font = "24px Arial";
             this.ctx.fillStyle = "rgb(255, 255, 255)";
-            this.ctx.fillText(i, robot.body.particles[0].position.x-12, robot.body.particles[0].position.y-40);
+            this.ctx.fillText(i, robot.body.particles[0].position.x-12, robot.body.particles[0].position.y-48);
             //this.ctx.fillText(Math.floor(robot.averagePosition), robot.body.particles[0].position.x-12, robot.body.particles[0].position.y-80);
         }
 

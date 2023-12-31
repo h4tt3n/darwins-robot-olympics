@@ -29,7 +29,7 @@ let numRobots = 50;
 //Genetic algorithm parameters
 const gaParams = {
     gemmationRate : 0.0, // Fraction of next generation created through asexual reproduction.
-    elitismRate : 0.1,  // Fraction of fittest individuals that will be cloned to next generation.
+    elitismRate : 0.10,  // Fraction of fittest individuals that will be cloned to next generation.
     selection : { // Select individuals for mating.
         func : GeneticOperators.randomWayTournamentSelection,
         params : {
@@ -46,7 +46,7 @@ const gaParams = {
     mutation : { // Mutate individuals.
         func : GeneticOperators.randomizeMutation,
         params : {
-            mutationChance : 0.02, 
+            mutationChance : 0.05, 
             minValue : 0, 
             maxValue : 1
         },
@@ -131,7 +131,7 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    target = simulation.createWaypoint(new Vector2(2000, 200), 70, "black");
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     // Create robots
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     // Run simulation
@@ -331,11 +331,11 @@ function pitFall2() {
     let pitBottom = 2000;
 
     // Create world
-    let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(400, -150));
+    let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(450, -150));
     let valdesSuperPoint2 = simulation.world.createPoint(new Vector2(400, 400));
     let valdesSuperPoint3 = simulation.world.createPoint(new Vector2(700, -400));
-    let valdesSuperPoint4 = simulation.world.createPoint(new Vector2(700, 150));
-    let valdesSuperPoint5 = simulation.world.createPoint(new Vector2(1200, -150));
+    let valdesSuperPoint4 = simulation.world.createPoint(new Vector2(750, 150));
+    let valdesSuperPoint5 = simulation.world.createPoint(new Vector2(1100, -150));
     let valdesSuperPoint6 = simulation.world.createPoint(new Vector2(1000, 400));
 
     let segment1 = simulation.world.createLineSegment(valdesSuperPoint1, valdesSuperPoint2);

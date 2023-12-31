@@ -218,6 +218,11 @@ class Simulation {
                 this.world.deleteLinearSpring(robot.body.linearSprings[i]);
             }
         }
+        if (robot.body.fixedSprings != undefined) {
+            for (let i = 0; i < robot.body.fixedSprings.length; i++) {
+                this.world.deleteFixedSpring(robot.body.fixedSprings[i]);
+            }
+        }
         if (robot.body.gearConstraints != undefined) {
             for (let i = 0; i < robot.body.gearConstraints.length; i++) {
                 this.world.deleteGearConstraint(robot.body.gearConstraints[i]);
@@ -249,7 +254,7 @@ class Simulation {
         let body = {
             wheels : [],
             particles : [],
-            linearSprings : [],
+            fixedSprings : [],
         }
 
         let position = new Vector2(0, 200); //new Vector2(0, 0);
@@ -257,18 +262,16 @@ class Simulation {
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
 
         // Body
-        let wheelRadius = 40;
-        let wheelMass = 10;
-        let wheel = this.world.createWheel(position.add(new Vector2(0, -100)), wheelMass * 2, 0, null, wheelRadius);
+        let wheel = this.world.createWheel(position.add(new Vector2(0, -100)), 10, 0, null, 40);
         wheel.color = randomColor;
         body.wheels.push(wheel);
 
-        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
+        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(0, -100)), 1, 10, randomColor);
         body.particles.push(btmLeftParticle);
 
-        let wheelParticleLinearSpring = this.world.createLinearSpring(wheel, btmLeftParticle, 0.5, 0.5, 0.5);
-        body.linearSprings.push(wheelParticleLinearSpring);
-
+        let wheelParticleFixedSpring = this.world.createFixedSpring(wheel, btmLeftParticle, 0.5, 0.5, 0.5);
+        wheelParticleFixedSpring.radius = 6;
+        body.fixedSprings.push(wheelParticleFixedSpring);
 
         // Create brain
         let brainParams = {
