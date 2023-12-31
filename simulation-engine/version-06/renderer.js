@@ -211,38 +211,40 @@ class Renderer {
             var robot = this.simulation.robots[i];
 
             // Draw linear springs
-            for (let j = 0; j < robot.body.linearSprings.length; j++) {
-                var linearSpring = robot.body.linearSprings[j];
+            if(robot.body.linearSprings != undefined) {
+                for (let j = 0; j < robot.body.linearSprings.length; j++) {
+                    var linearSpring = robot.body.linearSprings[j];
 
-                var x1 = linearSpring.pointA.position.x;
-                var y1 = linearSpring.pointA.position.y;
-                var x2 = linearSpring.pointB.position.x;
-                var y2 = linearSpring.pointB.position.y;
+                    var x1 = linearSpring.pointA.position.x;
+                    var y1 = linearSpring.pointA.position.y;
+                    var x2 = linearSpring.pointB.position.x;
+                    var y2 = linearSpring.pointB.position.y;
 
-                this.ctx.lineWidth = linearSpring.radius * 2;
-                this.ctx.strokeStyle = linearSpring.color;
-                //console.log(linearSpring.color);
+                    this.ctx.lineWidth = linearSpring.radius * 2;
+                    this.ctx.strokeStyle = linearSpring.color;
+                    //console.log(linearSpring.color);
 
-                this.ctx.beginPath();
-                this.ctx.moveTo(x1, y1);
-                this.ctx.lineTo(x2, y2);
-                this.ctx.stroke();
-                this.ctx.closePath();
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x1, y1);
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                }
             }
-
             // Draw body
-            for (let j = 0; j < robot.body.particles.length; j++) {
-                var particle = robot.body.particles[j];
-                var x = particle.position.x;
-                var y = particle.position.y;
+            if (robot.body.particles != undefined) {
+                for (let j = 0; j < robot.body.particles.length; j++) {
+                    var particle = robot.body.particles[j];
+                    var x = particle.position.x;
+                    var y = particle.position.y;
 
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-                this.ctx.fillStyle = particle.color;
-                this.ctx.fill();
-                this.ctx.closePath();
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.fill();
+                    this.ctx.closePath();
+                }
             }
-
             // Draw wheels
             if (robot.body.wheels != undefined) {
 

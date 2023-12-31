@@ -18,9 +18,11 @@ class AngularState extends LinearState {
     }
     addAngle(angle){
         this.angle += angle;
+        this.computeAngleVector();
     }
     addAngleVector(angleVector){
         this.angleVector = this.angleVector.rotate(angleVector);
+        this.computeAngle();
     }
     addAngularImpulse(angularImpulse){
         this.angularImpulse += angularImpulse;

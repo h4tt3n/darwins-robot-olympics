@@ -23,6 +23,7 @@ import { AngularState } from './angularState.js'
 
 // Deformable body components
 import { LinearLink } from './linearLink.js'
+import { FixedSpring } from './fixedSpring.js';
 import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
 import { GearConstraint } from './constraints/gearConstraint.js'
@@ -48,6 +49,7 @@ export {
     AngularState, 
     LinearLink, 
     LinearSpring, 
+    FixedSpring,
     AngularSpring,
     GearConstraint,
     Particle, 

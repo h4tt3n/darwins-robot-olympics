@@ -89,6 +89,7 @@ const createRobotFuncs = {
     "RoboStarfish" : createRoboStarfishes,
     "RoboGuy" : createRoboGuys,
     "RoboCar" : createRoboCars,
+    "TopDownTracker" : createTrackers,
 }
 
 const createChallengeFuncs = { 
@@ -192,6 +193,14 @@ function createRoboCars(numRobots = 50, params = {}, genome = null) {
         params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboCar(params);
+    }
+}
+
+function createTrackers(numRobots = 50, params = {}, genome = null) {
+    for (let i = 0; i < numRobots; i++) {
+        params.body.position = new Vector2(0, 200);
+        params.brain.genome = genome ? genome[i].genome : null;
+        simulation.createTopDownTracker(params);
     }
 }
 
@@ -322,12 +331,18 @@ function pitFall2() {
     let pitBottom = 2000;
 
     // Create world
-    let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(600, 250));
-    let valdesSuperPoint2 = simulation.world.createPoint(new Vector2(1100, 250));
+    let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(400, -150));
+    let valdesSuperPoint2 = simulation.world.createPoint(new Vector2(400, 400));
+    let valdesSuperPoint3 = simulation.world.createPoint(new Vector2(700, -400));
+    let valdesSuperPoint4 = simulation.world.createPoint(new Vector2(700, 150));
+    let valdesSuperPoint5 = simulation.world.createPoint(new Vector2(1200, -150));
+    let valdesSuperPoint6 = simulation.world.createPoint(new Vector2(1000, 400));
 
-    let segment = simulation.world.createLineSegment(valdesSuperPoint1, valdesSuperPoint2);
+    let segment1 = simulation.world.createLineSegment(valdesSuperPoint1, valdesSuperPoint2);
+    let segment2 = simulation.world.createLineSegment(valdesSuperPoint3, valdesSuperPoint4);
+    let segment3 = simulation.world.createLineSegment(valdesSuperPoint5, valdesSuperPoint6);
 
-    segment.radius = 24;
+    //segment.radius = 24;
 
     let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
     let topRightPoint = simulation.world.createPoint(new Vector2(right, top));

@@ -245,6 +245,101 @@ class Simulation {
     deleteWaypoint(wayPoint) {
         this.wayPoints.splice(this.wayPoints.indexOf(wayPoint), 1);
     }
+    createTopDownTracker(params = {}) {
+        let body = {
+            wheels : [],
+            particles : [],
+            linearSprings : [],
+        }
+
+        let position = new Vector2(0, 200); //new Vector2(0, 0);
+        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+
+        // Body
+        let wheelRadius = 40;
+        let wheelMass = 10;
+        let wheel = this.world.createWheel(position.add(new Vector2(0, -100)), wheelMass * 2, 0, null, wheelRadius);
+        wheel.color = randomColor;
+        body.wheels.push(wheel);
+
+        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
+        body.particles.push(btmLeftParticle);
+
+        let wheelParticleLinearSpring = this.world.createLinearSpring(wheel, btmLeftParticle, 0.5, 0.5, 0.5);
+        body.linearSprings.push(wheelParticleLinearSpring);
+
+
+        // Create brain
+        let brainParams = {
+            layers : [9, 24, 2],
+            activation : {
+                func : ActivationFunctions.tanhLike2,
+            },
+        }
+
+        //let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        
+        // Create vision
+        let visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : 9,
+            fov : Math.PI * 2 * 0.5,
+        }
+
+        //let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
+
+        // Update function
+        let update = function update() {
+        
+            // Update camera position and angle
+            this.eyes.origin = this.body.wheels[0].position;
+            this.eyes.directionVector = this.body.wheels[0].angleVector;
+    
+            // Update camera
+            let intersections = this.eyes.getOutput();
+    
+            // Input camera data to neural network
+            let inputs = [];
+            
+            for (let i = 0; i < intersections.length; i++) {
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+            }
+    
+            this.brain.setInput(inputs);
+    
+            // Run neural network
+            this.brain.run();
+    
+            // Get output from neural network
+            let output = this.brain.getOutput();
+    
+            // Direction
+            let deltaAngle = 0.0;
+            if (output[0] > 0.5) {
+                deltaAngle = 0.02;
+            } else if (output[0] < -0.5) {
+                deltaAngle = -0.02;
+            } else {
+                deltaAngle = 0.0;
+            }
+            this.body.wheels[0].angle += deltaAngle;
+            this.body.wheels[0].computeAngleVector();
+            //let angleVector = new Vector2(Math.cos(this.body.wheels[0].angle), Math.sin(this.body.wheels[0].angle));
+            //this.body.wheels[0].angleVector = angleVector;
+
+            // Movement in forward direction
+            this.body.wheels[0].velocity = this.body.wheels[0].velocity.mul(0.9);
+            this.body.wheels[0].impulse = this.body.wheels[0].impulse.add(this.body.wheels[0].angleVector.mul(ToolBox.map(output[1], -1, 1, 0.0, 15.0)));
+        }
+
+        let tracker = new Robot(brain, body, eyes, update);
+        this.robots.push(tracker);
+        return tracker;
+    }
     createRoboCar(params = {}) {
         let body = {
             particles : [],
