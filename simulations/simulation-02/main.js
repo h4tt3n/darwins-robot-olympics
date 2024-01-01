@@ -46,7 +46,7 @@ const gaParams = {
     mutation : { // Mutate individuals.
         func : GeneticOperators.randomizeMutation,
         params : {
-            mutationChance : 0.05, 
+            mutationChance : 0.02, 
             minValue : 0, 
             maxValue : 1
         },
@@ -331,16 +331,35 @@ function pitFall2() {
     let pitBottom = 2000;
 
     // Create world
-    let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(450, -150));
-    let valdesSuperPoint2 = simulation.world.createPoint(new Vector2(400, 400));
-    let valdesSuperPoint3 = simulation.world.createPoint(new Vector2(700, -400));
-    let valdesSuperPoint4 = simulation.world.createPoint(new Vector2(750, 150));
-    let valdesSuperPoint5 = simulation.world.createPoint(new Vector2(1100, -150));
-    let valdesSuperPoint6 = simulation.world.createPoint(new Vector2(1000, 400));
+    // let valdesSuperPoint1 = simulation.world.createPoint(new Vector2(450, -150));
+    // let valdesSuperPoint2 = simulation.world.createPoint(new Vector2(400, 400));
+    // let valdesSuperPoint3 = simulation.world.createPoint(new Vector2(700, -400));
+    // let valdesSuperPoint4 = simulation.world.createPoint(new Vector2(750, 150));
+    // let valdesSuperPoint5 = simulation.world.createPoint(new Vector2(1100, -150));
+    // let valdesSuperPoint6 = simulation.world.createPoint(new Vector2(1000, 400));
 
-    let segment1 = simulation.world.createLineSegment(valdesSuperPoint1, valdesSuperPoint2);
-    let segment2 = simulation.world.createLineSegment(valdesSuperPoint3, valdesSuperPoint4);
-    let segment3 = simulation.world.createLineSegment(valdesSuperPoint5, valdesSuperPoint6);
+    // let segment1 = simulation.world.createLineSegment(valdesSuperPoint1, valdesSuperPoint2);
+    // let segment2 = simulation.world.createLineSegment(valdesSuperPoint3, valdesSuperPoint4);
+    // let segment3 = simulation.world.createLineSegment(valdesSuperPoint5, valdesSuperPoint6);
+
+    let tunnelPoint1 = simulation.world.createPoint(new Vector2(100, top));
+    let tunnelPoint2 = simulation.world.createPoint(new Vector2(100, -200));
+    let tunnelPoint3 = simulation.world.createPoint(new Vector2(1500, -200));
+    let tunnelPoint4 = simulation.world.createPoint(new Vector2(1500, top));
+
+    let tunnelPoint5 = simulation.world.createPoint(new Vector2(100, bottom));
+    let tunnelPoint6 = simulation.world.createPoint(new Vector2(100, 50));
+    let tunnelPoint7 = simulation.world.createPoint(new Vector2(1500, 50));
+    let tunnelPoint8 = simulation.world.createPoint(new Vector2(1500, bottom));
+
+    let tunnelSegment1 = simulation.world.createLineSegment(tunnelPoint1, tunnelPoint2);
+    let tunnelSegment2 = simulation.world.createLineSegment(tunnelPoint2, tunnelPoint3);
+    let tunnelSegment3 = simulation.world.createLineSegment(tunnelPoint3, tunnelPoint4);
+
+    let tunnelSegment4 = simulation.world.createLineSegment(tunnelPoint5, tunnelPoint6);
+    let tunnelSegment5 = simulation.world.createLineSegment(tunnelPoint6, tunnelPoint7);
+    let tunnelSegment6 = simulation.world.createLineSegment(tunnelPoint7, tunnelPoint8);
+
 
     //segment.radius = 24;
 

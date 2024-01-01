@@ -257,7 +257,7 @@ class Simulation {
             fixedSprings : [],
         }
 
-        let position = new Vector2(0, 200); //new Vector2(0, 0);
+        let position = params.body.position //new Vector2(0, 0);
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
 

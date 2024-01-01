@@ -698,7 +698,7 @@ class Renderer {
         this.ctx.font = "20px Arial";
         this.ctx.fillStyle = "rgb(255, 255, 255)";
         this.ctx.fillText("Generation: " + this.simulation.generation, 10, 30);
-        this.ctx.fillText("Ticks: " + this.simulation.generationTicks + " / " + this.simulation.generationsMaxTicks, 10, 60);
+        this.ctx.fillText("Ticks: " + this.simulation.generationTicks + " / " + this.simulation.generationMaxTicks, 10, 60);
 
         // Render "Paused" in center of screen if simulation is paused
         if (this.simulation.isPaused) {
