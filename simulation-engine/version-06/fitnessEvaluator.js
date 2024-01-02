@@ -6,14 +6,25 @@
 
     Contains waypoints. Contains knowledge of each individual's waypoint progress.
 
+    fitnessEvaluatorArgs = {
+        wayPoints: [wayPoint1, wayPoint2, wayPoint3, ...],
+        challengeCompletedFunc: function(robot) { ... },
+        calculateFitnessFunc: function(robot) { ... }
+    }
+
 */
 
 class FitnessEvaluator {
-    constructor() {
-        this.waypoints = [];
+    constructor(args = {}) {
+        this.args = args;
     }
-    evaluate(robots) {
-
+    update(robots) {
+        for (let i = 0; i < robots.length; i++) {
+            let robot = robots[i];
+            if (this.args.challengeCompletedFunc(robot)) {
+                this.args.calculateFitnessFunc(robot);
+            }
+        }
     }
 }
 

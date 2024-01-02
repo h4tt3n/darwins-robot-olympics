@@ -455,7 +455,8 @@ class Simulation {
 
         // Create brain
         let brainParams = {
-            layers : [7, 24, 8],
+            //layers : [7, 24, 8],
+            layers : [7, 24, 4],
             activation : {
                 func : ActivationFunctions.tanhLike2,
             },
@@ -492,9 +493,14 @@ class Simulation {
             let inputs = [];
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                inputs.push(intersections[i] ? 1.0 / intersections[i].intersection.distance : 0.0);
+
+                // if (i === 0) {
+                //     console.log({intersections : intersections, inputs : inputs});
+                // }
             }
-    
+
             this.brain.setInput(inputs);
     
             // Run neural network

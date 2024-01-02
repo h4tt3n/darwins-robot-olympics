@@ -198,16 +198,19 @@ class Network {
     encode() {
         let chromosome = [];
         for (var i = 0; i < this.connections.length; i++) {
-            chromosome.push(ToolBox.map(this.connections[i].weight, -10, 10, 0, 1));
+            chromosome.push(ToolBox.map(this.connections[i].weight, -10000, 10000, 0, 1));
+            //chromosome.push(1.0 / this.connections[i].weight);
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, -10, 10, 0, 1));
+                chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, -100, 100, 0, 1));
+                //chromosome.push(1.0 / this.layers[i].neurons[j].bias);
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 chromosome.push(ToolBox.map(this.layers[i].neurons[j].n, 0, 2, 0, 1));
+                //chromosome.push(1.0 / this.layers[i].neurons[j].n);
             }
         }
         return chromosome;
@@ -216,18 +219,21 @@ class Network {
     decode(chromosome) {
         let chromosomeIndex = 0;
         for (var i = 0; i < this.connections.length; i++) {
-            this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10, 10);
+            this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10000, 10000);
+            //this.connections[i].weight = 1.0 / chromosome[chromosomeIndex];
             chromosomeIndex++;
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10, 10);
+                this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -100, 100);
+                //this.layers[i].neurons[j].bias = 1.0 / chromosome[chromosomeIndex];
                 chromosomeIndex++;
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 this.layers[i].neurons[j].n = ToolBox.map(chromosome[chromosomeIndex], 0, 1, 0, 2);
+                //this.layers[i].neurons[j].n = 1.0 / chromosome[chromosomeIndex];
                 chromosomeIndex++;
             }
         }
