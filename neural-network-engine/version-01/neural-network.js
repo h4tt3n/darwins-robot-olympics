@@ -314,13 +314,45 @@ class ActivationFunctions {
         return 1 / Math.pow(1 + Math.abs(x), 2);
     }
 
+    static parametricInvTanhLike(x, params = {}) {
+        let n = params.n;
+        // works with n = [0, infinite]
+        // Lower n gives a flatter sigmoid
+        // Higher n gives a steeper sigmoid
+        return x / (1 / n + Math.abs(x));
+    }
+
     static tanhLike2(x, params = {}) {
         let n = params.n;
         // n < 1 gives a steeper sigmoid
         // n > 1 gives a flatter sigmoid
         // n = 0 gives binary perceptron / Heaviside step function behavior
-        return x / (n + Math.abs(x));
+        return x / (100 / n + Math.abs(x));
     }
+
+    // static parametricTanhLike(x, params = {}) {
+    //     let n = params.n;
+    //     // n < 1 gives a steeper sigmoid
+    //     // n > 1 gives a flatter sigmoid
+    //     // n = 0 gives binary perceptron / Heaviside step function behavior
+    //     return x / (n + Math.abs(x));
+    // }
+
+    // static tanhLike2(x, params = {}) {
+    //     let n = params.n;
+    //     // n < 1 gives a steeper sigmoid
+    //     // n > 1 gives a flatter sigmoid
+    //     // n = 0 gives binary perceptron / Heaviside step function behavior
+    //     return x / (n + Math.abs(x));
+    // }
+
+    // static tanhLike2(x, params = {}) {
+    //     let n = params.n;
+    //     // n < 1 gives a steeper sigmoid
+    //     // n > 1 gives a flatter sigmoid
+    //     // n = 0 gives binary perceptron / Heaviside step function behavior
+    //     return x / (n*n*n*n + Math.abs(x));
+    // }
 
     static tanhlike2Derivative(x, n = 1.0) {
         return n / Math.pow(n + Math.abs(x), 2);
