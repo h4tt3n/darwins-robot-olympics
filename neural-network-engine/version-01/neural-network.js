@@ -314,7 +314,7 @@ class ActivationFunctions {
         return 1 / Math.pow(1 + Math.abs(x), 2);
     }
 
-    static parametricInvTanhLike(x, params = {}) {
+    static invParametricTanhLike(x, params = {}) {
         let n = params.n;
         // works with n = [0, infinite]
         // Lower n gives a flatter sigmoid
@@ -327,16 +327,16 @@ class ActivationFunctions {
         // n < 1 gives a steeper sigmoid
         // n > 1 gives a flatter sigmoid
         // n = 0 gives binary perceptron / Heaviside step function behavior
-        return x / (100 / n + Math.abs(x));
+        return x / (n + Math.abs(x));
     }
 
-    // static parametricTanhLike(x, params = {}) {
-    //     let n = params.n;
-    //     // n < 1 gives a steeper sigmoid
-    //     // n > 1 gives a flatter sigmoid
-    //     // n = 0 gives binary perceptron / Heaviside step function behavior
-    //     return x / (n + Math.abs(x));
-    // }
+    static parametricTanhLike(x, params = {}) {
+        let n = params.n;
+        // n < 1 gives a steeper sigmoid
+        // n > 1 gives a flatter sigmoid
+        // n = 0 gives binary perceptron / Heaviside step function behavior
+        return x / (n + Math.abs(x));
+    }
 
     // static tanhLike2(x, params = {}) {
     //     let n = params.n;

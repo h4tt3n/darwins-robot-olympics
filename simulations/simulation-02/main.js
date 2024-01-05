@@ -29,7 +29,7 @@ let numRobots = 50;
 //Genetic algorithm parameters
 const gaParams = {
     gemmationRate : 0.0, // Fraction of next generation created through asexual reproduction.
-    elitismRate : 0.10,  // Fraction of fittest individuals that will be cloned to next generation.
+    elitismRate : 0.1,  // Fraction of fittest individuals that will be cloned to next generation.
     selection : { // Select individuals for mating.
         func : GeneticOperators.randomWayTournamentSelection,
         params : {
@@ -46,7 +46,7 @@ const gaParams = {
     mutation : { // Mutate individuals.
         func : GeneticOperators.randomizeMutation,
         params : {
-            mutationChance : 0.02, 
+            mutationChance : 0.05, 
             minValue : 0, 
             maxValue : 1
         },
@@ -100,6 +100,7 @@ const createChallengeFuncs = {
     "Pitfall2" : pitFall2,
     "Helmet" : helmet,
     "Thunder-Dome" : thunderDome,
+    "Stairway to Heaven" : createStairwayMap,
 }
 
 let createRobotFunc = createRobotFuncs["RoboWorm"];
@@ -485,6 +486,36 @@ function thunderDome() {
     let segment8 = simulation.world.createLineSegment(point8, point9);
     let segment9 = simulation.world.createLineSegment(point9, point3);
 }
+
+function createStairwayMap() {
+    // Params
+    let levelCenter = new Vector2(1100, 800);
+    let stepWidth = 650;
+    let stepHeight = -140;
+
+    let topLeft = simulation.world.createPoint(levelCenter.add(new Vector2(-2500, -2000)));
+    let btmLeft = simulation.world.createPoint(levelCenter.add(new Vector2(-2500, 0)));
+    let step1Btm = simulation.world.createPoint(levelCenter.add(new Vector2(-800, 0)));
+    let step1Top = simulation.world.createPoint(step1Btm.position.add(new Vector2(0, stepHeight)));
+    let step2Btm = simulation.world.createPoint(step1Top.position.add(new Vector2(stepWidth, 0)));
+    let step2Top = simulation.world.createPoint(step2Btm.position.add(new Vector2(0, stepHeight)));
+    let step3Btm = simulation.world.createPoint(step2Top.position.add(new Vector2(stepWidth, 0)));
+    let step3Top = simulation.world.createPoint(step3Btm.position.add(new Vector2(0, stepHeight)));
+    let btmRight = simulation.world.createPoint(step3Top.position.add(new Vector2(1500, 0)));
+    let topRight = simulation.world.createPoint(step3Top.position.add(new Vector2(1500, -1600)));
+
+    let segment0 = simulation.world.createLineSegment(topLeft, btmLeft);
+    let segment1 = simulation.world.createLineSegment(btmLeft, step1Btm);
+    let segment2 = simulation.world.createLineSegment(step1Btm, step1Top);
+    let segment3 = simulation.world.createLineSegment(step1Top, step2Btm);
+    let segment4 = simulation.world.createLineSegment(step2Btm, step2Top);
+    let segment5 = simulation.world.createLineSegment(step2Top, step3Btm);
+    let segment6 = simulation.world.createLineSegment(step3Btm, step3Top);
+    let segment7 = simulation.world.createLineSegment(step3Top, btmRight);
+    let segment10 = simulation.world.createLineSegment(btmRight, topRight);
+    let segment11 = simulation.world.createLineSegment(topRight, topLeft);
+}
+//
 
 function deleteWorld() {
     simulation.world.lineSegments = [];
