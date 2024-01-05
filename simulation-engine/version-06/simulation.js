@@ -277,6 +277,7 @@ class Simulation {
         let brainParams = {
             layers : [9, 24, 2],
             activation : {
+                //func : ActivationFunctions.tanhLike2,
                 func : ActivationFunctions.tanhLike2,
             },
         }
@@ -309,7 +310,11 @@ class Simulation {
             let inputs = [];
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                //invDistance = ToolBox.map(invDistance, 0, 1, -1, 1);
+                invDistance = (invDistance * 2) - 1;
+                inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);
@@ -336,7 +341,7 @@ class Simulation {
 
             // Movement in forward direction
             this.body.wheels[0].velocity = this.body.wheels[0].velocity.mul(0.9);
-            this.body.wheels[0].impulse = this.body.wheels[0].impulse.add(this.body.wheels[0].angleVector.mul(ToolBox.map(output[1], -1, 1, 0.0, 15.0)));
+            this.body.wheels[0].impulse = this.body.wheels[0].impulse.add(this.body.wheels[0].angleVector.mul(ToolBox.map(output[1], -1, 1, 0.0, 30.0)));
         }
 
         let tracker = new Robot(brain, body, eyes, update);
@@ -470,7 +475,8 @@ class Simulation {
             //layers : [7, 24, 8],
             layers : [numRays, 16, 4],
             activation : {
-                func : ActivationFunctions.invParametricTanhLike,
+                //func : ActivationFunctions.invParametricTanhLike,
+                func : ActivationFunctions.tanhLike2,
             },
         }
 
@@ -496,7 +502,6 @@ class Simulation {
             for (let i = 0; i < intersections.length; i++) {
                 //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
                 let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                
                 inputs.push(intersections[i] ? invDistance : 0.0);
 
                 // if (i === 0) {
@@ -873,7 +878,8 @@ class Simulation {
             legAnchorLinearSprings : [],
         }
 
-        let position = new Vector2(0, 0); //new Vector2(0, 0);
+        let position = new Vector2(0, 0); //.add(new Vector2(Math.random() * 100 - 200, Math.random() * 100 - 200));
+        let angle = Math.PI * 2; // * Math.random();
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         var body = this.world.createParticle(position, 20, bodyRadius, randomColor);
@@ -881,7 +887,7 @@ class Simulation {
 
         // Legs
         for (let i = 0; i < numLegs; i++) {
-            let legAngle = Math.PI * 2 * i / numLegs;
+            let legAngle = angle + Math.PI * 2 * i / numLegs;
             let legAngleVector = new Vector2(Math.cos(legAngle), Math.sin(legAngle));
 
             // Leg anchors
@@ -916,7 +922,7 @@ class Simulation {
                 bodyParts.linearSprings.push(legSection);
 
                 // Leg angular spring
-                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.125, 0.25, 0.5);
+                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.125, 0.5, 0.5);
                 bodyParts.angularSprings.push(legAngular);
                 legAngulars.push(legAngular);
                 
