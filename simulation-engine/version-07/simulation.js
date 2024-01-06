@@ -132,6 +132,7 @@ class Simulation {
             this.runGeneticAlgorithm();
             
             // Create new robots
+            //this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             
             // Reset simulation
@@ -262,7 +263,8 @@ class Simulation {
     }   
 
     //
-    createTopDownTracker(params = {}) {
+    //createTopDownTracker(params = {}) {
+    createTopDownTracker(brainGenome) {
         
         const robotParams = {
             brain : {
@@ -442,7 +444,8 @@ class Simulation {
         // body.fixedSprings.push(wheelParticleFixedSpring);
 
         // Create brain
-        const brain = this.createNeuralNetwork(params.brain.genome, robotParams.brain);
+        //const brain = this.createNeuralNetwork(params.brain.genome, robotParams.brain);
+        const brain = this.createNeuralNetwork(brainGenome, robotParams.brain);
         
         // Create vision
         const vision = this.createRayCamera(
@@ -460,7 +463,9 @@ class Simulation {
 
 
     //
-    createRoboCar(params = {}) {
+    //createRoboCar(params = {}) {
+    createRoboCar(brainGenome) {
+
         let body = {
             particles : [],
             linearSprings : [],
@@ -593,8 +598,8 @@ class Simulation {
             },
         }
 
-        //let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
         // Update function
         let update = function update() {
@@ -673,7 +678,9 @@ class Simulation {
     }
 
     //
-    createRoboGuy(params = {}) {
+    //createRoboGuy(params = {}) {
+    createRoboGuy(brainGenome) {
+        
         let bodyParts = {
             particles : [],
             linearSprings : [],
@@ -938,7 +945,8 @@ class Simulation {
             },
         }
 
-        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
         let update = function update() {
 
@@ -993,7 +1001,10 @@ class Simulation {
         this.robots.push(guy);
         return guy;
     }
-    createRoboStarfish(params = {}) {
+
+    //
+    //createRoboStarfish(params = {}) {
+    createRoboStarfish(brainGenome) {
 
         // Body
         const numLegs = 3;
@@ -1101,7 +1112,8 @@ class Simulation {
             },
         }
 
-        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
         let update = function update() {
             // Update eyes
@@ -1142,7 +1154,8 @@ class Simulation {
         return starfish;
     }
 
-    createRoboCrab(params = {}) {
+    //createRoboCrab(params = {}) {
+    createRoboCrab(brainGenome) {
 
         let bodyParts = {
             particles : [],
@@ -1350,7 +1363,8 @@ class Simulation {
             },
         }
 
-        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
         let update = function update() {
             // Update eyes
@@ -1688,7 +1702,8 @@ class Simulation {
     }
 
     //
-    createRoboWorm(params = {}) {
+    //createRoboWorm(params = {}) {
+    createRoboWorm(brainGenome) {
         
         const bodyParams = {
             position : new Vector2(800, 200),
@@ -1749,7 +1764,8 @@ class Simulation {
             },
         }
 
-        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
         let update = function update() {
             // Update eyes

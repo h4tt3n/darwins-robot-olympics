@@ -93,7 +93,7 @@ const simulation = new SimulationEngine.Simulation(simParams);
 simulation.robotSpawner = {
     func : createRobotFunc,
     numRobots : numRobots,
-    robotParams : robotParams,
+    //robotParams : robotParams,
     genome : null,
 }
 
@@ -115,6 +115,7 @@ function startSimulation() {
     simulation.challengeSpawner.func();
     target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     // Create robots
+    //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     // Run simulation
     simulation.setIntervalId = setInterval(update, 0);
@@ -140,43 +141,54 @@ function update() {
 
 function createRoboWorms(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createRoboWorm(params);
+        //params.brain.genome = genome ? genome[i].genome : null;
+        //console.log(params);
+        let brainGenome = genome ? genome[i].genome : null;
+        //simulation.createRoboWorm(params);
+        simulation.createRoboWorm(brainGenome);
     }
 }
 
 function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createRoboCrab(params);
+        //params.brain.genome = genome ? genome[i].genome : null;
+        let brainGenome = genome ? genome[i].genome : null;
+        //simulation.createRoboCrab(params);
+        simulation.createRoboCrab(brainGenome);
     }
 }
 
 function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createRoboStarfish(params);
+        //params.brain.genome = genome ? genome[i].genome : null;
+        let brainGenome = genome ? genome[i].genome : null;
+        //simulation.createRoboStarfish(params);
+        simulation.createRoboStarfish(brainGenome);
     }
 }
 
 function createRoboGuys(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createRoboGuy(params);
+        //params.brain.genome = genome ? genome[i].genome : null;
+        let brainGenome = genome ? genome[i].genome : null;
+        //simulation.createRoboGuy(params);
+        simulation.createRoboGuy(brainGenome);
     }
 }
 
 function createRoboCars(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createRoboCar(params);
+        //params.brain.genome = genome ? genome[i].genome : null;
+        let brainGenome = genome ? genome[i].genome : null;
+        //simulation.createRoboCar(params);
+        simulation.createRoboCar(brainGenome);
     }
 }
 
 function createTrackers(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.brain.genome = genome ? genome[i].genome : null;
-        simulation.createTopDownTracker(params);
+        let brainGenome = genome ? genome[i].genome : null;
+        simulation.createTopDownTracker(brainGenome);
     }
 }
 
