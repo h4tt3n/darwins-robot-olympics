@@ -326,10 +326,6 @@ class ActivationFunctions {
         return x / (1 + Math.abs(x));
     }
 
-    // static inverseTanhLike(x) {
-    //     return x / (1 - Math.abs(x));
-    // }
-
     static inverseTanhLike(y) {
         if (y > 0) {
             return y / (1 - y);

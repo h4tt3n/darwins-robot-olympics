@@ -250,6 +250,10 @@ class Simulation {
     deleteWaypoint(wayPoint) {
         this.wayPoints.splice(this.wayPoints.indexOf(wayPoint), 1);
     }
+
+    // Robot creation functions
+
+    //
     createTopDownTracker(params = {}) {
         let body = {
             wheels : [],
@@ -257,7 +261,7 @@ class Simulation {
             fixedSprings : [],
         }
 
-        let position = params.body.position //new Vector2(0, 0);
+        let position = new Vector2(0, 0);
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
 
@@ -273,12 +277,14 @@ class Simulation {
         wheelParticleFixedSpring.radius = 6;
         body.fixedSprings.push(wheelParticleFixedSpring);
 
+        const numRays = 9;
+
         // Create brain
         let brainParams = {
-            layers : [9, 24, 2],
+            layers : [numRays, 24, 2],
             activation : {
                 //func : ActivationFunctions.tanhLike2,
-                func : ActivationFunctions.tanhLike2,
+                func : ActivationFunctions.parametricTanhLike,
             },
         }
 
@@ -289,7 +295,7 @@ class Simulation {
         let visionParams = {
             position : new Vector2(0, 200),
             direction : Math.PI * 2 * 0,
-            numRays : 9,
+            numRays : numRays,
             fov : Math.PI * 2 * 0.5,
         }
 
@@ -310,11 +316,12 @@ class Simulation {
             let inputs = [];
             
             for (let i = 0; i < intersections.length; i++) {
-                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                
+                //let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
                 //invDistance = ToolBox.map(invDistance, 0, 1, -1, 1);
-                invDistance = (invDistance * 2) - 1;
-                inputs.push(intersections[i] ? invDistance : 0.0);
+                //invDistance = (invDistance * 2) - 1;
+                //inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);
@@ -348,6 +355,9 @@ class Simulation {
         this.robots.push(tracker);
         return tracker;
     }
+
+
+    //
     createRoboCar(params = {}) {
         let body = {
             particles : [],
@@ -475,8 +485,9 @@ class Simulation {
             //layers : [7, 24, 8],
             layers : [numRays, 16, 4],
             activation : {
+                func : ActivationFunctions.parametricTanhLike,
                 //func : ActivationFunctions.invParametricTanhLike,
-                func : ActivationFunctions.tanhLike2,
+                //func : ActivationFunctions.tanhLike2,
             },
         }
 
@@ -500,9 +511,10 @@ class Simulation {
             let inputs = [];
             
             for (let i = 0; i < intersections.length; i++) {
-                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                inputs.push(intersections[i] ? invDistance : 0.0);
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                
+                // let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                // inputs.push(intersections[i] ? invDistance : 0.0);
 
                 // if (i === 0) {
                 //     console.log(inputs);
@@ -557,6 +569,8 @@ class Simulation {
         this.robots.push(car); // Wrong, for testing
         return car;
     }
+
+    //
     createRoboGuy(params = {}) {
         let bodyParts = {
             particles : [],
@@ -796,8 +810,33 @@ class Simulation {
         bodyParts.angularSprings.push(rightSoleAngular);
 
         // Create brain
-        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        //let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        //let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+
+        // Create vision
+        let numRays = 12;
+
+        let visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : numRays,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
+        }
+
+        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
+
+        // Create brain
+        let brainParams = {
+            //layers : [7, 24, 8],
+            layers : [numRays, 24, 8],
+            activation : {
+                func : ActivationFunctions.parametricTanhLike,
+                //func : ActivationFunctions.invParametricTanhLike,
+                //func : ActivationFunctions.tanhLike2,
+            },
+        }
+
+        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
 
         let update = function update() {
 
@@ -856,7 +895,7 @@ class Simulation {
 
         // Body
         const numLegs = 3;
-        const numLegSections = 2;
+        const numLegSections = 3;
 
         const bodyRadius = 20;
         
@@ -895,7 +934,7 @@ class Simulation {
             bodyParts.particles.push(legAnchor);
 
             // Leg linear spring to body
-            var legLinear = this.world.createLinearSpring(body, legAnchor, 0.5, 0.5, 0.5);
+            var legLinear = this.world.createLinearSpring(body, legAnchor, 1.0, 1.0, 0.5);
             legLinear.radius = legJointMaxRadius;
             legLinear.color = randomColor2;
             bodyParts.linearSprings.push(legLinear);
@@ -916,13 +955,13 @@ class Simulation {
                 bodyParts.particles.push(legJoint);
 
                 // Leg sections
-                var legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 0.5, 0.5, 0.5);
+                var legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 1.0, 1.0, 0.5);
                 legSection.radius = legJointRadius;
                 legSection.color = randomColor2;
                 bodyParts.linearSprings.push(legSection);
 
                 // Leg angular spring
-                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.125, 0.5, 0.5);
+                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 0.5, 0.5);
                 bodyParts.angularSprings.push(legAngular);
                 legAngulars.push(legAngular);
                 
@@ -976,7 +1015,7 @@ class Simulation {
             let intersections = this.eyes.getOutput();
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 10000);
             }
     
             this.brain.setInput(inputs);
@@ -1063,9 +1102,9 @@ class Simulation {
         leftLeg1Section2.color = randomColor2;
         leftLeg1Section3.color = randomColor2;
 
-        var leftLeg1Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg1Section1, 1.0, 1.0, 0.5);
-        var leftLeg1Angular2 = this.world.createAngularSpring(leftLeg1Section1, leftLeg1Section2, 0.25, 1.0, 0.5);
-        var leftLeg1Angular3 = this.world.createAngularSpring(leftLeg1Section2, leftLeg1Section3, 0.125, 1.0, 0.5);
+        var leftLeg1Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg1Section1, 0.25, 0.5, 0.5);
+        var leftLeg1Angular2 = this.world.createAngularSpring(leftLeg1Section1, leftLeg1Section2, 0.25, 0.5, 0.5);
+        var leftLeg1Angular3 = this.world.createAngularSpring(leftLeg1Section2, leftLeg1Section3, 0.25, 0.5, 0.5);
         
         bodyParts.leftLeg1JointAngularSpring = leftLeg1Angular1;
         bodyParts.leftLeg1AngularSprings.push(leftLeg1Angular2);
@@ -1086,9 +1125,9 @@ class Simulation {
         leftLeg2Section2.color = randomColor2;
         leftLeg2Section3.color = randomColor2;
 
-        var leftLeg2Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg2Section1, 1.0, 1.0, 0.5);
-        var leftLeg2Angular2 = this.world.createAngularSpring(leftLeg2Section1, leftLeg2Section2, 0.25, 1.0, 0.5);
-        var leftLeg2Angular3 = this.world.createAngularSpring(leftLeg2Section2, leftLeg2Section3, 0.125, 1.0, 0.5);
+        var leftLeg2Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg2Section1, 0.25, 0.5, 0.5);
+        var leftLeg2Angular2 = this.world.createAngularSpring(leftLeg2Section1, leftLeg2Section2, 0.25, 0.5, 0.5);
+        var leftLeg2Angular3 = this.world.createAngularSpring(leftLeg2Section2, leftLeg2Section3, 0.25, 0.5, 0.5);
 
         bodyParts.leftLeg2JointAngularSpring = leftLeg2Angular1;
         bodyParts.leftLeg2AngularSprings.push(leftLeg2Angular2);
@@ -1109,9 +1148,9 @@ class Simulation {
         rightLeg1Section2.color = randomColor2;
         rightLeg1Section3.color = randomColor2;
 
-        var rightLeg1Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg1Section1, 1.0, 1.0, 0.5);
-        var rightLeg1Angular2 = this.world.createAngularSpring(rightLeg1Section1, rightLeg1Section2, 0.25, 1.0, 0.5);
-        var rightLeg1Angular3 = this.world.createAngularSpring(rightLeg1Section2, rightLeg1Section3, 0.125, 1.0, 0.5);
+        var rightLeg1Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg1Section1, 0.25, 0.5, 0.5);
+        var rightLeg1Angular2 = this.world.createAngularSpring(rightLeg1Section1, rightLeg1Section2, 0.25, 0.5, 0.5);
+        var rightLeg1Angular3 = this.world.createAngularSpring(rightLeg1Section2, rightLeg1Section3, 0.25, 0.5, 0.5);
 
         bodyParts.rightLeg1JointAngularSpring = rightLeg1Angular1;
         bodyParts.rightLeg1AngularSprings.push(rightLeg1Angular2);
@@ -1132,9 +1171,9 @@ class Simulation {
         rightLeg2Section2.color = randomColor2;
         rightLeg2Section3.color = randomColor2;
 
-        var rightLeg2Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg2Section1, 1.0, 1.0, 0.5);
-        var rightLeg2Angular2 = this.world.createAngularSpring(rightLeg2Section1, rightLeg2Section2, 0.25, 1.0, 0.5);
-        var rightLeg2Angular3 = this.world.createAngularSpring(rightLeg2Section2, rightLeg2Section3, 0.125, 1.0, 0.5);
+        var rightLeg2Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg2Section1, 0.25, 0.5, 0.5);
+        var rightLeg2Angular2 = this.world.createAngularSpring(rightLeg2Section1, rightLeg2Section2, 0.25, 0.5, 0.5);
+        var rightLeg2Angular3 = this.world.createAngularSpring(rightLeg2Section2, rightLeg2Section3, 0.25, 0.5, 0.5);
 
         bodyParts.rightLeg2JointAngularSpring = rightLeg2Angular1;
         bodyParts.rightLeg2AngularSprings.push(rightLeg2Angular2);
@@ -1186,16 +1225,36 @@ class Simulation {
         bodyParts.particles.push(rightLeg2Joint2);
         bodyParts.particles.push(rightLeg2Foot);
 
-        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        // let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+
+        // Create vision
+        let numRays = 12;
+
+        let visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : numRays,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
+        }
+
+        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
+
+        // Create brain
+        let brainParams = {
+            layers : [numRays, 16, 8],
+            activation : {
+                func : ActivationFunctions.parametricTanhLike,
+            },
+        }
+
+        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
 
         let update = function update() {
             // Update eyes
             
-            //const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
             const angleVector = this.body.linearSprings[1].angleVector;
             this.eyes.directionVector = angleVector.perp();
-            //this.eyes.origin = this.body.particles[0].position.add(angleVector.mul(this.body.particles[0].radius));
             this.eyes.origin = this.body.particles[0].position;
     
             this.eyes.update();
@@ -1204,10 +1263,9 @@ class Simulation {
             let inputs = [];
     
             let intersections = this.eyes.getOutput();
-            //console.log(intersections)
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
             }
     
             this.brain.setInput(inputs);
@@ -1503,17 +1561,26 @@ class Simulation {
         return crab;
     }
     createRoboWorm(params = {}) {
+        
+        const bodyParams = {
+            position : new Vector2(500, 200),
+            numSegments : 12,
+            radius : 14,
+            mass : 2,
+        }
+        
         let body = {
             particles : [],
             linearSprings : [],
             angularSprings : [],
         }
+
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         
-        for (let i = 0; i < params.body.numSegments; i++) {
-            let particle = this.world.createParticle(params.body.position, params.body.mass, params.body.radius, randomColor);
-            params.body.position = params.body.position.sub(new Vector2(params.body.radius * 2.2, 0));
+        for (let i = 0; i < bodyParams.numSegments; i++) {
+            let particle = this.world.createParticle(bodyParams.position, bodyParams.mass, bodyParams.radius, randomColor);
+            bodyParams.position = bodyParams.position.sub(new Vector2(bodyParams.radius * 2.2, 0));
             body.particles.push(particle);
         }
 
@@ -1531,8 +1598,30 @@ class Simulation {
             body.angularSprings.push(angularSpring);
         }
         
-        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        // let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+
+        // Create vision
+        const numRays = 7;
+
+        const visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : numRays,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
+        }
+
+        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
+
+        // Create brain
+        const brainParams = {
+            layers : [numRays, 16, bodyParams.numSegments-2],
+            activation : {
+                func : ActivationFunctions.parametricTanhLike,
+            },
+        }
+
+        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
 
         let update = function update() {
             // Update eyes
@@ -1558,11 +1647,8 @@ class Simulation {
     
             // Update body
             for (let i = 0; i < this.body.angularSprings.length; i++) {
-            //for (let i = 0; i < 8; i++) {
                 this.body.angularSprings[i].setRestAngleVector(output[i] * Math.PI * 2 * 0.125);
-                //this.body.angularSprings[i].setRestAngleVector(Math.PI * 2 * 0.125);
             }
-    
         }
 
         let robot = new Robot(brain, body, eyes, update);

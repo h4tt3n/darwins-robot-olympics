@@ -55,27 +55,27 @@ const gaParams = {
 
 // Robot parameters
 const robotParams = {
-    body : {
-        position : new Vector2(0, 200),
-        numSegments : 10,
-        radius : 14,
-        mass : 2,
-    },
+    // body : {
+    //     position : new Vector2(0, 200),
+    //     numSegments : 10,
+    //     radius : 14,
+    //     mass : 2,
+    // },
     brain : {
         genome : null,
-        params : {
-            layers : [7, 24, 8],
-            activation : {
-                func : ActivationFunctions.tanhLike2,
-            },
-        },
+        // params : {
+        //     layers : [7, 24, 8],
+        //     activation : {
+        //         func : ActivationFunctions.tanhLike2,
+        //     },
+        // },
     },
-    eyes : {
-        position : new Vector2(0, 200),
-        direction : Math.PI * 2 * 0,
-        numRays : 7,
-        fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/7), //Math.PI * 2 * 0.625, // For roboCrabs // Math.PI * 2 * 0.25, // For roboWorms
-    }
+    // eyes : {
+    //     position : new Vector2(0, 200),
+    //     direction : Math.PI * 2 * 0,
+    //     numRays : 7,
+    //     fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/7), //Math.PI * 2 * 0.625, // For roboCrabs // Math.PI * 2 * 0.25, // For roboWorms
+    // }
 }
 
 // Simulation parameters
@@ -159,7 +159,7 @@ function update() {
 
 function createRoboWorms(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.body.position = new Vector2(0, 200);
+        //params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboWorm(params);
     }
@@ -167,7 +167,7 @@ function createRoboWorms(numRobots = 50, params = {}, genome = null) {
 
 function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.body.position = new Vector2(0, 200);
+        //params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboCrab(params);
     }
@@ -175,7 +175,7 @@ function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
 
 function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.body.position = new Vector2(0, 200);
+        //params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboStarfish(params);
     }
@@ -183,7 +183,7 @@ function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
 
 function createRoboGuys(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.body.position = new Vector2(0, 200);
+        //params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboGuy(params);
     }
@@ -191,7 +191,7 @@ function createRoboGuys(numRobots = 50, params = {}, genome = null) {
 
 function createRoboCars(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.body.position = new Vector2(0, 200);
+        //params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createRoboCar(params);
     }
@@ -199,7 +199,7 @@ function createRoboCars(numRobots = 50, params = {}, genome = null) {
 
 function createTrackers(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
-        params.body.position = new Vector2(0, 200);
+        //params.body.position = new Vector2(0, 200);
         params.brain.genome = genome ? genome[i].genome : null;
         simulation.createTopDownTracker(params);
     }
