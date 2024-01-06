@@ -181,6 +181,18 @@ class Simulation {
         // Run genetic algorithm
         this.individuals = this.geneticAlgorithm.step(this.deadIndividuals);
     }
+    createWaypoint(position, radius, color) {
+        let wayPoint = new WayPoint(position, radius, color);
+        this.wayPoints.push(wayPoint);
+        return wayPoint;
+    }
+    deleteWaypoint(wayPoint) {
+        this.wayPoints.splice(this.wayPoints.indexOf(wayPoint), 1);
+    }
+
+    // Robot creation functions
+
+    //
     deleteRobot(robot) {
         // Delete collisions
         const collisionKeys = Array.from(this.world.collisions.keys());
@@ -242,116 +254,118 @@ class Simulation {
         this.robots.splice(this.robots.indexOf(robot), 1);
         this.deadRobots.push(robot);
     }
-    createWaypoint(position, radius, color) {
-        let wayPoint = new WayPoint(position, radius, color);
-        this.wayPoints.push(wayPoint);
-        return wayPoint;
-    }
-    deleteWaypoint(wayPoint) {
-        this.wayPoints.splice(this.wayPoints.indexOf(wayPoint), 1);
-    }
 
-    // Robot creation functions
+    //
+    createRobot(params = {}) {
+
+    }   
 
     //
     createTopDownTracker(params = {}) {
-        let body = {
+        
+        const body = {
             wheels : [],
             particles : [],
             fixedSprings : [],
         }
 
-        let position = new Vector2(0, 0);
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        const robotParams = {
+            brain : {
+                // Number of input nodes must match sum of sensory inputs
+                layers : [9, 24, 2],
+                activation : {
+                    func : ActivationFunctions.parametricTanhLike,
+                },
+            },
+            sensors : {
+                vision : {
+                    position : new Vector2(0, 0),
+                    direction : Math.PI * 2 * 0,
+                    numRays : 9,
+                    fieldOfView : Math.PI * 2 * 0.5,
+                },
+            },
+            body : {
+                position : new Vector2(0, 0),
+                velocity : Vector2.zero,
+                color : "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")",
+            },
+            updateFunc : function update() {
+
+                // Update camera position and angle
+                this.eyes.origin = this.body.wheels[0].position;
+                this.eyes.directionVector = this.body.wheels[0].angleVector;
+        
+                // Update camera
+                let intersections = this.eyes.getOutput();
+        
+                // Input camera data to neural network
+                let inputs = [];
+                
+                for (let i = 0; i < intersections.length; i++) {
+                    inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                    
+                    //let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                    //invDistance = ToolBox.map(invDistance, 0, 1, -1, 1);
+                    //invDistance = (invDistance * 2) - 1;
+                    //inputs.push(intersections[i] ? invDistance : 0.0);
+                }
+        
+                this.brain.setInput(inputs);
+        
+                // Run neural network
+                this.brain.run();
+        
+                // Get output from neural network
+                let output = this.brain.getOutput();
+        
+                // Rotation
+                let deltaAngle = 0.0;
+                if (output[0] > 0.5) {
+                    deltaAngle = 0.02;
+                } else if (output[0] < -0.5) {
+                    deltaAngle = -0.02;
+                } else {
+                    deltaAngle = 0.0;
+                }
+
+                this.body.wheels[0].angularImpulse = 0.0;
+                this.body.wheels[0].angularVelocity = 0.0;
+                this.body.wheels[0].angle += deltaAngle;
+                this.body.wheels[0].computeAngleVector();
+
+                // Movement in forward direction (kinematic)
+                this.body.wheels[0].velocity = Vector2.zero;
+                this.body.wheels[0].impulse = Vector2.zero;
+                this.body.wheels[0].addPosition(this.body.wheels[0].angleVector.mul(ToolBox.map(output[1], -1, 1, 0.0, 5.0)));
+            },
+        }
 
         // Body
-        let wheel = this.world.createWheel(position.add(new Vector2(0, -100)), 10, 0, null, 40);
-        wheel.color = randomColor;
+        let wheel = this.world.createWheel(robotParams.body.position.add(new Vector2(0, -100)), 10, 0, null, 40);
+        wheel.color = robotParams.body.color;
         body.wheels.push(wheel);
 
-        let btmLeftParticle = this.world.createParticle(position.add(new Vector2(0, -100)), 1, 10, randomColor);
+        let btmLeftParticle = this.world.createParticle(robotParams.body.position.add(new Vector2(0, -100)), 1, 10, robotParams.body.color);
         body.particles.push(btmLeftParticle);
 
         let wheelParticleFixedSpring = this.world.createFixedSpring(wheel, btmLeftParticle, 0.5, 0.5, 0.5);
         wheelParticleFixedSpring.radius = 6;
         body.fixedSprings.push(wheelParticleFixedSpring);
 
-        const numRays = 9;
-
         // Create brain
-        let brainParams = {
-            layers : [numRays, 24, 2],
-            activation : {
-                //func : ActivationFunctions.tanhLike2,
-                func : ActivationFunctions.parametricTanhLike,
-            },
-        }
-
-        //let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
+        let brain = this.createNeuralNetwork(params.brain.genome, robotParams.brain);
         
         // Create vision
-        let visionParams = {
-            position : new Vector2(0, 200),
-            direction : Math.PI * 2 * 0,
-            numRays : numRays,
-            fov : Math.PI * 2 * 0.5,
-        }
+        let eyes = this.createRayCamera(
+            robotParams.sensors.vision.position, 
+            robotParams.sensors.vision.direction, 
+            robotParams.sensors.vision.numRays, 
+            robotParams.sensors.vision.fieldOfView
+        );
 
-        //let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
-        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
-
-        // Update function
-        let update = function update() {
-        
-            // Update camera position and angle
-            this.eyes.origin = this.body.wheels[0].position;
-            this.eyes.directionVector = this.body.wheels[0].angleVector;
-    
-            // Update camera
-            let intersections = this.eyes.getOutput();
-    
-            // Input camera data to neural network
-            let inputs = [];
-            
-            for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                
-                //let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                //invDistance = ToolBox.map(invDistance, 0, 1, -1, 1);
-                //invDistance = (invDistance * 2) - 1;
-                //inputs.push(intersections[i] ? invDistance : 0.0);
-            }
-    
-            this.brain.setInput(inputs);
-    
-            // Run neural network
-            this.brain.run();
-    
-            // Get output from neural network
-            let output = this.brain.getOutput();
-    
-            // Direction
-            let deltaAngle = 0.0;
-            if (output[0] > 0.5) {
-                deltaAngle = 0.02;
-            } else if (output[0] < -0.5) {
-                deltaAngle = -0.02;
-            } else {
-                deltaAngle = 0.0;
-            }
-            this.body.wheels[0].angle += deltaAngle;
-            this.body.wheels[0].computeAngleVector();
-            //let angleVector = new Vector2(Math.cos(this.body.wheels[0].angle), Math.sin(this.body.wheels[0].angle));
-            //this.body.wheels[0].angleVector = angleVector;
-
-            // Movement in forward direction
-            this.body.wheels[0].velocity = this.body.wheels[0].velocity.mul(0.9);
-            this.body.wheels[0].impulse = this.body.wheels[0].impulse.add(this.body.wheels[0].angleVector.mul(ToolBox.map(output[1], -1, 1, 0.0, 30.0)));
-        }
-
-        let tracker = new Robot(brain, body, eyes, update);
+        // Create robot
+        let tracker = new Robot(brain, body, eyes, robotParams.updateFunc);
         this.robots.push(tracker);
         return tracker;
     }
@@ -475,7 +489,7 @@ class Simulation {
             position : new Vector2(0, 200),
             direction : Math.PI * 2 * 0,
             numRays : numRays,
-            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays), //Math.PI * 2 * 0.625, // For roboCrabs // Math.PI * 2 * 0.25, // For roboWorms
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
         }
 
         let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
@@ -566,7 +580,7 @@ class Simulation {
 
         // Create robot
         let car = new Robot(brain, body, eyes, update);
-        this.robots.push(car); // Wrong, for testing
+        this.robots.push(car);
         return car;
     }
 
@@ -888,7 +902,7 @@ class Simulation {
         }
 
         let guy = new Robot(brain, bodyParts, eyes, update);
-        this.robots.push(guy); // Wrong, for testing
+        this.robots.push(guy);
         return guy;
     }
     createRoboStarfish(params = {}) {
@@ -1307,9 +1321,11 @@ class Simulation {
         }
 
         let crab = new Robot(brain, bodyParts, eyes, update);
-        this.robots.push(crab); // Wrong, for testing
+        this.robots.push(crab);
         return crab;
     }
+
+    //
     createRoboCrabOld(params = {}) {
 
         let bodyParts = {
@@ -1494,8 +1510,30 @@ class Simulation {
         bodyParts.particles.push(rightLeg2Joint2);
         bodyParts.particles.push(rightLeg2Foot);
 
-        let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+        // let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
+        // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
+
+        // Create vision
+        let numRays = 12;
+
+        let visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : numRays,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
+        }
+
+        let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
+
+        // Create brain
+        let brainParams = {
+            layers : [numRays, 16, 8],
+            activation : {
+                func : ActivationFunctions.parametricTanhLike,
+            },
+        }
+
+        let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
 
         let update = function update() {
             // Update eyes
@@ -1557,14 +1595,16 @@ class Simulation {
         }
         
         let crab = new Robot(brain, bodyParts, eyes, update);
-        this.robots.push(crab); // Wrong, for testing
+        this.robots.push(crab);
         return crab;
     }
+
+    //
     createRoboWorm(params = {}) {
         
         const bodyParams = {
-            position : new Vector2(500, 200),
-            numSegments : 12,
+            position : new Vector2(800, 200),
+            numSegments : 32,
             radius : 14,
             mass : 2,
         }
@@ -1655,6 +1695,8 @@ class Simulation {
         this.robots.push(robot);
         return robot;
     }
+
+    //
     createIndividual(params = {}) {
         let individual = new Individual(params.genome, params.fitness);
         this.deadIndividuals.push(individual);
@@ -1664,6 +1706,8 @@ class Simulation {
         this.individuals.splice(this.individuals.indexOf(individual), 1);
         this.deadIndividuals.push(individual);
     }
+
+    //
     createNeuralNetwork(genome, params) {
         let neuralNetwork = new Network(genome, params);
         this.neuralNetworks.push(neuralNetwork);
@@ -1672,6 +1716,8 @@ class Simulation {
     deleteNeuralNetwork(neuralNetwork) {
         this.neuralNetworks.splice(this.neuralNetworks.indexOf(neuralNetwork), 1);
     }
+
+    //
     createRay(origin, direction) {
         let ray = new Ray(origin, direction);
         this.rays.push(ray);
@@ -1680,6 +1726,8 @@ class Simulation {
     deleteRay(ray) {
         this.rays.splice(this.rays.indexOf(ray), 1);
     }
+
+    //
     createRayCamera(origin, direction, numRays, width) {
         let rayCamera = new RayCamera(origin, direction, numRays, width);
         this.rayCameras.push(rayCamera);
