@@ -4,7 +4,7 @@
     This class contains all functions and variables responsible for
     evaluating the fitness score of each individual in a population.
 
-    The fitness evaluation process consists of one or more steps, to be completed in order.
+    The fitness evaluation process consists of one or more steps to be completed in order.
     Each fitness step is a class instance that contains its own unique set of functions and variables.
 
     Each fitness step contains a set of target values that the robot must attempt to reach.
@@ -21,6 +21,9 @@
 
     The fitness evaluator holds information about fitness score, and the current fitness step and target values for each robot.
 
+    The FitnessEvaluator holds a collection of RobtFitnessStates, one for each robot in the population. 
+    The RobotFitnessState holds information about fitness step progress and fitness value for a specific robot.
+
     fitnessEvaluatorArgs = {
         fitnessSteps : [
 
@@ -29,6 +32,17 @@
 
 */
 
+// This class maps fitness step progress and score to a specific robot.
+class RobotFitnessState {
+    constructor(robot) {
+        this.robot = robot;
+        this.fitnessStepIndex = 0;
+        this.fitnessScore = 0;
+        this.isCompleted = false;
+    }
+}
+
+// This class contains information about a specific fitness step.
 class FitnessStep {
     constructor(args = {}) {
         this.args = args;
@@ -38,14 +52,10 @@ class FitnessStep {
 class FitnessEvaluator {
     constructor(args = {}) {
         this.args = args;
+        this.RobotFitnessStates = [];
         this.fitnessSteps = [];
         this.isCompleted = false;
     }
-    createFitnessSteps() {
-        for(let i = 0; i < this.args.fitnessSteps.length; i++) {
-            this.fitnessSteps.push(new FitnessStep(this.args.fitnessSteps[i]));
-        }
-    }
 }
 
-export { FitnessStep, FitnessEvaluator };
+export { RobotFitnessState, FitnessStep, FitnessEvaluator };

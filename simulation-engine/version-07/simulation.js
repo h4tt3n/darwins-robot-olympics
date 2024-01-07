@@ -267,6 +267,7 @@ class Simulation {
     createTopDownTracker(brainGenome) {
         
         const robotParams = {
+            name : "topDownTracker",
             brain : {
                 // Number of input nodes must match sum of sensory inputs
                 layers : [11, 24, 2],
@@ -386,6 +387,9 @@ class Simulation {
                 // this.body.wheels[0].addPosition(this.body.wheels[0].angleVector.mul(ToolBox.map(output[1], -1, 1, 0.0, 5.0)));
             },
         }
+
+        let roboParamsJson = JSON.stringify(robotParams);
+        console.log(roboParamsJson);
 
         // Body
         const body = new Map();
@@ -618,10 +622,10 @@ class Simulation {
             let inputs = [];
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
                 
-                // let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                // inputs.push(intersections[i] ? invDistance : 0.0);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? invDistance : 0.0);
 
                 // if (i === 0) {
                 //     console.log(inputs);

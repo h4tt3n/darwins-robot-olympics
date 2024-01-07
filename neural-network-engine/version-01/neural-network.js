@@ -88,8 +88,10 @@ class Network {
             this.genome = genome;
             this.decode(this.genome);
         } else {
-            this.genome = this.createRandomGenome();
-            this.decode(this.genome);
+            //this.genome = this.createRandomGenome();
+            //this.decode(this.genome);
+            this.initiateNeuralNetwork();
+            this.genome = this.encode();
         }
 
     }
@@ -99,6 +101,25 @@ class Network {
     }
     static createInstance(genome, params) {
         return new Network(genome, params);
+    }
+    initiateNeuralNetwork() {
+        let minBiasValue = -100;
+        let maxBiasValue = 100;
+        let minWeightValue = -10000;
+        let maxWeightValue = 10000;
+        let minNValue = 0;
+        let maxNValue = 2;
+
+        for (var i = 0; i < this.connections.length; i++) {
+            this.connections[i].weight = ToolBox.lerp(minWeightValue, maxWeightValue, Math.random());
+        }
+
+        for (var i = 1; i < this.layers.length; i++) {
+            for (var j = 0; j < this.layers[i].neurons.length; j++) {
+                this.layers[i].neurons[j].bias = ToolBox.lerp(minBiasValue, maxBiasValue, Math.random());
+                this.layers[i].neurons[j].n = ToolBox.lerp(minNValue, maxNValue, Math.random());
+            }
+        }
     }
     createRandomGenome() {
         let genome = [];
@@ -201,14 +222,14 @@ class Network {
             //chromosome.push(ToolBox.map(this.connections[i].weight, -10000, 10000, 0, 1));
             //chromosome.push(1.0 / this.connections[i].weight);
             //chromosome.push(1.0 / (1.0 + Math.exp(-this.connections[i].weight)));
-            chromosome.push(ActivationFunctions.sigmoid(this.connections[i].weight));
+            chromosome.push(ActivationFunctions.sigmoidLike(this.connections[i].weight));
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 //chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, -100, 100, 0, 1));
                 //chromosome.push(1.0 / this.layers[i].neurons[j].bias);
                 //chromosome.push(1.0 / (1.0 + Math.exp(-this.layers[i].neurons[j].bias)));
-                chromosome.push(ActivationFunctions.sigmoid(this.layers[i].neurons[j].bias));
+                chromosome.push(ActivationFunctions.sigmoidLike(this.layers[i].neurons[j].bias));
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
@@ -228,7 +249,7 @@ class Network {
             //this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10000, 10000);
             //this.connections[i].weight = 1.0 / chromosome[chromosomeIndex];
             //this.connections[i].weight = Math.log(chromosome[chromosomeIndex] / (1 - chromosome[chromosomeIndex]));
-            this.connections[i].weight = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
+            this.connections[i].weight = ActivationFunctions.inverseSigmoidLike(chromosome[chromosomeIndex]);
             chromosomeIndex++;
         }
         for (var i = 1; i < this.layers.length; i++) {
@@ -236,7 +257,7 @@ class Network {
                 //this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -100, 100);
                 //this.layers[i].neurons[j].bias = 1.0 / chromosome[chromosomeIndex];
                 //this.layers[i].neurons[j].bias = Math.log(chromosome[chromosomeIndex] / (1 - chromosome[chromosomeIndex]));
-                this.layers[i].neurons[j].bias = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
+                this.layers[i].neurons[j].bias = ActivationFunctions.inverseSigmoidLike(chromosome[chromosomeIndex]);
                 chromosomeIndex++;
             }
         }
@@ -251,7 +272,6 @@ class Network {
         }
     }
 }
-
 
 // ******************************************************
 //   Neural network activation function library
@@ -292,6 +312,16 @@ class ActivationFunctions {
         return Math.log(y / (1 - y));
     }
 
+    static parameterizedSigmoid(x, params = { n : 0.1 }) {
+        let n = 0.9; //params.n;
+        return 1 / (1 + Math.exp(-n*x));
+    }
+
+    static inverseParameterizedSigmoid(y, params = { n : 0.1 }) {
+        let n = 0.9; //params.n;
+        return -(1 / n) * Math.log((1 - y) / y);
+    }
+
     static sigmoidDerivative(y) {
         return y * (1 - y);
     }
@@ -299,6 +329,14 @@ class ActivationFunctions {
     static sigmoidLike(x) {
         return 0.5 + 0.5 * x / (1 + Math.abs(x));
     }
+
+    static inverseSigmoidLike(y) {
+        if (y >= 0.5) {
+            return (1 - 2 * y) / (2 * (y - 1));
+        } else {
+            return -(1 - 2 * y) / (2 * y);
+        }
+    }    
 
     static sigmoidLikeDerivative(x) {
         return 0.5 / Math.pow(1 + Math.abs(x), 2);
@@ -483,5 +521,12 @@ class ActivationFunctions {
         return 0.5 + 0.5 * Math.sin(Math.PI * (a * x + b));
     }
 }
+
+let val = 0.490133705318008;
+
+let encodedVal = ActivationFunctions.sigmoidLike(val);
+let decodedVal = ActivationFunctions.inverseSigmoidLike(encodedVal);
+
+console.log({val : val, encodedVal : encodedVal, decodedVal : decodedVal});
 
 export { Network, ActivationFunctions };
