@@ -82,16 +82,22 @@ class Network {
         this.fitness = null;
         this.connections = [];
         this.params = params;
+        this.minBiasValue = -100;
+        this.maxBiasValue = 100;
+        this.minWeightValue = -10000;
+        this.maxWeightValue = 10000;
+        this.minNValue = 0;
+        this.maxNValue = 2;
         //this.activation = params.activation;
         this.init(this.params.layers);
         if (genome) {
             this.genome = genome;
             this.decode(this.genome);
         } else {
-            //this.genome = this.createRandomGenome();
-            //this.decode(this.genome);
-            this.initiateNeuralNetwork();
-            this.genome = this.encode();
+            this.genome = this.createRandomGenome();
+            this.decode(this.genome);
+            // this.initiateNeuralNetwork();
+            // this.genome = this.encode();
         }
 
     }
@@ -103,21 +109,14 @@ class Network {
         return new Network(genome, params);
     }
     initiateNeuralNetwork() {
-        let minBiasValue = -100;
-        let maxBiasValue = 100;
-        let minWeightValue = -10000;
-        let maxWeightValue = 10000;
-        let minNValue = 0;
-        let maxNValue = 2;
-
         for (var i = 0; i < this.connections.length; i++) {
-            this.connections[i].weight = ToolBox.lerp(minWeightValue, maxWeightValue, Math.random());
+            this.connections[i].weight = ToolBox.lerp(this.minWeightValue, this.maxWeightValue, Math.random());
         }
 
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                this.layers[i].neurons[j].bias = ToolBox.lerp(minBiasValue, maxBiasValue, Math.random());
-                this.layers[i].neurons[j].n = ToolBox.lerp(minNValue, maxNValue, Math.random());
+                this.layers[i].neurons[j].bias = ToolBox.lerp(this.minBiasValue, this.maxBiasValue, Math.random());
+                this.layers[i].neurons[j].n = ToolBox.lerp(this.minNValue, this.maxNValue, Math.random());
             }
         }
     }
@@ -219,24 +218,25 @@ class Network {
     encode() {
         let chromosome = [];
         for (var i = 0; i < this.connections.length; i++) {
-            //chromosome.push(ToolBox.map(this.connections[i].weight, -10000, 10000, 0, 1));
+            chromosome.push(ToolBox.map(this.connections[i].weight, this.minWeightValue, this.maxWeightValue, 0, 1));
             //chromosome.push(1.0 / this.connections[i].weight);
             //chromosome.push(1.0 / (1.0 + Math.exp(-this.connections[i].weight)));
-            chromosome.push(ActivationFunctions.sigmoidLike(this.connections[i].weight));
+            //chromosome.push(ActivationFunctions.sigmoid(this.connections[i].weight));
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                //chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, -100, 100, 0, 1));
+                chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, this.minBiasValue, this.maxBiasValue, 0, 1));
                 //chromosome.push(1.0 / this.layers[i].neurons[j].bias);
                 //chromosome.push(1.0 / (1.0 + Math.exp(-this.layers[i].neurons[j].bias)));
-                chromosome.push(ActivationFunctions.sigmoidLike(this.layers[i].neurons[j].bias));
+                //chromosome.push(ActivationFunctions.sigmoid(this.layers[i].neurons[j].bias));
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                //chromosome.push(ToolBox.map(this.layers[i].neurons[j].n, 0, 2, 0, 1));
+                chromosome.push(ToolBox.map(this.layers[i].neurons[j].n, this.minNValue, this.maxNValue, 0, 1));
                 //chromosome.push(1.0 / this.layers[i].neurons[j].n);
-                chromosome.push(1.0 / (1.0 + this.layers[i].neurons[j].n));
+                //chromosome.push(1.0 / (1.0 + this.layers[i].neurons[j].n));
+                //chromosome.push(ActivationFunctions.sigmoid(this.layers[i].neurons[j].n));
                 
             }
         }
@@ -246,27 +246,27 @@ class Network {
     decode(chromosome) {
         let chromosomeIndex = 0;
         for (var i = 0; i < this.connections.length; i++) {
-            //this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10000, 10000);
+            this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minWeightValue, this.maxWeightValue);
             //this.connections[i].weight = 1.0 / chromosome[chromosomeIndex];
             //this.connections[i].weight = Math.log(chromosome[chromosomeIndex] / (1 - chromosome[chromosomeIndex]));
-            this.connections[i].weight = ActivationFunctions.inverseSigmoidLike(chromosome[chromosomeIndex]);
+            //this.connections[i].weight = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
             chromosomeIndex++;
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                //this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -100, 100);
+                this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minBiasValue, this.maxBiasValue);
                 //this.layers[i].neurons[j].bias = 1.0 / chromosome[chromosomeIndex];
                 //this.layers[i].neurons[j].bias = Math.log(chromosome[chromosomeIndex] / (1 - chromosome[chromosomeIndex]));
-                this.layers[i].neurons[j].bias = ActivationFunctions.inverseSigmoidLike(chromosome[chromosomeIndex]);
+                //this.layers[i].neurons[j].bias = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
                 chromosomeIndex++;
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
-                //this.layers[i].neurons[j].n = ToolBox.map(chromosome[chromosomeIndex], 0, 1, 0, 2);
+                this.layers[i].neurons[j].n = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minNValue, this.maxNValue);
                 //this.layers[i].neurons[j].n = 1.0 / chromosome[chromosomeIndex];
-                this.layers[i].neurons[j].n = (1.0 / chromosome[chromosomeIndex]) - 1.0;
-                
+                //this.layers[i].neurons[j].n = (1.0 / chromosome[chromosomeIndex]) - 1.0;
+                //this.layers[i].neurons[j].n = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
                 chromosomeIndex++;
             }
         }
@@ -522,11 +522,21 @@ class ActivationFunctions {
     }
 }
 
-let val = 0.490133705318008;
 
-let encodedVal = ActivationFunctions.sigmoidLike(val);
-let decodedVal = ActivationFunctions.inverseSigmoidLike(encodedVal);
+// let genomeEncoder = function(x) {
+//     return 1.0 / (1.0 + x);
+// }
 
-console.log({val : val, encodedVal : encodedVal, decodedVal : decodedVal});
+// let val = 42.0001337;
+
+// let encodedVal = ActivationFunctions.sigmoid(val);
+// let decodedVal = ActivationFunctions.inverseSigmoid(encodedVal);
+
+// console.log({val : val, encodedVal : encodedVal, decodedVal : decodedVal});
+
+// let encodedVal2 = 1.0 / val;
+// let decodedVal2 = 1.0 / encodedVal2; 
+
+// console.log({val : val, encodedVal2 : encodedVal2, decodedVal2 : decodedVal2});
 
 export { Network, ActivationFunctions };
