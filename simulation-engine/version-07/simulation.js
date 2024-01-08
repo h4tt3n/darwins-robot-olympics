@@ -904,9 +904,11 @@ class Simulation {
             let intersections = this.eyes.getOutput();
             
             for (let i = 0; i < intersections.length; i++) {
+                if( intersections[i] ) {
                 //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
                 let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                inputs.push(intersections[i] ? invDistance : 0.0);
+                inputs.push(invDistance);
+                }
             }
     
             this.brain.setInput(inputs);

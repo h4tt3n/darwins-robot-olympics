@@ -1,6 +1,7 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+// Colors
 const OlympicBlue   = "rgb(0, 129, 200)";
 const OlympicYellow = "rgb(252, 177, 49)";
 const OlympicBlack  = "rgb(0, 0, 0)";
@@ -112,3 +113,5 @@ function roundedRect(x, y, width, height, radius) {
     ctx.lineWidth = 10;
     ctx.stroke();
 }
+
+export { draw };

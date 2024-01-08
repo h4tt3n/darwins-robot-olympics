@@ -257,13 +257,14 @@ function createWorld3() {
 
 function pitFall() {
     // Params
-    let top = -400;
+    let top = -800;
     let bottom = 400;
-    let left = -800;
-    let right = 2400;
-    let pitTopOffset = 100;
+    let left = -1200;
+    let right = 2800;
+    let pitTopOffset = 200;
+    let pitBottomOffset = 200;
 
-    let pitLeft = 700;
+    let pitLeft = 600;
     let pitRight = 1000;
     let pitBottom = 3000;
 
@@ -273,8 +274,8 @@ function pitFall() {
     let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
     let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
     let pitTopLeftPoint = simulation.world.createPoint(new Vector2(pitLeft, bottom + pitTopOffset));
-    let pitBottomLeftPoint = simulation.world.createPoint(new Vector2(pitLeft - 100, pitBottom));
-    let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + 100, pitBottom));
+    let pitBottomLeftPoint = simulation.world.createPoint(new Vector2(pitLeft - pitBottomOffset, pitBottom));
+    let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + pitBottomOffset, pitBottom));
     let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom + pitTopOffset));
 
 

@@ -56,6 +56,12 @@ class FitnessEvaluator {
         this.fitnessSteps = [];
         this.isCompleted = false;
     }
+    init(robotPopulation) {
+        // Create a RobotFitnessState for each robot in the population.
+        for (let robot of robotPopulation.robots) {
+            this.RobotFitnessStates.push(new RobotFitnessState(robot));
+        }
+    }
 }
 
 export { RobotFitnessState, FitnessStep, FitnessEvaluator };
