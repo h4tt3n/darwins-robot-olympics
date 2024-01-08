@@ -141,6 +141,14 @@ class ToolBox {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 
+    static encodeRealValueToUnitRange(value, min, max) {
+        return (value - min) / (max - min);
+    }
+    
+    static decodeUnitRangeToRealValue(encoded, min, max) {
+        return encoded * (max - min) + min;
+    }
+
     // static map(value, input1, input2, output1, output2) {
     //     return (value - input1) * (output2 - output1) / (input2 - input1) + output1;
     // }

@@ -342,12 +342,12 @@ class Simulation {
                 let inputs = [];
                 
                 for (let i = 0; i < intersections.length; i++) {
-                    inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                    //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
                     
-                    //let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                    //invDistance = ToolBox.map(invDistance, 0, 1, -1, 1);
-                    //invDistance = (invDistance * 2) - 1;
-                    //inputs.push(intersections[i] ? invDistance : 0.0);
+                    let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                    // invDistance = ToolBox.map(invDistance, 0, 1, -1, 1);
+                    // invDistance = (invDistance * 2) - 1;
+                    inputs.push(intersections[i] ? invDistance : 0.0);
                 }
         
                 this.brain.setInput(inputs);
@@ -614,8 +614,6 @@ class Simulation {
             this.eyes.origin = this.body.wheels[0].position;
     
             // Update camera
-            //this.eyes.castAll(this.world.lineSegments);
-            //this.eyes.update();
             let intersections = this.eyes.getOutput();
     
             // Input camera data to neural network
@@ -623,16 +621,9 @@ class Simulation {
             
             for (let i = 0; i < intersections.length; i++) {
                 //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                
                 let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
                 inputs.push(intersections[i] ? invDistance : 0.0);
-
-                // if (i === 0) {
-                //     console.log(inputs);
-                // }
             }
-
-            //console.log({inputs : inputs, intersections : intersections});
 
             this.brain.setInput(inputs);
     
@@ -641,8 +632,6 @@ class Simulation {
     
             // Get output from neural network
             let output = this.brain.getOutput();
-
-            //console.log(output);
     
             // Acceleration
             this.body.wheels[0].addAngularImpulse(output[0] * 0.2);
@@ -971,7 +960,9 @@ class Simulation {
             // // //console.log(intersections)
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);
@@ -1133,7 +1124,9 @@ class Simulation {
             let intersections = this.eyes.getOutput();
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 10000);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 10000);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);
@@ -1385,7 +1378,9 @@ class Simulation {
             let intersections = this.eyes.getOutput();
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);
@@ -1659,7 +1654,9 @@ class Simulation {
             //console.log(intersections)
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : Infinity);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);
@@ -1709,11 +1706,27 @@ class Simulation {
     //createRoboWorm(params = {}) {
     createRoboWorm(brainGenome) {
         
+        const numRays = 7;
+
         const bodyParams = {
-            position : new Vector2(800, 200),
+            position : new Vector2(0, 200),
             numSegments : 10,
             radius : 14,
             mass : 2,
+        }
+
+        const visionParams = {
+            position : new Vector2(0, 200),
+            direction : Math.PI * 2 * 0,
+            numRays : numRays,
+            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
+        }
+
+        const brainParams = {
+            layers : [numRays, 24, bodyParams.numSegments-2],
+            activation : {
+                func : ActivationFunctions.parametricTanhLike,
+            },
         }
         
         let body = {
@@ -1733,7 +1746,7 @@ class Simulation {
 
         // Connect particles with linear springs
         for (let i = 0; i < body.particles.length - 1; i++) {
-            let linearSpring = this.world.createLinearSpring(body.particles[i], body.particles[i+1], 1, 1, 0.5);
+            let linearSpring = this.world.createLinearSpring(body.particles[i], body.particles[i+1], 1.0, 1.0, 0.5);
             linearSpring.radius = 16;
             linearSpring.color = randomColor2;
             body.linearSprings.push(linearSpring);
@@ -1741,7 +1754,7 @@ class Simulation {
 
         // Connect linearSprings with angular springs
         for (let i = 0; i < body.linearSprings.length - 1; i++) {
-            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.125, 0.25, 0.5);
+            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.25, 0.5, 0.5);
             body.angularSprings.push(angularSpring);
         }
         
@@ -1749,25 +1762,9 @@ class Simulation {
         // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
 
         // Create vision
-        const numRays = 7;
-
-        const visionParams = {
-            position : new Vector2(0, 200),
-            direction : Math.PI * 2 * 0,
-            numRays : numRays,
-            fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
-        }
-
         let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
 
         // Create brain
-        const brainParams = {
-            layers : [numRays, 16, bodyParams.numSegments-2],
-            activation : {
-                func : ActivationFunctions.parametricTanhLike,
-            },
-        }
-
         //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
         let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
@@ -1785,7 +1782,9 @@ class Simulation {
             let intersections = this.eyes.getOutput();
             
             for (let i = 0; i < intersections.length; i++) {
-                inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                inputs.push(intersections[i] ? invDistance : 0.0);
             }
     
             this.brain.setInput(inputs);

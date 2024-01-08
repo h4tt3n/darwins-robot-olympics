@@ -281,20 +281,21 @@ function pitFall() {
     let bottom = 400;
     let left = -800;
     let right = 2400;
+    let pitTopOffset = 100;
 
-    let pitLeft = 800;
+    let pitLeft = 700;
     let pitRight = 1000;
-    let pitBottom = 2000;
+    let pitBottom = 3000;
 
     // Create world
     let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
     let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
     let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
     let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
-    let pitTopLeftPoint = simulation.world.createPoint(new Vector2(pitLeft, bottom));
+    let pitTopLeftPoint = simulation.world.createPoint(new Vector2(pitLeft, bottom + pitTopOffset));
     let pitBottomLeftPoint = simulation.world.createPoint(new Vector2(pitLeft - 100, pitBottom));
     let pitBottomRightPoint = simulation.world.createPoint(new Vector2(pitRight + 100, pitBottom));
-    let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom));
+    let pitTopRightPoint = simulation.world.createPoint(new Vector2(pitRight, bottom + pitTopOffset));
 
 
     simulation.world.createLineSegment(topLeftPoint, topRightPoint);
