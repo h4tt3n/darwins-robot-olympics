@@ -66,9 +66,7 @@ const simParams = {
 
 const createRobotFuncs = {
     "RoboWorm" : createRoboWorms,
-    "RoboCrab" : createRoboCrabs,
     "RoboStarfish" : createRoboStarfishes,
-    "RoboGuy" : createRoboGuys,
     "RoboCar" : createRoboCars,
     "TopDownTracker" : createTrackers,
 }
@@ -149,30 +147,12 @@ function createRoboWorms(numRobots = 50, params = {}, genome = null) {
     }
 }
 
-function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
-    for (let i = 0; i < numRobots; i++) {
-        //params.brain.genome = genome ? genome[i].genome : null;
-        let brainGenome = genome ? genome[i].genome : null;
-        //simulation.createRoboCrab(params);
-        simulation.createRoboCrab(brainGenome);
-    }
-}
-
 function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         //params.brain.genome = genome ? genome[i].genome : null;
         let brainGenome = genome ? genome[i].genome : null;
         //simulation.createRoboStarfish(params);
         simulation.createRoboStarfish(brainGenome);
-    }
-}
-
-function createRoboGuys(numRobots = 50, params = {}, genome = null) {
-    for (let i = 0; i < numRobots; i++) {
-        //params.brain.genome = genome ? genome[i].genome : null;
-        let brainGenome = genome ? genome[i].genome : null;
-        //simulation.createRoboGuy(params);
-        simulation.createRoboGuy(brainGenome);
     }
 }
 
