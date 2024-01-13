@@ -311,16 +311,6 @@ class Simulation {
                             radius : 40,
                         },
                     },
-                    {
-                        name : "motortestwheel",
-                        args : {
-                            position : new Vector2(0, 100),
-                            mass : 5,
-                            angle : 0,
-                            inertia : null,
-                            radius : 30,
-                        },
-                    },
                 ],
                 fixedSprings : [
                     {
@@ -328,29 +318,6 @@ class Simulation {
                         args : {
                             linearStateA : "wheel",
                             linearStateB : "particle",
-                            stiffness : 0.5,
-                            damping : 0.5,
-                            warmStart : 0.5,
-                        },
-                    },
-                    {
-                        name : "motortestfixedSpring",
-                        args : {
-                            linearStateA : "wheel",
-                            linearStateB : "motortestwheel",
-                            stiffness : 0.5,
-                            damping : 0.5,
-                            warmStart : 0.5,
-                        },
-                    },
-                ],
-                MotorConstraints : [
-                    {
-                        name : "motorConstraint",
-                        args : {
-                            angularStateA : "wheel",
-                            angularStateB : "motortestwheel",
-                            restVelocity : 0.0,
                             stiffness : 0.5,
                             damping : 0.5,
                             warmStart : 0.5,

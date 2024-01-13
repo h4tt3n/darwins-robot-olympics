@@ -27,6 +27,7 @@ import { FixedSpring } from './fixedSpring.js';
 import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
 import { GearConstraint } from './constraints/gearConstraint.js'
+import { MotorConstraint } from './constraints/motorConstraint.js'
 
 import { Particle } from './particle.js'
 import { Wheel } from './wheel.js'
@@ -52,6 +53,7 @@ export {
     FixedSpring,
     AngularSpring,
     GearConstraint,
+    MotorConstraint,
     Particle, 
     Wheel, 
     CollisionHandler,

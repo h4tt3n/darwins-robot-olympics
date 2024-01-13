@@ -51,7 +51,6 @@ class MotorConstraint {
         this.reducedInertia = inverseInertia != 0.0 ? 1.0 / inverseInertia : 0.0;
     }
     computeRestImpulse() {
-        //console.log('MotorConstraint computeRestImpulse')
         // State
         const velocityA = this.angularStateA.angularVelocity;
         const velocityB = this.angularStateB.angularVelocity;

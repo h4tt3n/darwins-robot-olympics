@@ -1,7 +1,6 @@
 "use strict";
 
 import { constants} from './constants.js'
-import { Vector2 } from '../../vector-library/version-01/vector2.js'
 import { Point } from './point.js'
 import { LineSegment } from './lineSegment.js'
 import { LinearState } from './linearState.js'
