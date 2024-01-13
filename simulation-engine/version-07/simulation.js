@@ -12,6 +12,7 @@ import { WayPoint } from './wayPoint.js';
 import { Robot } from './robot.js';
 import { FitnessEvaluator } from './fitnessEvaluator.js';
 import { constants } from '../../physics-engine/version-01/constants.js';
+import { MotorConstraint } from '../../physics-engine/version-01/constraints/motorConstraint.js';
 
 class Simulation {
     constructor(params = {}) {
@@ -310,6 +311,16 @@ class Simulation {
                             radius : 40,
                         },
                     },
+                    {
+                        name : "motortestwheel",
+                        args : {
+                            position : new Vector2(0, 100),
+                            mass : 5,
+                            angle : 0,
+                            inertia : null,
+                            radius : 30,
+                        },
+                    },
                 ],
                 fixedSprings : [
                     {
@@ -317,6 +328,29 @@ class Simulation {
                         args : {
                             linearStateA : "wheel",
                             linearStateB : "particle",
+                            stiffness : 0.5,
+                            damping : 0.5,
+                            warmStart : 0.5,
+                        },
+                    },
+                    {
+                        name : "motortestfixedSpring",
+                        args : {
+                            linearStateA : "wheel",
+                            linearStateB : "motortestwheel",
+                            stiffness : 0.5,
+                            damping : 0.5,
+                            warmStart : 0.5,
+                        },
+                    },
+                ],
+                MotorConstraints : [
+                    {
+                        name : "motorConstraint",
+                        args : {
+                            angularStateA : "wheel",
+                            angularStateB : "motortestwheel",
+                            restVelocity : 0.0,
                             stiffness : 0.5,
                             damping : 0.5,
                             warmStart : 0.5,
@@ -433,6 +467,21 @@ class Simulation {
                 );
                 //body.fixedSprings.push(fixedSpring);
                 body.set(robotParams.body.fixedSprings[i].name, fixedSpring);
+            }
+        }
+
+        if (robotParams.body.MotorConstraints != undefined) {
+            for( let i = 0; i < robotParams.body.MotorConstraints.length; i++) {
+                let motorConstraint = this.world.createMotorConstraint(
+                    body.get(robotParams.body.MotorConstraints[i].args.angularStateA),
+                    body.get(robotParams.body.MotorConstraints[i].args.angularStateB),
+                    robotParams.body.MotorConstraints[i].args.restVelocity,
+                    robotParams.body.MotorConstraints[i].args.stiffness,
+                    robotParams.body.MotorConstraints[i].args.damping,
+                    robotParams.body.MotorConstraints[i].args.warmStart
+                );
+                //body.MotorConstraints.push(motorConstraint);
+                body.set(robotParams.body.MotorConstraints[i].name, motorConstraint);
             }
         }
 

@@ -12,6 +12,7 @@ import { LinearSpring } from './linearSpring.js'
 import { FixedSpring } from './fixedSpring.js';
 import { AngularSpring } from './angularSpring.js'
 import { GearConstraint } from './constraints/gearConstraint.js'
+import { MotorConstraint } from './constraints/motorConstraint.js'
 import { CollisionHandler } from './collision/collisionHandler.js'
 import { Wheel } from './wheel.js'
 
@@ -26,6 +27,7 @@ class World {
         this.linearSprings = [];
         this.angularSprings = [];
         this.gearConstraints = [];
+        this.motorConstraints = [];
         this.particles = [];
         this.wheels = [];
         this.collisions = new Map();
@@ -42,6 +44,7 @@ class World {
         this.linearSprings = [];
         this.angularSprings = [];
         this.gearConstraints = [];
+        this.motorConstraints = [];
         this.particles = [];
         this.wheels = [];
         this.collisions = new Map();
@@ -54,6 +57,7 @@ class World {
             this.applyCorrectiveImpulsestoArray(this.linearSprings);
             this.applyCorrectiveImpulsestoArray(this.fixedSprings);
             this.applyCorrectiveImpulsestoArray(this.gearConstraints);
+            this.applyCorrectiveImpulsestoArray(this.motorConstraints);
             this.applyCorrectiveImpulsesToMap(this.collisions);
         }
     }
@@ -73,6 +77,7 @@ class World {
         this.linearSprings.forEach(l => { l.applyWarmStart() });
         this.fixedSprings.forEach(f => { f.applyWarmStart() });
         this.gearConstraints.forEach(g => { g.applyWarmStart() });
+        this.motorConstraints.forEach(m => { m.applyWarmStart() });
         this.collisions.forEach(c => { c.applyWarmStart() });
     }
     computeData(){
@@ -91,6 +96,7 @@ class World {
         this.linearSprings.forEach(l => { l.computeRestImpulse() });
         this.fixedSprings.forEach(f => { f.computeRestImpulse() });
         this.gearConstraints.forEach(g => { g.computeRestImpulse() });
+        this.motorConstraints.forEach(m => { m.computeRestImpulse() });
         this.collisions.forEach(c => { c.computeRestImpulse() });
     }
     update(){
@@ -235,6 +241,23 @@ class World {
         var index = this.gearConstraints.indexOf(gearConstraint);
         if (index > -1) {
             this.gearConstraints.splice(index, 1);
+        }
+    }
+    createMotorConstraint(angularStateA, angularStateB, restVelocity){
+        var motorConstraintParams = {
+            angularStateA : angularStateA,
+            angularStateB : angularStateB,
+            restVelocity : restVelocity
+        }
+        var motorConstraint = new MotorConstraint(motorConstraintParams);
+        motorConstraint.objectId = this.objectIdCounter++;
+        this.motorConstraints.push(motorConstraint);
+        return this.motorConstraints[this.motorConstraints.length - 1];
+    }
+    deleteMotorConstraint(motorConstraint){
+        var index = this.motorConstraints.indexOf(motorConstraint);
+        if (index > -1) {
+            this.motorConstraints.splice(index, 1);
         }
     }
     createParticle(position, mass, radius, color){

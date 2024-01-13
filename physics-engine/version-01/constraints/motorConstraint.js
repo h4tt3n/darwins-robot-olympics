@@ -7,13 +7,15 @@ class MotorConstraint {
         this.angularStateA = params.angularStateA;
         this.angularStateB = params.angularStateB;
         this.restVelocity = params.restVelocity || 0.0;
+        this.stiffness = params.stiffness || 0.5;
+        this.damping = params.damping || 0.5;
+        this.warmStart = params.warmStart || 0.5;       
 
-        this.stiffness = 0.5;
-        this.damping = 0.5;
-        this.warmStart = 0.5;        
         this.reducedInertia = 0.0;
         this.restImpulse = 0.0;
         this.accumulatedImpulse = 0.0;
+
+        this.computeReducedInertia();
     }
     applyCorrectiveImpulse() {
         if (this.restImpulse == 0.0) { return; }
@@ -49,6 +51,7 @@ class MotorConstraint {
         this.reducedInertia = inverseInertia != 0.0 ? 1.0 / inverseInertia : 0.0;
     }
     computeRestImpulse() {
+        //console.log('MotorConstraint computeRestImpulse')
         // State
         const velocityA = this.angularStateA.angularVelocity;
         const velocityB = this.angularStateB.angularVelocity;
