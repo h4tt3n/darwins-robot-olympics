@@ -22,9 +22,8 @@ class MotorConstraint {
         // State
         const impulseA = this.angularStateA.angularImpulse
         const impulseB = this.angularStateB.angularImpulse;
-        const impulse = impulseB - impulseA;
         // Error
-        const impulseError = impulse - this.restImpulse;
+        const impulseError = (impulseB - impulseA) - this.restImpulse;
         // Correction
         const correctiveImpulse = -impulseError * this.reducedInertia;
         // Apply
@@ -48,7 +47,7 @@ class MotorConstraint {
     }
     computeReducedInertia() {
         const inverseInertia = this.angularStateA.inverseInertia + this.angularStateB.inverseInertia;
-        this.reducedInertia = inverseInertia != 0.0 ? 1.0 / inverseInertia : 0.0;
+        this.reducedInertia = inverseInertia > 0.0 ? 1.0 / inverseInertia : 0.0;
     }
     computeRestImpulse() {
         // State
@@ -58,6 +57,10 @@ class MotorConstraint {
         const velocityError = (velocityB - velocityA) - this.restVelocity;
         // Correction
         this.restImpulse = -(this.damping * velocityError);
+    }
+    setRestVelocity(restVelocity) {
+        this.restVelocity = restVelocity;
+        this.computeData();
     }
 }
 

@@ -31,9 +31,8 @@ class GearConstraint {
         // State
         const impulseA = this.angularStateA.angularImpulse * this.gearRatio;
         const impulseB = this.angularStateB.angularImpulse;
-        const impulse = impulseB - impulseA;
         // Error
-        const impulseError = impulse - this.restImpulse;
+        const impulseError = (impulseB - impulseA) - this.restImpulse;
         // Correction
         const correctiveImpulse = -impulseError * this.reducedInertia;
         // Apply
@@ -57,7 +56,7 @@ class GearConstraint {
     }
     computeReducedInertia() {
         const inverseInertia = this.angularStateA.inverseInertia * this.gearRatio * this.gearRatio + this.angularStateB.inverseInertia;
-        this.reducedInertia = inverseInertia != 0.0 ? 1.0 / inverseInertia : 0.0;
+        this.reducedInertia = inverseInertia > 0.0 ? 1.0 / inverseInertia : 0.0;
     }
     computeRestDeltaAngle() {
         this.restDeltaAngle = this.angularStateB.angle - this.angularStateA.angle * this.gearRatio;
@@ -82,6 +81,7 @@ class GearConstraint {
         this.computeRestDeltaAngle();
     }
     setRadii(radiusA, radiusB) {
+        // TODO: Add setter for direction of rotation
         this.gearRatio = radiusA != 0.0 && radiusB != 0.0 ? radiusA / radiusB : 1.0;
         this.computeReducedInertia();
         this.computeRestDeltaAngle();

@@ -52,14 +52,14 @@ class Renderer {
         this.ctx.font = "italic 26px Arial";
         this.ctx.fillText("Play and experiment with evolving, challenge-solving robots", 20, 170);
         
-        // Version and copyright
-        this.ctx.fillStyle = "rgb(128, 128, 128)";
-        this.ctx.font = "14px Arial";
-        this.ctx.fillText("Version 0.1.0 beta - 08.01.2024", 20, this.canvas.height-40);
-        this.ctx.fillText("Copyright \u00A9 Michael Schmidt Nissen", 20, this.canvas.height-20);
+        // // Version and copyright
+        // this.ctx.fillStyle = "rgb(128, 128, 128)";
+        // this.ctx.font = "14px Arial";
+        // this.ctx.fillText("Version 0.1.0 beta - 08.01.2024", 20, this.canvas.height-40);
+        // this.ctx.fillText("Copyright \u00A9 Michael Schmidt Nissen", 20, this.canvas.height-20);
 
         // Render logo
-        this.ctx.translate(200, 200);
+        this.ctx.translate(240, 200);
         this.ctx.scale(0.8, 0.8);
     
         draw();

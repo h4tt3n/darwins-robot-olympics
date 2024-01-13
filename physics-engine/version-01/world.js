@@ -14,6 +14,7 @@ import { GearConstraint } from './constraints/gearConstraint.js'
 import { MotorConstraint } from './constraints/motorConstraint.js'
 import { CollisionHandler } from './collision/collisionHandler.js'
 import { Wheel } from './wheel.js'
+import { Body } from './body.js';
 
 class World {
     constructor(params = {}){
@@ -29,6 +30,7 @@ class World {
         this.motorConstraints = [];
         this.particles = [];
         this.wheels = [];
+        this.bodys = [];
         this.collisions = new Map();
         this.objectIdCounter = 0;
         this.collisionHandler = new CollisionHandler(this);
@@ -46,6 +48,7 @@ class World {
         this.motorConstraints = [];
         this.particles = [];
         this.wheels = [];
+        this.bodys = [];
         this.collisions = new Map();
         this.objectIdCounter = 0;
         this.collisionHandler = new CollisionHandler(this);
@@ -83,6 +86,7 @@ class World {
         this.linearSprings.forEach(l => { l.computeData() });
         this.fixedSprings.forEach(f => { f.computeData() });
         this.angularSprings.forEach(a => { a.computeData() });
+        this.bodys.forEach(b => { b.computeData() });
     }
     computeNewState(){
         this.linearStates.forEach(l => {l.computeNewState()});

@@ -32,6 +32,8 @@ import { MotorConstraint } from './constraints/motorConstraint.js'
 import { Particle } from './particle.js'
 import { Wheel } from './wheel.js'
 
+import { Body } from './body.js'
+
 // Collision detection
 import { CollisionHandler } from './collision/collisionHandler.js'
 import { LineSegmentParticleCollision } from './collision/lineSegmentParticleCollision.js';
@@ -55,7 +57,8 @@ export {
     GearConstraint,
     MotorConstraint,
     Particle, 
-    Wheel, 
+    Wheel,
+    Body,
     CollisionHandler,
     LineSegmentParticleCollision,
     ParticleParticleCollision,
