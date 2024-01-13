@@ -33,13 +33,13 @@ const gaParams = {
         func : GeneticOperators.randomWayTournamentSelection,
         params : {
             numParents : 2,
-            maxContestants : 10,
+            maxContestants : 8,
         },
     }, 
     crossover : { // Mate individuals.
         func : GeneticOperators.wholeArithmeticRecombination,
         params : {
-            numChildren : 1,
+            numChildren : 2,
         },
     }, 
     mutation : { // Mutate individuals.
@@ -53,11 +53,11 @@ const gaParams = {
 };
 
 // Robot parameters
-const robotParams = {
-    brain : {
-        genome : null,
-    },
-}
+// const robotParams = {
+//     brain : {
+//         genome : null,
+//     },
+// }
 
 // Simulation parameters
 const simParams = {
@@ -114,7 +114,7 @@ function startSimulation() {
     target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
-    simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
+    simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
     // Run simulation
     simulation.setIntervalId = setInterval(update, 0);
 }
