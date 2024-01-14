@@ -44,23 +44,23 @@ class Ray {
 
 // This Camera class is for simple computer vision and for allowing entities to perform obstacle detection.
 class RayCamera {
-    constructor(origin, direction, numRays, fov) {
+    constructor(origin, direction, numRays, fieldOfView) {
         this.origin = origin;
         this.direction = direction;
         this.numRays = numRays;
-        this.fov = fov;
+        this.fieldOfView = fieldOfView;
         
         this.rays = [];
         this.closestIntersections = [];
         this.directionVector = new Vector2(Math.cos(this.direction), Math.sin(this.direction));
-        this.deltaAngle = this.fov / (this.numRays - 1);
+        this.deltaAngle = this.fieldOfView / (this.numRays - 1);
         this.deltaAngleVector = new Vector2(Math.cos(this.deltaAngle), Math.sin(this.deltaAngle));
-        this.halfFov = -this.fov * 0.5;
+        this.halfFov = -this.fieldOfView * 0.5;
         this.halfFovVector = new Vector2(Math.cos(this.halfFov), Math.sin(this.halfFov));
 
         // Intialize rays
         for (let i = 0; i < numRays; i++) {
-            const angle = this.direction + fov * (i / (numRays - 1)) - fov * 0.5;
+            const angle = this.direction + fieldOfView * (i / (numRays - 1)) - fieldOfView * 0.5;
             let angeVector = new Vector2(Math.cos(angle), Math.sin(angle));
             this.rays.push(new Ray(this.origin, angeVector));
         }
