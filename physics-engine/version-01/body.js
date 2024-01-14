@@ -1,6 +1,6 @@
 "use strict";
 
-import { constants } from './../constants.js';
+import { constants } from '../version-01/constants.js';
 import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { LinearState } from './linearState.js';
 import { AngularState } from './angularState.js';

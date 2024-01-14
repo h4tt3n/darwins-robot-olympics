@@ -261,7 +261,104 @@ class Simulation {
     //
     createRobot(params = {}) {
 
-    }   
+    }
+    
+    createRobotBody(bodyParams = {}, world) {
+            
+        const body = new Map();
+
+        if (bodyParams.particles != undefined) {
+            for( let i = 0; i < bodyParams.particles.length; i++) {
+                let particle = world.createParticle(
+                    bodyParams.particles[i].args.position, 
+                    bodyParams.particles[i].args.mass, 
+                    bodyParams.particles[i].args.radius,
+                    bodyParams.particles[i].args.color
+                );
+                body.set(bodyParams.particles[i].name, particle);
+            }
+        }
+
+        if (bodyParams.wheels != undefined) {
+            for( let i = 0; i < bodyParams.wheels.length; i++) {
+                let wheel = world.createWheel(
+                    bodyParams.wheels[i].args.position, 
+                    bodyParams.wheels[i].args.mass, 
+                    bodyParams.wheels[i].args.angle, 
+                    bodyParams.wheels[i].args.inertia, 
+                    bodyParams.wheels[i].args.radius
+                );
+                body.set(bodyParams.wheels[i].name, wheel);
+            }
+        }
+
+        if (bodyParams.fixedSprings != undefined) {
+            for( let i = 0; i < bodyParams.fixedSprings.length; i++) {
+                //console.log(bodyParams);
+                let fixedSpring = world.createFixedSpring(
+                    body.get(bodyParams.fixedSprings[i].args.linearStateA),
+                    body.get(bodyParams.fixedSprings[i].args.linearStateB),
+                    bodyParams.fixedSprings[i].args.stiffness, 
+                    bodyParams.fixedSprings[i].args.damping, 
+                    bodyParams.fixedSprings[i].args.warmStart
+                );
+                body.set(bodyParams.fixedSprings[i].name, fixedSpring);
+            }
+        }
+
+        if (bodyParams.linearSprings != undefined) {
+            for( let i = 0; i < bodyParams.linearSprings.length; i++) {
+                let linearSpring = world.createLinearSpring(
+                    body.get(bodyParams.linearSprings[i].args.linearStateA),
+                    body.get(bodyParams.linearSprings[i].args.linearStateB),
+                    bodyParams.linearSprings[i].args.stiffness,
+                    bodyParams.linearSprings[i].args.damping,
+                    bodyParams.linearSprings[i].args.warmStart
+                );
+                body.set(bodyParams.linearSprings[i].name, linearSpring);
+            }
+        }
+
+        if (bodyParams.angularSprings != undefined) {
+            for( let i = 0; i < bodyParams.angularSprings.length; i++) {
+                let angularSpring = world.createAngularSpring(
+                    body.get(bodyParams.angularSprings[i].args.angularStateA),
+                    body.get(bodyParams.angularSprings[i].args.angularStateB),
+                    bodyParams.angularSprings[i].args.stiffness,
+                    bodyParams.angularSprings[i].args.damping,
+                    bodyParams.angularSprings[i].args.warmStart
+                );
+                body.set(bodyParams.angularSprings[i].name, angularSpring);
+            }
+        }
+
+        if (bodyParams.gearConstraints != undefined) {
+            for( let i = 0; i < bodyParams.gearConstraints.length; i++) {
+                let gearConstraint = world.createGearConstraint(
+                    body.get(bodyParams.gearConstraints[i].args.linearStateA),
+                    body.get(bodyParams.gearConstraints[i].args.linearStateB),
+                    bodyParams.gearConstraints[i].args.ratio
+                );
+                body.set(bodyParams.gearConstraints[i].name, gearConstraint);
+            }
+        }
+
+        if (bodyParams.MotorConstraints != undefined) {
+            for( let i = 0; i < bodyParams.MotorConstraints.length; i++) {
+                let motorConstraint = world.createMotorConstraint(
+                    body.get(bodyParams.MotorConstraints[i].args.angularStateA),
+                    body.get(bodyParams.MotorConstraints[i].args.angularStateB),
+                    bodyParams.MotorConstraints[i].args.restVelocity,
+                    bodyParams.MotorConstraints[i].args.stiffness,
+                    bodyParams.MotorConstraints[i].args.damping,
+                    bodyParams.MotorConstraints[i].args.warmStart
+                );
+                body.set(bodyParams.MotorConstraints[i].name, motorConstraint);
+            }
+        }
+
+        return body;
+    }
 
     //
     //createTopDownTracker(params = {}) {
@@ -389,68 +486,10 @@ class Simulation {
             },
         }
 
-        let roboParamsJson = JSON.stringify(robotParams);
-        console.log(roboParamsJson);
+        //let roboParamsJson = JSON.stringify(robotParams);
+        //console.log(roboParamsJson);
 
         // Body
-        const body = new Map();
-
-        if (robotParams.body.particles != undefined) {
-            for( let i = 0; i < robotParams.body.particles.length; i++) {
-                let particle = this.world.createParticle(
-                    robotParams.body.particles[i].args.position, 
-                    robotParams.body.particles[i].args.mass, 
-                    robotParams.body.particles[i].args.radius,
-                    robotParams.body.particles[i].args.color
-                );
-                //body.particles.push(particle);
-                body.set(robotParams.body.particles[i].name, particle);
-            }
-        }
-
-        if (robotParams.body.wheels != undefined) {
-            for( let i = 0; i < robotParams.body.wheels.length; i++) {
-                let wheel = this.world.createWheel(
-                    robotParams.body.wheels[i].args.position, 
-                    robotParams.body.wheels[i].args.mass, 
-                    robotParams.body.wheels[i].args.angle, 
-                    robotParams.body.wheels[i].args.inertia, 
-                    robotParams.body.wheels[i].args.radius
-                );
-                //body.wheels.push(wheel);
-                body.set(robotParams.body.wheels[i].name, wheel);
-            }
-        }
-
-        if (robotParams.body.fixedSprings != undefined) {
-            for( let i = 0; i < robotParams.body.fixedSprings.length; i++) {
-                //console.log(robotParams.body);
-                let fixedSpring = this.world.createFixedSpring(
-                    body.get(robotParams.body.fixedSprings[i].args.linearStateA),
-                    body.get(robotParams.body.fixedSprings[i].args.linearStateB),
-                    robotParams.body.fixedSprings[i].args.stiffness, 
-                    robotParams.body.fixedSprings[i].args.damping, 
-                    robotParams.body.fixedSprings[i].args.warmStart
-                );
-                //body.fixedSprings.push(fixedSpring);
-                body.set(robotParams.body.fixedSprings[i].name, fixedSpring);
-            }
-        }
-
-        if (robotParams.body.MotorConstraints != undefined) {
-            for( let i = 0; i < robotParams.body.MotorConstraints.length; i++) {
-                let motorConstraint = this.world.createMotorConstraint(
-                    body.get(robotParams.body.MotorConstraints[i].args.angularStateA),
-                    body.get(robotParams.body.MotorConstraints[i].args.angularStateB),
-                    robotParams.body.MotorConstraints[i].args.restVelocity,
-                    robotParams.body.MotorConstraints[i].args.stiffness,
-                    robotParams.body.MotorConstraints[i].args.damping,
-                    robotParams.body.MotorConstraints[i].args.warmStart
-                );
-                //body.MotorConstraints.push(motorConstraint);
-                body.set(robotParams.body.MotorConstraints[i].name, motorConstraint);
-            }
-        }
 
         // let wheel = this.world.createWheel(robotParams.body.position.add(new Vector2(0, -100)), 10, 0, null, 40);
         // wheel.color = robotParams.body.color;
@@ -462,6 +501,9 @@ class Simulation {
         // let wheelParticleFixedSpring = this.world.createFixedSpring(wheel, btmLeftParticle, 0.5, 0.5, 0.5);
         // wheelParticleFixedSpring.radius = 6;
         // body.fixedSprings.push(wheelParticleFixedSpring);
+
+        // Create body
+        const body = this.createRobotBody(robotParams.body, this.world);
 
         // Create brain
         //const brain = this.createNeuralNetwork(params.brain.genome, robotParams.brain);
