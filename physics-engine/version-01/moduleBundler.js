@@ -20,6 +20,8 @@ import { LineSegment } from './lineSegment.js'
 // Base components
 import { LinearState } from './linearState.js'
 import { AngularState } from './angularState.js'
+import { Particle } from './particle.js'
+import { Wheel } from './wheel.js'
 
 // Deformable body components
 import { LinearLink } from './linearLink.js'
@@ -29,9 +31,7 @@ import { AngularSpring } from './angularSpring.js'
 import { GearConstraint } from './constraints/gearConstraint.js'
 import { MotorConstraint } from './constraints/motorConstraint.js'
 
-import { Particle } from './particle.js'
-import { Wheel } from './wheel.js'
-
+// Compound bodys
 import { Body } from './body.js'
 
 // Collision detection
@@ -62,4 +62,5 @@ export {
     CollisionHandler,
     LineSegmentParticleCollision,
     ParticleParticleCollision,
-    World };
+    World 
+};

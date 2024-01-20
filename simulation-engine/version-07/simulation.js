@@ -238,9 +238,9 @@ class Simulation {
                 this.world.deleteFixedSpring(robot.body.fixedSprings[i]);
             }
         }
-        if (robot.body.MotorConstraints != undefined) {
-            for (let i = 0; i < robot.body.MotorConstraints.length; i++) {
-                this.world.deleteMotorConstraint(robot.body.MotorConstraints[i]);
+        if (robot.body.motorConstraints != undefined) {
+            for (let i = 0; i < robot.body.motorConstraints.length; i++) {
+                this.world.deleteMotorConstraint(robot.body.motorConstraints[i]);
             }
         }
         if (robot.body.gearConstraints != undefined) {
@@ -258,6 +258,16 @@ class Simulation {
                 this.world.deleteParticle(robot.body.particles[i]);
             }
         }
+        if (robot.body.angularStates != undefined) {
+            for (let i = 0; i < robot.body.angularStates.length; i++) {
+                this.world.deleteAngularState(robot.body.angularStates[i]);
+            }
+        }
+        if (robot.body.linearStates != undefined) {
+            for (let i = 0; i < robot.body.linearStates.length; i++) {
+                this.world.deleteLinearState(robot.body.linearStates[i]);
+            }
+        }
         // Delete robot
         this.robots.splice(this.robots.indexOf(robot), 1);
         this.deadRobots.push(robot);
@@ -272,6 +282,17 @@ class Simulation {
             
         const body = new Map();
 
+        if (bodyParams.linearStates != undefined) {
+            for( let i = 0; i < bodyParams.linearStates.length; i++) {
+                let linearState = world.createLinearState(
+                    bodyParams.linearStates[i].args.position,
+                    bodyParams.linearStates[i].args.mass,
+                    bodyParams.linearStates[i].args.radius
+                );
+                body.set(bodyParams.linearStates[i].name, linearState);
+            }
+        }
+        
         if (bodyParams.particles != undefined) {
             for( let i = 0; i < bodyParams.particles.length; i++) {
                 let particle = world.createParticle(
@@ -281,6 +302,18 @@ class Simulation {
                     bodyParams.particles[i].args.color
                 );
                 body.set(bodyParams.particles[i].name, particle);
+            }
+        }
+
+        if (bodyParams.angularStates != undefined) {
+            for( let i = 0; i < bodyParams.angularStates.length; i++) {
+                let angularState = world.createAngularState(
+                    bodyParams.angularStates[i].args.position, 
+                    bodyParams.angularStates[i].args.mass, 
+                    bodyParams.angularStates[i].args.angle, 
+                    bodyParams.angularStates[i].args.inertia
+                );
+                body.set(bodyParams.angularStates[i].name, angularState);
             }
         }
 
@@ -342,23 +375,26 @@ class Simulation {
                 let gearConstraint = world.createGearConstraint(
                     body.get(bodyParams.gearConstraints[i].args.linearStateA),
                     body.get(bodyParams.gearConstraints[i].args.linearStateB),
-                    bodyParams.gearConstraints[i].args.ratio
+                    bodyParams.gearConstraints[i].args.ratio,
+                    bodyParams.gearConstraints[i].args.stiffness,
+                    bodyParams.gearConstraints[i].args.damping,
+                    bodyParams.gearConstraints[i].args.warmStart
                 );
                 body.set(bodyParams.gearConstraints[i].name, gearConstraint);
             }
         }
 
-        if (bodyParams.MotorConstraints != undefined) {
-            for( let i = 0; i < bodyParams.MotorConstraints.length; i++) {
+        if (bodyParams.motorConstraints != undefined) {
+            for( let i = 0; i < bodyParams.motorConstraints.length; i++) {
                 let motorConstraint = world.createMotorConstraint(
-                    body.get(bodyParams.MotorConstraints[i].args.angularStateA),
-                    body.get(bodyParams.MotorConstraints[i].args.angularStateB),
-                    bodyParams.MotorConstraints[i].args.restVelocity,
-                    bodyParams.MotorConstraints[i].args.stiffness,
-                    bodyParams.MotorConstraints[i].args.damping,
-                    bodyParams.MotorConstraints[i].args.warmStart
+                    body.get(bodyParams.motorConstraints[i].args.angularStateA),
+                    body.get(bodyParams.motorConstraints[i].args.angularStateB),
+                    bodyParams.motorConstraints[i].args.restVelocity,
+                    bodyParams.motorConstraints[i].args.stiffness,
+                    bodyParams.motorConstraints[i].args.damping,
+                    bodyParams.motorConstraints[i].args.warmStart
                 );
-                body.set(bodyParams.MotorConstraints[i].name, motorConstraint);
+                body.set(bodyParams.motorConstraints[i].name, motorConstraint);
             }
         }
 
@@ -507,6 +543,7 @@ class Simulation {
             angularSprings : [],
             gearConstraints : [],
             wheels : [],
+            angularStates : [],
         }
 
         let position = new Vector2(0, 200); //new Vector2(0, 0);
@@ -516,13 +553,16 @@ class Simulation {
         // Wheels
         let wheelRadius = 40;
         let wheelMass = 10;
-        let engine = this.world.createWheel(position.add(new Vector2(0, -100)), wheelMass * 2, 0, null, wheelRadius);
+        //let engine = this.world.createWheel(position.add(new Vector2(0, -100)), wheelMass * 2, 0, null, wheelRadius);
+        let engineInertia = 0.5 * wheelMass * wheelRadius * wheelRadius;
+        let engine = this.world.createAngularState(position.add(new Vector2(0, -100)), wheelMass * 2, 0, engineInertia);
         let wheel1 = this.world.createWheel(position.add(new Vector2(-100, 0)), wheelMass, 0, null, wheelRadius);
         let wheel2 = this.world.createWheel(position.add(new Vector2(100, 0)), wheelMass, 0, null, wheelRadius);
         engine.color = randomColor;
         wheel1.color = randomColor;
         wheel2.color = randomColor;
-        body.wheels.push(engine);
+        //body.wheels.push(engine);
+        body.angularStates.push(engine);
         body.wheels.push(wheel1);
         body.wheels.push(wheel2);
 
