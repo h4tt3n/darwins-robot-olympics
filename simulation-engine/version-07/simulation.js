@@ -274,10 +274,6 @@ class Simulation {
     }
 
     //
-    createRobot(params = {}) {
-
-    }
-    
     createRobotBody(world, bodyParams = {}) {
             
         const body = new Map();
@@ -332,7 +328,6 @@ class Simulation {
 
         if (bodyParams.fixedSprings != undefined) {
             for( let i = 0; i < bodyParams.fixedSprings.length; i++) {
-                //console.log(bodyParams);
                 let fixedSpring = world.createFixedSpring(
                     body.get(bodyParams.fixedSprings[i].args.linearStateA),
                     body.get(bodyParams.fixedSprings[i].args.linearStateB),
@@ -402,8 +397,8 @@ class Simulation {
     }
 
     //
-    //createTopDownTracker(params = {}) {
-    createTopDownTracker(brainGenome) {
+    //createRobot(params = {}) {
+    createRobot(brainGenome) {
         
         const robotParams = {
             name : "topDownTracker",

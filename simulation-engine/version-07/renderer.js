@@ -420,8 +420,17 @@ class Renderer {
 
                     this.renderAngularState(wheel, wheel.radius * 0.5);
                 }
-
             }
+
+            // Draw angularStates
+            if (robot.body.angularStates != undefined) {
+                for (let j = 0; j < robot.body.angularStates.length; j++) {
+                    var angularState = robot.body.angularStates[j];
+
+                    this.renderAngularState(angularState, 24);
+                }
+            }
+
 
             // Write index above head
             this.ctx.font = "24px Arial";
@@ -516,7 +525,47 @@ class Renderer {
         //     //this.ctx.fillStyle = wheel.color;
         //     this.ctx.stroke();
         //     this.ctx.closePath();
-        //     this.renderAngularState(wheel, wheel.radius * 0.5);
+
+        //     var pos = wheel.position;
+
+        //     // Light gray line in direction of angle
+        //     var x2 = pos.x + wheel.angleVector.x * r;
+        //     var y2 = pos.y + wheel.angleVector.y * r;
+        //     var direction = new Vector2(x2 - x, y2 - y);
+
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(pos.x, pos.y);
+        //     this.ctx.lineTo(x2, y2);
+        //     this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
+
+        //     // Green line in direction of right perpendicular of angle
+        //     var right = pos.add(wheel.angleVector.perp().mul(r));
+
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(pos.x, pos.y);
+        //     this.ctx.lineTo(right.x, right.y);
+        //     this.ctx.strokeStyle = "rgb(32, 255, 32)";
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
+
+        //     // Red line in direction of left perpendicular of angle
+        //     var right = pos.add(wheel.angleVector.perp().mul(-r));
+
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(pos.x, pos.y);
+        //     this.ctx.lineTo(right.x, right.y);
+        //     this.ctx.strokeStyle = "rgb(255, 32, 32)";
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
+
+        //     // Dot in center
+        //     this.ctx.beginPath();
+        //     this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
+        //     this.ctx.fillStyle = "rgb(128, 128, 128)";
+        //     this.ctx.fill();
+        //     this.ctx.closePath();
         // }
 
         // Draw LinearStates
@@ -538,11 +587,53 @@ class Renderer {
         this.ctx.lineWidth = 10;
         this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
-        for (let i = 0; i < this.simulation.world.angularStates.length; i++) {
-            var angularState = this.simulation.world.angularStates[i];
+        // for (let i = 0; i < this.simulation.world.angularStates.length; i++) {
+        //     var angularState = this.simulation.world.angularStates[i];
 
-            this.renderAngularState(angularState, 24);
-        }
+            //this.renderAngularState(angularState, 24);
+
+            // var pos = angularState.position;
+
+            // // Light gray line in direction of angle
+            // var x2 = pos.x + angularState.angleVector.x * 16;
+            // var y2 = pos.y + angularState.angleVector.y * 16;
+            // var direction = new Vector2(x2 - x, y2 - y);
+
+            // this.ctx.beginPath();
+            // this.ctx.moveTo(pos.x, pos.y);
+            // this.ctx.lineTo(x2, y2);
+            // this.ctx.strokeStyle = "rgb(192, 192, 192)";
+            // this.ctx.stroke();
+            // this.ctx.closePath();
+
+            // // Green line in direction of right perpendicular of angle
+            // var right = pos.add(angularState.angleVector.perp().mul(16));
+
+            // this.ctx.beginPath();
+            // this.ctx.moveTo(pos.x, pos.y);
+            // this.ctx.lineTo(right.x, right.y);
+            // this.ctx.strokeStyle = "rgb(32, 255, 32)";
+            // this.ctx.stroke();
+            // this.ctx.closePath();
+
+            // // Red line in direction of left perpendicular of angle
+            // var right = pos.add(angularState.angleVector.perp().mul(-16));
+
+            // this.ctx.beginPath();
+            // this.ctx.moveTo(pos.x, pos.y);
+            // this.ctx.lineTo(right.x, right.y);
+            // this.ctx.strokeStyle = "rgb(255, 32, 32)";
+            // this.ctx.stroke();
+            // this.ctx.closePath();
+
+            // // Dot in center
+            // this.ctx.beginPath();
+            // this.ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+            // this.ctx.fillStyle = "rgb(128, 128, 128)";
+            // this.ctx.fill();
+            // this.ctx.closePath();
+
+        //}
 
         // Draw lineSegmentParticleCollisions for debugging
 

@@ -52,13 +52,6 @@ const gaParams = {
     },
 };
 
-// Robot parameters
-// const robotParams = {
-//     brain : {
-//         genome : null,
-//     },
-// }
-
 // Simulation parameters
 const simParams = {
     gaParams : gaParams,
@@ -168,7 +161,7 @@ function createRoboCars(numRobots = 50, params = {}, genome = null) {
 function createTrackers(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         let brainGenome = genome ? genome[i].genome : null;
-        simulation.createTopDownTracker(brainGenome);
+        simulation.createRobot(brainGenome);
     }
 }
 
