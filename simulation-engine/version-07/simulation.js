@@ -666,7 +666,7 @@ class Simulation {
         // Create brain
         let brainParams = {
             //layers : [7, 24, 8],
-            layers : [numRays, 16, 4],
+            layers : [numRays, 24, 4],
             activation : {
                 func : ActivationFunctions.parametricTanhLike,
                 //func : ActivationFunctions.invParametricTanhLike,

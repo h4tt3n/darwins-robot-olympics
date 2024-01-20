@@ -411,51 +411,14 @@ class Renderer {
                     var y = wheel.position.y;
                     var r = wheel.radius * 0.5;
 
+                    // Wheel circle
                     this.ctx.beginPath();
                     this.ctx.arc(x, y, wheel.radius - 5, 0, Math.PI * 2);
                     this.ctx.strokeStyle = wheel.color;
                     this.ctx.stroke();
                     this.ctx.closePath();
 
-                    var pos = wheel.position;
-
-                    // Light gray line in direction of angle
-                    var x2 = pos.x + wheel.angleVector.x * r;
-                    var y2 = pos.y + wheel.angleVector.y * r;
-
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(pos.x, pos.y);
-                    this.ctx.lineTo(x2, y2);
-                    this.ctx.strokeStyle = "rgb(192, 192, 192)";
-                    this.ctx.stroke();
-                    this.ctx.closePath();
-
-                    // Green line in direction of right perpendicular of angle
-                    var right = pos.add(wheel.angleVector.perp().mul(r));
-
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(pos.x, pos.y);
-                    this.ctx.lineTo(right.x, right.y);
-                    this.ctx.strokeStyle = "rgb(32, 255, 32)";
-                    this.ctx.stroke();
-                    this.ctx.closePath();
-
-                    // Red line in direction of left perpendicular of angle
-                    var left = pos.add(wheel.angleVector.perp().mul(-r));
-
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(pos.x, pos.y);
-                    this.ctx.lineTo(left.x, left.y);
-                    this.ctx.strokeStyle = "rgb(255, 32, 32)";
-                    this.ctx.stroke();
-                    this.ctx.closePath();
-
-                    // Dot in center
-                    this.ctx.beginPath();
-                    this.ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
-                    this.ctx.fillStyle = wheel.color;
-                    this.ctx.fill();
-                    this.ctx.closePath();
+                    this.renderAngularState(wheel, wheel.radius * 0.5);
                 }
 
             }
@@ -553,47 +516,7 @@ class Renderer {
         //     //this.ctx.fillStyle = wheel.color;
         //     this.ctx.stroke();
         //     this.ctx.closePath();
-
-        //     var pos = wheel.position;
-
-        //     // Light gray line in direction of angle
-        //     var x2 = pos.x + wheel.angleVector.x * r;
-        //     var y2 = pos.y + wheel.angleVector.y * r;
-        //     var direction = new Vector2(x2 - x, y2 - y);
-
-        //     this.ctx.beginPath();
-        //     this.ctx.moveTo(pos.x, pos.y);
-        //     this.ctx.lineTo(x2, y2);
-        //     this.ctx.strokeStyle = "rgb(192, 192, 192)";
-        //     this.ctx.stroke();
-        //     this.ctx.closePath();
-
-        //     // Green line in direction of right perpendicular of angle
-        //     var right = pos.add(wheel.angleVector.perp().mul(r));
-
-        //     this.ctx.beginPath();
-        //     this.ctx.moveTo(pos.x, pos.y);
-        //     this.ctx.lineTo(right.x, right.y);
-        //     this.ctx.strokeStyle = "rgb(32, 255, 32)";
-        //     this.ctx.stroke();
-        //     this.ctx.closePath();
-
-        //     // Red line in direction of left perpendicular of angle
-        //     var right = pos.add(wheel.angleVector.perp().mul(-r));
-
-        //     this.ctx.beginPath();
-        //     this.ctx.moveTo(pos.x, pos.y);
-        //     this.ctx.lineTo(right.x, right.y);
-        //     this.ctx.strokeStyle = "rgb(255, 32, 32)";
-        //     this.ctx.stroke();
-        //     this.ctx.closePath();
-
-        //     // Dot in center
-        //     this.ctx.beginPath();
-        //     this.ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
-        //     this.ctx.fillStyle = "rgb(128, 128, 128)";
-        //     this.ctx.fill();
-        //     this.ctx.closePath();
+        //     this.renderAngularState(wheel, wheel.radius * 0.5);
         // }
 
         // Draw LinearStates
@@ -610,54 +533,15 @@ class Renderer {
         }
 
         // Draw AngularStates
-        this.ctx.lineWidth = 3;
+        // this.ctx.lineWidth = 3;
+        // this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        this.ctx.lineWidth = 10;
         this.ctx.strokeStyle = "rgb(192, 192, 192)";
-        //this.ctx.lineJoin = "round";
 
         for (let i = 0; i < this.simulation.world.angularStates.length; i++) {
             var angularState = this.simulation.world.angularStates[i];
 
-            var pos = angularState.position;
-
-            // Light gray line in direction of angle
-            var x2 = pos.x + angularState.angleVector.x * 16;
-            var y2 = pos.y + angularState.angleVector.y * 16;
-            var direction = new Vector2(x2 - x, y2 - y);
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(pos.x, pos.y);
-            this.ctx.lineTo(x2, y2);
-            this.ctx.strokeStyle = "rgb(192, 192, 192)";
-            this.ctx.stroke();
-            this.ctx.closePath();
-
-            // Green line in direction of right perpendicular of angle
-            var right = pos.add(angularState.angleVector.perp().mul(16));
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(pos.x, pos.y);
-            this.ctx.lineTo(right.x, right.y);
-            this.ctx.strokeStyle = "rgb(32, 255, 32)";
-            this.ctx.stroke();
-            this.ctx.closePath();
-
-            // Red line in direction of left perpendicular of angle
-            var right = pos.add(angularState.angleVector.perp().mul(-16));
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(pos.x, pos.y);
-            this.ctx.lineTo(right.x, right.y);
-            this.ctx.strokeStyle = "rgb(255, 32, 32)";
-            this.ctx.stroke();
-            this.ctx.closePath();
-
-            // Dot in center
-            this.ctx.beginPath();
-            this.ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
-            this.ctx.fillStyle = "rgb(128, 128, 128)";
-            this.ctx.fill();
-            this.ctx.closePath();
-
+            this.renderAngularState(angularState, 24);
         }
 
         // Draw lineSegmentParticleCollisions for debugging
@@ -829,6 +713,59 @@ class Renderer {
             this.ctx.fillStyle = "rgb(255, 255, 255)";
             this.ctx.fillText("Paused", this.canvas.width / 2 - 60, 40);
         }
+    }
+
+    renderAngularState(angularState, radius) {
+
+        var x = angularState.position.x;
+        var y = angularState.position.y;
+
+        // Wheel circle
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, angularState.radius - 5, 0, Math.PI * 2);
+        this.ctx.strokeStyle = angularState.color;
+        this.ctx.stroke();
+        this.ctx.closePath();
+
+        var pos = angularState.position;
+
+        // Light gray line in direction of angle
+        var x2 = pos.x + angularState.angleVector.x * radius;
+        var y2 = pos.y + angularState.angleVector.y * radius;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(pos.x, pos.y);
+        this.ctx.lineTo(x2, y2);
+        this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        this.ctx.stroke();
+        this.ctx.closePath();
+
+        // Green line in direction of right perpendicular of angle
+        var right = pos.add(angularState.angleVector.perp().mul(radius));
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(pos.x, pos.y);
+        this.ctx.lineTo(right.x, right.y);
+        this.ctx.strokeStyle = "rgb(32, 255, 32)";
+        this.ctx.stroke();
+        this.ctx.closePath();
+
+        // Red line in direction of left perpendicular of angle
+        var left = pos.add(angularState.angleVector.perp().mul(-radius));
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(pos.x, pos.y);
+        this.ctx.lineTo(left.x, left.y);
+        this.ctx.strokeStyle = "rgb(255, 32, 32)";
+        this.ctx.stroke();
+        this.ctx.closePath();
+
+        // Dot in center
+        this.ctx.beginPath();
+        this.ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+        this.ctx.fillStyle = angularState.color;
+        this.ctx.fill();
+        this.ctx.closePath();
     }
 }
 
