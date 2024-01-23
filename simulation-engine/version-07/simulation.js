@@ -398,7 +398,7 @@ class Simulation {
 
     //
     //createRobot(params = {}) {
-    createRobot(brainGenome) {
+    createRobot(params = {}, brainGenome) {
         
         const robotParams = {
             name : "topDownTracker",
@@ -512,17 +512,19 @@ class Simulation {
             },
         }
 
+        params = robotParams;
+
         // Create brain
-        const brain = this.createNeuralNetwork(brainGenome, robotParams.brain);
+        const brain = this.createNeuralNetwork(brainGenome, params.brain);
 
         // Create body
-        const body = this.createRobotBody(this.world, robotParams.body);
+        const body = this.createRobotBody(this.world, params.body);
         
         // Create vision
-        const vision = this.createRayCamera(robotParams.sensors.vision);
+        const vision = this.createRayCamera(params.sensors.vision);
 
         // Create robot
-        let tracker = new Robot(brain, body, vision, robotParams.updateFunc);
+        let tracker = new Robot(brain, body, vision, params.updateFunc);
         this.robots.push(tracker);
         return tracker;
     }
@@ -809,7 +811,7 @@ class Simulation {
                 bodyParts.linearSprings.push(legSection);
 
                 // Leg angular spring
-                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 0.5, 0.5);
+                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.125, 1.0, 0.5);
                 bodyParts.angularSprings.push(legAngular);
                 legAngulars.push(legAngular);
                 
@@ -823,7 +825,7 @@ class Simulation {
         for (let i = 0; i < bodyParts.legAnchorLinearSprings.length; i++) {
             let legAnchorLinear1 = bodyParts.legAnchorLinearSprings[i];
             let legAnchorLinear2 = bodyParts.legAnchorLinearSprings[(i + 1) % bodyParts.legAnchorLinearSprings.length];
-            let legAngular = this.world.createAngularSpring(legAnchorLinear1, legAnchorLinear2, 0.5, 0.5, 0.5);
+            let legAngular = this.world.createAngularSpring(legAnchorLinear1, legAnchorLinear2, 0.5, 1.0, 0.5);
             bodyParts.angularSprings.push(legAngular);
         }
 
@@ -842,7 +844,7 @@ class Simulation {
 
         // Create brain
         let brainParams = {
-            layers : [numRays, 16, numLegs],
+            layers : [numRays, 24, numLegs],
             activation : {
                 func : ActivationFunctions.invParametricTanhLike,
             },

@@ -5,7 +5,7 @@ import { constants } from './../constants.js';
 
 class LineSegmentParticleCollision {
     constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
-        this.stiffness = 1.0;
+        this.stiffness = 0.5;
         this.damping = 0.5;
         this.warmStart = 0.5;
         this.staticFrictionVelocity = 1.0;
@@ -29,7 +29,8 @@ class LineSegmentParticleCollision {
         const deltaImpulse = this.particle.impulse;
         // Error
         const impulseErrorNormal = this.normal.dot(deltaImpulse.sub(this.restImpulse));
-        const impulseErrorTangent = this.normal.perpDot(deltaImpulse.sub(this.restImpulse));
+        // const impulseErrorTangent = this.normal.perpDot(deltaImpulse.sub(this.restImpulse));
+        const impulseErrorTangent = this.normal.perpDot(this.restImpulse.mul(-1));
         // Correction
         const correctiveImpulse = (this.normal.mul(-impulseErrorNormal * this.reducedMass).add(this.normal.perp().mul(-impulseErrorTangent * this.reducedMass)));
         // Apply

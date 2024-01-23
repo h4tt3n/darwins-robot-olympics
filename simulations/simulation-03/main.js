@@ -22,6 +22,7 @@
 import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { GeneticOperators } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { SimulationEngine } from '../../simulation-engine/version-07/simulationEngine.js';
+import { ActivationFunctions } from '../../neural-network-engine/version-01/neural-network.js';
 
 let numRobots = 50;
 
@@ -33,19 +34,19 @@ const gaParams = {
         func : GeneticOperators.randomWayTournamentSelection,
         params : {
             numParents : 2,
-            maxContestants : 8,
+            maxContestants : 4,
         },
     }, 
     crossover : { // Mate individuals.
         func : GeneticOperators.wholeArithmeticRecombination,
         params : {
-            numChildren : 2,
+            numChildren : 1,
         },
     }, 
     mutation : { // Mutate individuals.
         func : GeneticOperators.randomizeMutation,
         params : {
-            mutationChance : 0.05, 
+            mutationChance : 0.02, 
             minValue : 0, 
             maxValue : 1
         },
@@ -161,10 +162,9 @@ function createRoboCars(numRobots = 50, params = {}, genome = null) {
 function createTrackers(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         let brainGenome = genome ? genome[i].genome : null;
-        simulation.createRobot(brainGenome);
+        simulation.createRobot(params, brainGenome);
     }
 }
-
 
 // Level creation functions
 
