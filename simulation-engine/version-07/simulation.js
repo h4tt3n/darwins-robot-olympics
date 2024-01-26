@@ -703,13 +703,13 @@ class Simulation {
             let output = this.brain.getOutput();
     
             // Acceleration
-            this.body.wheels[0].addAngularImpulse(output[0] * 1.0);
+            this.body.angularStates[0].addAngularImpulse(output[0] * 1.0);
     
             // Brake
             // TODO: Model as constraint, and make gradual, not binary
             if(output[1] > 0.0){
-                this.body.wheels[0].angularImpulse = 0.0;
-                this.body.wheels[0].angularVelocity = 0.0;
+                this.body.angularStates[0].angularImpulse = 0.0;
+                this.body.angularStates[0].angularVelocity = 0.0;
             }
     
             // Gearing
@@ -755,7 +755,7 @@ class Simulation {
         const legJointMaxRadius = 15;
         const legJointMinRadius = 10;
 
-        const legJointMinMass = 5;
+        const legJointMinMass = 10;
         const legJointMaxMass = 10;
 
         // Vision
@@ -808,13 +808,13 @@ class Simulation {
                 bodyParts.particles.push(legJoint);
 
                 // Leg sections
-                var legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 1.0, 1.0, 0.5);
+                var legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 0.5, 1.0, 0.5);
                 legSection.radius = legJointRadius;
                 legSection.color = randomColor2;
                 bodyParts.linearSprings.push(legSection);
 
                 // Leg angular spring
-                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.125, 1.0, 0.5);
+                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 1.0, 0.5);
                 bodyParts.angularSprings.push(legAngular);
                 legAngulars.push(legAngular);
                 
@@ -941,7 +941,7 @@ class Simulation {
 
         // Connect particles with linear springs
         for (let i = 0; i < body.particles.length - 1; i++) {
-            let linearSpring = this.world.createLinearSpring(body.particles[i], body.particles[i+1], 1.0, 1.0, 0.5);
+            let linearSpring = this.world.createLinearSpring(body.particles[i], body.particles[i+1], 0.5, 1.0, 0.5);
             linearSpring.radius = 16;
             linearSpring.color = randomColor2;
             body.linearSprings.push(linearSpring);
@@ -949,7 +949,7 @@ class Simulation {
 
         // Connect linearSprings with angular springs
         for (let i = 0; i < body.linearSprings.length - 1; i++) {
-            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.125, 1.0, 0.5);
+            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.25, 1.0, 0.5);
             body.angularSprings.push(angularSpring);
         }
         
