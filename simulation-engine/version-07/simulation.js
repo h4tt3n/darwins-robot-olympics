@@ -641,8 +641,8 @@ class Simulation {
         body.linearSprings.push(btmLeftToWheel1);
         body.linearSprings.push(btmRightToWheel2);
 
-        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.125, 1.0, 0.5);
-        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.125, 1.0, 0.5);
+        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.25, 1.0, 0.5);
+        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.25, 1.0, 0.5);
 
         body.angularSprings.push(btmLeftToWheel1Angular);
         body.angularSprings.push(btmRightToWheel2Angular);
@@ -680,7 +680,7 @@ class Simulation {
             // Update camera position and angle
             const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
             this.eyes.directionVector = angleVector.perp();
-            this.eyes.origin = this.body.wheels[0].position;
+            this.eyes.origin = this.body.angularStates[0].position;
     
             // Update camera
             let intersections = this.eyes.getOutput();

@@ -84,8 +84,8 @@ class Network {
         this.params = params;
         this.minBiasValue = -100;
         this.maxBiasValue = 100;
-        this.minWeightValue = -100000;
-        this.maxWeightValue = 100000;
+        this.minWeightValue = -10000;
+        this.maxWeightValue = 10000;
         this.minNValue = 0;
         this.maxNValue = 1000;
         //this.activation = params.activation;

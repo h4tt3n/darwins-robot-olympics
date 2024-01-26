@@ -5,7 +5,7 @@ import { constants } from './../constants.js';
 
 class LineSegmentParticleCollision {
     constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
-        this.stiffness = 0.25;
+        this.stiffness = 0.5;
         this.damping = 0.5;
         this.warmStart = 0.5;
         this.staticFrictionVelocity = 1.0;
