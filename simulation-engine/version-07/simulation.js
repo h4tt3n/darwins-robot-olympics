@@ -566,10 +566,10 @@ class Simulation {
         // GearConstraint between engine and wheel
         let engineToWheel1 = this.world.createGearConstraint(engine, wheel1, 1.0);
         let engineToWheel2 = this.world.createGearConstraint(engine, wheel2, 1.0);
-        let wheel1ToWheel2 = this.world.createGearConstraint(wheel1, wheel2, 1.0);
+        //let wheel1ToWheel2 = this.world.createGearConstraint(wheel1, wheel2, 1.0);
         body.gearConstraints.push(engineToWheel1);
         body.gearConstraints.push(engineToWheel2);
-        body.gearConstraints.push(wheel1ToWheel2);
+        //body.gearConstraints.push(wheel1ToWheel2);
 
         // Body
         let btmLeftParticle = this.world.createParticle(position.add(new Vector2(-50, -50)), 10, 10, randomColor);
@@ -582,10 +582,10 @@ class Simulation {
         body.particles.push(topRightParticle);
         body.particles.push(topLeftParticle);
 
-        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 0.5, 0.5, 0.5);
-        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 0.5, 0.5, 0.5);
-        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 0.5, 0.5, 0.5);
-        let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 0.5, 0.5, 0.5);
+        let btmLeftToBtmRight = this.world.createLinearSpring(btmLeftParticle, btmRightParticle, 0.5, 1.0, 0.5);
+        let btmRightToTopRight = this.world.createLinearSpring(btmRightParticle, topRightParticle, 0.5, 1.0, 0.5);
+        let topRightToTopLeft = this.world.createLinearSpring(topRightParticle, topLeftParticle, 0.5, 1.0, 0.5);
+        let topLeftToBtmLeft = this.world.createLinearSpring(topLeftParticle, btmLeftParticle, 0.5, 1.0, 0.5);
         btmLeftToBtmRight.radius = 8;
         btmLeftToBtmRight.color = randomColor2;
         btmRightToTopRight.radius = 8;
@@ -612,10 +612,10 @@ class Simulation {
         // body.angularSprings.push(topRightToTopLeftAngular);
         // body.angularSprings.push(topLeftToBtmLeftAngular);
 
-        let btmLeftToEngine = this.world.createLinearSpring(btmLeftParticle, engine, 0.5, 0.5, 0.5);
-        let btmRightToEngine = this.world.createLinearSpring(btmRightParticle, engine, 0.5, 0.5, 0.5);
-        let topLeftToEngine = this.world.createLinearSpring(topLeftParticle, engine, 0.5, 0.5, 0.5);
-        let topRightToEngine = this.world.createLinearSpring(topRightParticle, engine, 0.5, 0.5, 0.5);
+        let btmLeftToEngine = this.world.createLinearSpring(btmLeftParticle, engine, 0.5, 1.0, 0.5);
+        let btmRightToEngine = this.world.createLinearSpring(btmRightParticle, engine, 0.5, 1.0, 0.5);
+        let topLeftToEngine = this.world.createLinearSpring(topLeftParticle, engine, 0.5, 1.0, 0.5);
+        let topRightToEngine = this.world.createLinearSpring(topRightParticle, engine, 0.5, 1.0, 0.5);
         btmLeftToEngine.radius = 8;
         btmLeftToEngine.color = randomColor2;
         btmRightToEngine.radius = 8;
@@ -631,8 +631,8 @@ class Simulation {
         body.linearSprings.push(topRightToEngine);
 
         // Wheel
-        let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.125, 0.5, 0.5);
-        let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.125, 0.5, 0.5);
+        let btmLeftToWheel1 = this.world.createLinearSpring(btmLeftParticle, wheel1, 0.125, 1.0, 0.5);
+        let btmRightToWheel2 = this.world.createLinearSpring(btmRightParticle, wheel2, 0.125, 1.0, 0.5);
         btmLeftToWheel1.radius = 8;
         btmLeftToWheel1.color = randomColor2;
         btmRightToWheel2.radius = 8;
@@ -641,8 +641,8 @@ class Simulation {
         body.linearSprings.push(btmLeftToWheel1);
         body.linearSprings.push(btmRightToWheel2);
 
-        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.125, 0.5, 0.5);
-        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.125, 0.5, 0.5);
+        let btmLeftToWheel1Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmLeftToWheel1, 0.125, 1.0, 0.5);
+        let btmRightToWheel2Angular = this.world.createAngularSpring(btmLeftToBtmRight, btmRightToWheel2, 0.125, 1.0, 0.5);
 
         body.angularSprings.push(btmLeftToWheel1Angular);
         body.angularSprings.push(btmRightToWheel2Angular);
@@ -703,7 +703,7 @@ class Simulation {
             let output = this.brain.getOutput();
     
             // Acceleration
-            this.body.wheels[0].addAngularImpulse(output[0] * 0.2);
+            this.body.wheels[0].addAngularImpulse(output[0] * 1.0);
     
             // Brake
             // TODO: Model as constraint, and make gradual, not binary
@@ -731,6 +731,9 @@ class Simulation {
             // Set rest angles of steering constraints
             this.body.angularSprings[0].setRestAngleVector( ToolBox.map(output[3], -1, 1, minAngleLeft, maxAngleLeft));
             this.body.angularSprings[1].setRestAngleVector( ToolBox.map(output[3], -1, 1, maxAngleRight, minAngleRight));
+
+            // this.body.angularSprings[0].setRestAngleVector( maxAngleLeft);
+            // this.body.angularSprings[1].setRestAngleVector( minAngleRight);
         }
 
         // Create robot
@@ -846,7 +849,7 @@ class Simulation {
         let brainParams = {
             layers : [numRays, 24, numLegs],
             activation : {
-                func : ActivationFunctions.invParametricTanhLike,
+                func : ActivationFunctions.parametricTanhLike,
             },
         }
 
@@ -946,7 +949,7 @@ class Simulation {
 
         // Connect linearSprings with angular springs
         for (let i = 0; i < body.linearSprings.length - 1; i++) {
-            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.25, 0.5, 0.5);
+            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[i+1], 0.125, 1.0, 0.5);
             body.angularSprings.push(angularSpring);
         }
         
@@ -976,9 +979,9 @@ class Simulation {
             
             for (let i = 0; i < intersections.length; i++) {
                 if( intersections[i] ) {
-                //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                inputs.push(invDistance);
+                    //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
+                    let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                    inputs.push(invDistance);
                 }
             }
     

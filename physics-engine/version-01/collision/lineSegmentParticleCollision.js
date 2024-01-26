@@ -5,12 +5,12 @@ import { constants } from './../constants.js';
 
 class LineSegmentParticleCollision {
     constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
-        this.stiffness = 0.5;
+        this.stiffness = 0.25;
         this.damping = 0.5;
         this.warmStart = 0.5;
         this.staticFrictionVelocity = 1.0;
-        this.staticFriction = 0.9;
-        this.dynamicFriction = 0.1;
+        this.staticFriction = 1;
+        this.dynamicFriction = 0.5;
         this.lineSegment = lineSegment;
         this.particle = particle;
         this.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
@@ -24,13 +24,13 @@ class LineSegmentParticleCollision {
         this.computeReducedMass();
     }
     applyCorrectiveImpulse() {
-        if (this.restImpulse == 0.0) { return; }
+        if (this.restImpulse == Vector2.zero) { return; }
         // State
         const deltaImpulse = this.particle.impulse;
         // Error
         const impulseErrorNormal = this.normal.dot(deltaImpulse.sub(this.restImpulse));
-        // const impulseErrorTangent = this.normal.perpDot(deltaImpulse.sub(this.restImpulse));
-        const impulseErrorTangent = this.normal.perpDot(this.restImpulse.mul(-1));
+        const impulseErrorTangent = this.normal.perpDot(deltaImpulse.sub(this.restImpulse));
+        //const impulseErrorTangent = this.normal.perpDot(this.restImpulse.mul(-1));
         // Correction
         const correctiveImpulse = (this.normal.mul(-impulseErrorNormal * this.reducedMass).add(this.normal.perp().mul(-impulseErrorTangent * this.reducedMass)));
         // Apply
@@ -65,7 +65,11 @@ class LineSegmentParticleCollision {
         //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(-restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
         const restImpulseTangentWithFriction = restImpulseTangent * FrictionCoefficient;
         // Apply
-        this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        if (positionErrorNormal > 0.0) {
+            this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        } else {
+            this.restImpulse = Vector2.zero;
+        }
     }
     computeReducedMass(){
         const k = this.particle.inverseMass;

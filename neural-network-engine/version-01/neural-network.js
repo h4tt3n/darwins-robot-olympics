@@ -84,10 +84,10 @@ class Network {
         this.params = params;
         this.minBiasValue = -100;
         this.maxBiasValue = 100;
-        this.minWeightValue = -10000;
-        this.maxWeightValue = 10000;
+        this.minWeightValue = -100000;
+        this.maxWeightValue = 100000;
         this.minNValue = 0;
-        this.maxNValue = 2;
+        this.maxNValue = 1000;
         //this.activation = params.activation;
         this.init(this.params.layers);
         if (genome) {
@@ -111,12 +111,14 @@ class Network {
     initiateNeuralNetwork() {
         for (var i = 0; i < this.connections.length; i++) {
             this.connections[i].weight = ToolBox.lerp(this.minWeightValue, this.maxWeightValue, Math.random());
+            // console.log(this.minWeightValue, this.maxWeightValue, this.connections[i].weight)
         }
 
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 this.layers[i].neurons[j].bias = ToolBox.lerp(this.minBiasValue, this.maxBiasValue, Math.random());
                 this.layers[i].neurons[j].n = ToolBox.lerp(this.minNValue, this.maxNValue, Math.random());
+                // console.log(this.minNValue, this.maxNValue, this.layers[i].neurons[j].n)
             }
         }
     }
@@ -202,7 +204,7 @@ class Network {
                 thisNeuron.input = sum
                 //thisNeuron.output = this.params.activation.func(sum, this.params.activation.params);
                 thisNeuron.output = this.params.activation.func(sum, {n : thisNeuron.n});
-                //thisNeuron.output = this.params.activation.func(sum, {n : 2});
+                //thisNeuron.output = this.params.activation.func(sum, {n : 1});
 
                 //console.log(thisNeuron.n);
             }
@@ -219,25 +221,18 @@ class Network {
         let chromosome = [];
         for (var i = 0; i < this.connections.length; i++) {
             chromosome.push(ToolBox.map(this.connections[i].weight, this.minWeightValue, this.maxWeightValue, 0, 1));
-            //chromosome.push(1.0 / this.connections[i].weight);
-            //chromosome.push(1.0 / (1.0 + Math.exp(-this.connections[i].weight)));
-            //chromosome.push(ActivationFunctions.sigmoid(this.connections[i].weight));
+            //console.log(this.connections[i].weight, this.minWeightValue, this.maxWeightValue, chromosome[chromosome.length - 1]);
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, this.minBiasValue, this.maxBiasValue, 0, 1));
-                //chromosome.push(1.0 / this.layers[i].neurons[j].bias);
-                //chromosome.push(1.0 / (1.0 + Math.exp(-this.layers[i].neurons[j].bias)));
-                //chromosome.push(ActivationFunctions.sigmoid(this.layers[i].neurons[j].bias));
+                //console.log(this.layers[i].neurons[j].bias, this.minBiasValue, this.maxBiasValue, chromosome[chromosome.length - 1]);
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 chromosome.push(ToolBox.map(this.layers[i].neurons[j].n, this.minNValue, this.maxNValue, 0, 1));
-                //chromosome.push(1.0 / this.layers[i].neurons[j].n);
-                //chromosome.push(1.0 / (1.0 + this.layers[i].neurons[j].n));
-                //chromosome.push(ActivationFunctions.sigmoid(this.layers[i].neurons[j].n));
-                
+                //console.log(this.layers[i].neurons[j].n, this.minNValue, this.maxNValue, chromosome[chromosome.length - 1]);
             }
         }
         return chromosome;
@@ -247,26 +242,20 @@ class Network {
         let chromosomeIndex = 0;
         for (var i = 0; i < this.connections.length; i++) {
             this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minWeightValue, this.maxWeightValue);
-            //this.connections[i].weight = 1.0 / chromosome[chromosomeIndex];
-            //this.connections[i].weight = Math.log(chromosome[chromosomeIndex] / (1 - chromosome[chromosomeIndex]));
-            //this.connections[i].weight = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
+            //console.log(chromosome[chromosomeIndex], this.minWeightValue, this.maxWeightValue, this.connections[i].weight);
             chromosomeIndex++;
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minBiasValue, this.maxBiasValue);
-                //this.layers[i].neurons[j].bias = 1.0 / chromosome[chromosomeIndex];
-                //this.layers[i].neurons[j].bias = Math.log(chromosome[chromosomeIndex] / (1 - chromosome[chromosomeIndex]));
-                //this.layers[i].neurons[j].bias = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
+                //console.log(chromosome[chromosomeIndex], this.minBiasValue, this.maxBiasValue, this.layers[i].neurons[j].bias);
                 chromosomeIndex++;
             }
         }
         for (var i = 1; i < this.layers.length; i++) {
             for (var j = 0; j < this.layers[i].neurons.length; j++) {
                 this.layers[i].neurons[j].n = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minNValue, this.maxNValue);
-                //this.layers[i].neurons[j].n = 1.0 / chromosome[chromosomeIndex];
-                //this.layers[i].neurons[j].n = (1.0 / chromosome[chromosomeIndex]) - 1.0;
-                //this.layers[i].neurons[j].n = ActivationFunctions.inverseSigmoid(chromosome[chromosomeIndex]);
+                //console.log(chromosome[chromosomeIndex], this.minNValue, this.maxNValue, this.layers[i].neurons[j].n);
                 chromosomeIndex++;
             }
         }
@@ -380,6 +369,7 @@ class ActivationFunctions {
 
     static invParametricTanhLike(x, params = {}) {
         let n = params.n;
+        //console.log(n);
         // works with n = [0, infinite]
         // Lower n gives a flatter sigmoid
         // Higher n gives a steeper sigmoid

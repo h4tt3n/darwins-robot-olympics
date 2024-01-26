@@ -5,7 +5,7 @@ import { constants } from './../constants.js';
 
 class LineSegmentWheelCollision {
     constructor(lineSegment, wheel, lineSegmentCollisionPoint, wheelCollisionPoint, distance, normal) {
-        this.stiffness = 1.0;
+        this.stiffness = 0.5;
         this.damping = 0.5;
         this.warmStart = 0.5;
         this.staticFrictionVelocity = 1.0;
@@ -24,7 +24,7 @@ class LineSegmentWheelCollision {
         this.computeReducedMass();
     }
     applyCorrectiveImpulse() {
-        if (this.restImpulse == 0.0) { return; }
+        if (this.restImpulse == Vector2.zero) { return; }
         // State
         const relativeCollisionPoint = this.wheelCollisionPoint.sub(this.wheel.position);
         const deltaImpulse = this.wheel.impulse.add(relativeCollisionPoint.perpDot(-this.wheel.angularImpulse));
@@ -69,7 +69,12 @@ class LineSegmentWheelCollision {
         //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(-restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
         const restImpulseTangentWithFriction = restImpulseTangent * FrictionCoefficient;
         // Apply
-        this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        //this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        if (positionErrorNormal > 0.0) {
+            this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        } else {
+            this.restImpulse = Vector2.zero;
+        }
     }
     computeReducedMass(){
         const k = this.wheel.inverseMass + this.wheel.radius * this.wheel.radius * this.wheel.inverseInertia;
