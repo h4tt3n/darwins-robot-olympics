@@ -1,5 +1,7 @@
 "use strict";
 
+import NodeBase from "./nodeBase.js";
+
 class ActionBase extends NodeBase {
     constructor() {
         super();
@@ -11,3 +13,5 @@ class ActionBase extends NodeBase {
         return super.toString();
     }
 };
+
+export { ActionBase };

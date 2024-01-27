@@ -1,6 +1,6 @@
 "use strict";
 
-class NodeStates {
+class NodeState {
     constructor() {
         this.SUCCESS = 0;
         this.RUNNING = 1;
@@ -9,4 +9,4 @@ class NodeStates {
     }
 };
 
-export { NodeStates };
+export { NodeState };
