@@ -3,7 +3,7 @@
 import { NodeState } from "../nodeState";
 import { CompositeBase } from "../compositeBase";
 
-class Sequence extends CompositeBase {
+class Serialiser extends CompositeBase {
     constructor(nodes) {
         super(nodes);
         this.nodeIndex = 0;
@@ -19,17 +19,20 @@ class Sequence extends CompositeBase {
             return this.state;
         }
         switch (this.children[this.nodeIndex].evaluate()) {
-            case NodeState.FAILURE:
-                this.state = NodeState.FAILURE;
-                this.reset();
-                return this.state;
             case NodeState.SUCCESS:
                 this.nodeIndex++;
-                return this.evaluate();
+                this.evaluate();
+                this.state = NodeState.RUNNING;
+                break;
             case NodeState.RUNNING:
                 this.state = NodeState.RUNNING;
-                return this.state;
+                break;
+            case NodeState.FAILURE:
+                this.reset();
+                this.state = NodeState.FAILURE;
+                break;
         }
+        return this.state;
     }
     reset() {
         this.nodeIndex = 0;
@@ -39,4 +42,4 @@ class Sequence extends CompositeBase {
     }
 }
 
-export { Sequence };
+export { Serialiser };
