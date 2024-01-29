@@ -26,6 +26,9 @@ class BehaviorTreeFactory {
     static sequence(nodes) {
         return new Sequence(nodes);
     }
+    static serialiser(nodes) {
+        return new Serialiser(nodes);
+    }
     static alwaysReturnFailure() {
         return new AlwaysReturnFailure();
     }
@@ -38,14 +41,14 @@ class BehaviorTreeFactory {
     static delay(delayTime) {
         return new Delay(delayTime);
     }
+    static inverter(node) {
+        return new Inverter(node);
+    }
     static limiter(node, numTimes) {
         return new Limiter(node, numTimes);
     }
     static repeater(node, numRepeats) {
         return new Repeater(node, numRepeats);
-    }
-    static inverter(node) {
-        return new Inverter(node);
     }
 }
 
