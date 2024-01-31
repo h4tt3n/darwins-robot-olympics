@@ -1,7 +1,7 @@
 "use strict";
 
 import { NodeState } from "../nodeState.js";
-import { CompositeBase } from "../compositeBase.js";
+import { CompositeBase } from "../base/compositeBase.js";
 
 class Selector extends CompositeBase {
     constructor(nodes) {

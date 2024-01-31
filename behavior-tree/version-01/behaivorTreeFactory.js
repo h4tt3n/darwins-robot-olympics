@@ -1,7 +1,7 @@
 "use strict";
 
 import { BehaviorTree } from "./behaviorTree.js";
-import { Action } from "./actions/action.js";
+import { ActionCommand } from "./actions/actionCommand.js";
 import { Selector } from "./composites/selector.js";
 import { Sequence } from "./composites/sequence.js";
 import { Serialiser } from "./composites/serialiser.js";
@@ -18,7 +18,7 @@ class BehaviorTreeFactory {
         return new BehaviorTree(entity);
     }
     static action(command) {
-        return new Action(command);
+        return new ActionCommand(command);
     }
     static selector(nodes) {
         return new Selector(nodes);

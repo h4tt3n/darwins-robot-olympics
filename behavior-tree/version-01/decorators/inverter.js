@@ -1,7 +1,7 @@
 "use strict";
 
 import { NodeState } from "../nodeState.js";
-import { DecoratorBase } from "../decoratorBase.js";
+import { DecoratorBase } from "../base/decoratorBase.js";
 
 class Inverter extends DecoratorBase {
     constructor(node) {

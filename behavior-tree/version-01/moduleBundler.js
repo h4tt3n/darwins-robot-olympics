@@ -11,6 +11,8 @@ import { NodeBase } from "./base/nodeBase.js";
 import { ActionCommand } from "./actions/actionCommand.js";
 
 // Commands
+import { HasReachedTarget } from "./commands/hasReachedTarget.js";
+import { ReturnSuccess } from "./commands/returnSuccess.js";
 
 // Composites
 import { Selector } from "./composites/selector.js";
@@ -33,14 +35,26 @@ import { NodeState } from "./nodeState.js";
 
 // Export
 export {
+    // Base classes
     ActionBase,
     CommandBase,
     CompositeBase,
     DecoratorBase,
     NodeBase,
+
+    // Actions
+    ActionCommand,
+
+    // Commands
+    HasReachedTarget,
+    ReturnSuccess,
+
+    // Composites
     Selector,
     Sequence,
     Serialiser,
+
+    // Decorators
     AlwaysReturnFailure,
     AlwaysReturnSuccess,
     AlwaysReturnRunning,
@@ -48,7 +62,8 @@ export {
     Inverter,
     Limiter,
     Repeater,
-    ActionCommand,
+
+    // Core
     BehaviorTreeFactory,
     BehaviorTree,
     NodeState

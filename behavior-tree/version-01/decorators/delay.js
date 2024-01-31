@@ -1,7 +1,7 @@
 "use strict";
 
 import { NodeState } from "../nodeState.js";
-import { DecoratorBase } from "../decoratorBase.js";
+import { DecoratorBase } from "../base/decoratorBase.js";
 
 class Delay extends DecoratorBase {
     constructor(node, numTurns) {

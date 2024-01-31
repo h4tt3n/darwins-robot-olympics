@@ -1,7 +1,7 @@
 "use strict";
 
-import NodeBase from "./nodeBase.js";
-import NodeState from "./nodeState.js";
+import { NodeBase } from "./base/nodeBase.js";
+import { NodeState } from "./nodeState.js";
 
 class BehaviorTree {
     constructor(entity) {

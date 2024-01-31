@@ -1,6 +1,6 @@
 "use strict";
 
-import NodeBase from "./nodeBase.js";
+import { NodeBase } from "./nodeBase.js";
 
 class ActionBase extends NodeBase {
     constructor() {

@@ -1,7 +1,7 @@
 "use strict";
 
-import { NodeState } from "../nodeState";
-import { CompositeBase } from "../compositeBase";
+import { NodeState } from "../nodeState.js";
+import { CompositeBase } from "../base/compositeBase.js";
 
 class Serialiser extends CompositeBase {
     constructor(nodes) {

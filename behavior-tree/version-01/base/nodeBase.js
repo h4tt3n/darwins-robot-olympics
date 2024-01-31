@@ -19,6 +19,6 @@ class NodeBase {
     toString() {
         return this.constructor.name;
     }
-}
+};
 
 export { NodeBase };

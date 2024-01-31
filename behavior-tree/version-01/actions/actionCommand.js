@@ -1,7 +1,7 @@
 "use strict";
 
 import { ActionBase } from "../base/actionBase.js";
-import CommandBase from "../base/commandBase.js";
+import { CommandBase } from "../base/commandBase.js";
 
 class ActionCommand extends ActionBase {
     constructor(command) {
