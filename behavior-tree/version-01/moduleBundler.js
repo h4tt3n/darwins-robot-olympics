@@ -13,6 +13,8 @@ import { ActionCommand } from "./actions/actionCommand.js";
 // Commands
 import { HasReachedTarget } from "./commands/hasReachedTarget.js";
 import { ReturnSuccess } from "./commands/returnSuccess.js";
+import { ReturnFailure } from "./commands/returnFailure.js";
+import { ReturnRunning } from "./commands/returnRunning.js";
 
 // Composites
 import { Selector } from "./composites/selector.js";
@@ -48,6 +50,8 @@ export {
     // Commands
     HasReachedTarget,
     ReturnSuccess,
+    ReturnFailure,
+    ReturnRunning,
 
     // Composites
     Selector,

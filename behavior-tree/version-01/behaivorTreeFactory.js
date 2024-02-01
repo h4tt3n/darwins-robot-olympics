@@ -27,7 +27,7 @@ class BehaviorTreeFactory {
         return new Sequence(nodes);
     }
     static serialiser(nodes) {
-        return new Serialiser(nodes);
+        return new Serialiser(arguments);
     }
     static alwaysReturnFailure() {
         return new AlwaysReturnFailure();

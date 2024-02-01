@@ -4,9 +4,9 @@ import { NodeBase } from "./base/nodeBase.js";
 import { NodeState } from "./nodeState.js";
 
 class BehaviorTree {
-    constructor(entity) {
+    constructor(entity, rootNode) {
         this.entity = entity;
-        this.rootNode = null;
+        this.rootNode = rootNode;
         this.state = NodeState.DEFAULT;
     }
     add(node) {

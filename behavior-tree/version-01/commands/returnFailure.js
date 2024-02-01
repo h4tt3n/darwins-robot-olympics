@@ -3,14 +3,14 @@
 import { CommandBase } from "../base/commandBase.js";
 import { NodeState } from "../nodeState.js";
 
-class ReturnSuccess extends CommandBase {
+class ReturnFailure extends CommandBase {
     constructor() {
         super();
     }
     execute() {
-        console.log("ReturnSuccess.execute");
-        return NodeState.SUCCESS;
+        console.log("ReturnFailure.execute");
+        return NodeState.FAILURE;
     }
 }
 
-export { ReturnSuccess };
+export { ReturnFailure };

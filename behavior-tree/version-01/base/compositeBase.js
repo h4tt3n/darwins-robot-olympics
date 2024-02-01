@@ -5,7 +5,11 @@ import { NodeBase } from "./nodeBase.js";
 class CompositeBase extends NodeBase {
     constructor(nodes) {
         super();
-        this.children = [];
+        // for (let i = 0; i < arguments.length; i++) {
+        //     console.log(arguments[i]);
+        // }
+
+        this.children = nodes;
         
     }
     add(node) {

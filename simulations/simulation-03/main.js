@@ -254,11 +254,11 @@ function pitFall() {
     let bottom = 400;
     let left = -1200;
     let right = 2800;
-    let pitTopOffset = 200;
+    let pitTopOffset = 0;
     let pitBottomOffset = 200;
 
-    let pitLeft = 600;
-    let pitRight = 1000;
+    let pitLeft = 650;
+    let pitRight = 950;
     let pitBottom = 3000;
 
     // Create world

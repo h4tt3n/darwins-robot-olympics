@@ -13,11 +13,12 @@ class Serialiser extends CompositeBase {
             this.state = NodeState.FAILURE;
             return this.state;
         }
-        if(this.nodeIndex == this.children.length-1) {
+        if(this.nodeIndex == this.children.length) {
             this.state = NodeState.SUCCESS;
             this.reset();
             return this.state;
         }
+        
         switch (this.children[this.nodeIndex].evaluate()) {
             case NodeState.SUCCESS:
                 this.nodeIndex++;

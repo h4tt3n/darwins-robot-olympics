@@ -5,7 +5,6 @@ class NodeBase {
         this.root = null;
         this.parent = null;
         this.state = null;
-        this.timeStamp = new Date().getTime();
     }
     add(node) {
         return null;
