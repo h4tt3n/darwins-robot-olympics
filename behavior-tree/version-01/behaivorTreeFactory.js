@@ -47,8 +47,8 @@ class BehaviorTreeFactory {
     static limiter(node, numTimes) {
         return new Limiter(node, numTimes);
     }
-    static repeater(node, numRepeats) {
-        return new Repeater(node, numRepeats);
+    static repeater(node) {
+        return new Repeater(arguments, 3);
     }
 }
 

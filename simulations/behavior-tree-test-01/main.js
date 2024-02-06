@@ -11,10 +11,12 @@ class Entity {
 
 var entity = new Entity();
 
-var node = BT.BehaviorTreeFactory.serialiser(
-    BT.BehaviorTreeFactory.action(new ReturnSuccess()),
-    BT.BehaviorTreeFactory.action(new ReturnSuccess()),
-    BT.BehaviorTreeFactory.action(new ReturnSuccess())
+var node = BT.BehaviorTreeFactory.repeater( 
+    BT.BehaviorTreeFactory.serialiser(
+        BT.BehaviorTreeFactory.action(new ReturnSuccess()),
+        BT.BehaviorTreeFactory.action(new ReturnSuccess()),
+        BT.BehaviorTreeFactory.action(new ReturnSuccess())
+    )
 );
 
 var bTree = new BT.BehaviorTree(entity, node);
