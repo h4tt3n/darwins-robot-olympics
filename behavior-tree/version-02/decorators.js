@@ -59,25 +59,6 @@ class Repeater extends Decorator {
     }
 }
 
-class MaxAttempts extends Decorator {
-    constructor(name, child, attempts) {
-        super(name, child);
-        this.attempts = attempts;
-        this.count = 0;
-    }
-    tick() {
-        let status = this.child.tick();
-        if (status === NodeState.SUCCESS || status === NodeState.FAILURE) {
-            this.count++;
-            if (this.count === this.attempts) {
-                this.count = 0;
-                return status;
-            }
-        }
-        return NodeState.RUNNING;
-    }
-}
-
 class UntilFail extends Decorator {
     constructor(name, child) {
         super(name, child);
@@ -106,4 +87,4 @@ class UntilSuccess extends Decorator {
     }
 }
 
-export { Inverter, Delay, Repeater, MaxAttempts, UntilFail, UntilSuccess };
+export { Inverter, Delay, Repeater, UntilFail, UntilSuccess };

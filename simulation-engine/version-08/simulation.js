@@ -90,9 +90,6 @@ class Simulation {
 
         this.generationTicks++;
 
-        // Physics (Robot body)
-        this.world.update();
-
         // Raycasting (Robot vision)
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
         this.rayCameras.forEach(rayCamera => { rayCamera.castAll(raycastableSegments) });
@@ -100,6 +97,9 @@ class Simulation {
 
         // Neural network (Robot brain)
         this.robots.forEach(robot => { robot.update(); });
+
+        // Physics (Robot body)
+        this.world.update();
 
         // Evaluate population
         this.evaluate();
