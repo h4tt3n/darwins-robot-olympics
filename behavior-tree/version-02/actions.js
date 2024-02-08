@@ -29,15 +29,60 @@ class Running extends Node {
     }
 }
 
-class MoveToTarget extends Node {
-    constructor(name, targetNumber) {
+class HasTimedOut extends Node {
+    constructor(robot, timeout, name) {
         super(name);
-        this.targetNumber = targetNumber;
+        this.robot = robot;
+        this.timeout = timeout;
     }
     tick() {
-        console.log(`MoveToTarget: tick: moving to target ${this.targetNumber}`);
+        if(this.robot.ticksAlive > this.timeout) {
+            return NodeState.SUCCESS;
+        } else {
+            return NodeState.FAILURE;
+        }
+    }
+}
+// JSDoc description with params and return
+/**
+ * Represents a node that checks if a robot has reached a target.
+ * @extends Node
+ * @param {Robot} robot - The robot to check
+ * @param {Target} target - The target to check
+ * @param {string} name - The name of the node
+ * @return {NodeState} - The state of the node
+ */
+class HasReachedTarget extends Node {
+    constructor(robot, target, name) {
+        super(name);
+        this.robot = robot;
+        this.target = target;
+    }
+    tick() {
+        let position = this.robot.body.particles[0].position;
+        let distance = position.distance(target.position);
+        if(distance < target.radius + creature.body.particles[0].radius) {
+            return NodeState.SUCCESS;
+        } else {
+            return NodeState.FAILURE;
+        }
+    }
+}
+
+class CalculateFitness extends Node {
+    constructor(robot, name) {
+        super(name);
+        this.robot = robot;
+    }
+    tick() {
+        let fitness = 0;
+        let position = this.robot.body.particles[0].position;
+        let distance = position.distance(target.position);
+        fitness += distance;
+        fitness += this.robot.ticksAlive;
+        this.robot.fitness = fitness;
         return NodeState.SUCCESS;
     }
 }
 
-export { Success, Failure, Running, MoveToTarget };
+export { Success, Failure, Running, HasTimedOut, HasReachedTarget, CalculateFitness};

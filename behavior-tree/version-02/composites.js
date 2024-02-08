@@ -26,10 +26,23 @@ class Selector extends Composite {
     }
 }
 
+/**
+ * Represents a sequence in a behavior tree, executing its children sequentially.
+ */
 class Sequence extends Composite {
+    /**
+     * Creates a sequence.
+     * @constructor
+     * @param {string} name - The name of the sequence
+     * @param {Node[]} children - The children of the sequence
+     */
     constructor(name, children=[]) {
         super(name, children);
     }
+    /**
+     * Executes the children of the sequence.
+     * @return {NodeState} - The state of the sequence
+     */
     tick() {
         for (let child of this.children) {
             let status = child.tick();

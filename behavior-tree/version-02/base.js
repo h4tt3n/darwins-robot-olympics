@@ -1,6 +1,14 @@
 "use strict";
 
 // Node state enum
+/**
+ * Represents the state of a node in a behavior tree.
+ * @enum {string}
+ * @readonly
+ * @property {string} SUCCESS - The node has completed successfully
+ * @property {string} FAILURE - The node has failed
+ * @property {string} RUNNING - The node is running
+ */
 class NodeState {
     static SUCCESS = "SUCCESS";
     static FAILURE = "FAILURE";
@@ -8,7 +16,16 @@ class NodeState {
 }
 
 // Node base class
+/**
+ * Represents a node in a behavior tree.
+ * @abstract
+ */
 class Node {
+    /**
+     * Creates a node.
+     * @constructor
+     * @param {string} name - The name of the node
+     */
     constructor(name) {
         this.name = name;
     }
@@ -74,16 +91,13 @@ class Action extends Node {
 }
 
 // Behavior tree class
-// Only needed for blackboard support
 class BehaviorTree {
-    constructor(entity, root) {
-        this.entity = entity;
+    constructor(root) {
         if (root instanceof Node) {
             this.root = root;
         } else {
             throw new Error("BehaviorTree: root must be a node");
         }
-        this.blackboard = new Map();
     }
     tick() {
         return this.root.tick();
