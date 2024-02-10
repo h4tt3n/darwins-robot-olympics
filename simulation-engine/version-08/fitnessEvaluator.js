@@ -1,6 +1,6 @@
 "use strict";
 
-import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness } from "../../behavior-tree/version-02/wrapper.js";
+import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness, BumpTicksAlive } from "../../behavior-tree/version-02/wrapper.js";
 
 
 class FitnessEvaluator {
@@ -15,8 +15,6 @@ class FitnessEvaluator {
     }
     setup(robots) {
 
-        console.log(this.simulation.wayPoints);
-
         for (let robot of robots) {
             
             let behaviorTree = new BehaviorTree(
@@ -28,6 +26,7 @@ class FitnessEvaluator {
                             new HasReachedTarget(robot, this.simulation.wayPoints[2], "HasReachedTarget 3"),
                         ]),
                         new HasTimedOut(robot, 1000, "HasTimedOut"),
+                        //new BumpTicksAlive(robot, "BumpTicksAlive"),
                     ]),
                     new CalculateFitness(robot, "CalculateFitness"),
                 ]),

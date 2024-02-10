@@ -9,11 +9,11 @@ class Selector extends Composite {
     tick() {
         for (let child of this.children) {
             let status = child.tick();
-            console.log(`Selector ${this.name}: tick: evaluating child: ${child.name}`);
+            //console.log(`Selector ${this.name}: tick: evaluating child: ${child.name}`);
             switch (status) {
                 case NodeState.SUCCESS:
                 case NodeState.RUNNING:
-                    console.log(`Selector ${this.name}: tick: child: ${child.name} status: ${status}`);
+                    //console.log(`Selector ${this.name}: tick: child: ${child.name} status: ${status}`);
                     return status;
                 case NodeState.FAILURE:
                     continue;
@@ -21,7 +21,7 @@ class Selector extends Composite {
                     throw new Error(`Selector: Invalid node state ${status}`);
             }
         }
-        console.log(`Selector ${this.name}: status: ${NodeState.FAILURE}`);
+        //console.log(`Selector ${this.name}: status: ${NodeState.FAILURE}`);
         return NodeState.FAILURE;
     }
 }
@@ -46,21 +46,21 @@ class Sequence extends Composite {
     tick() {
         for (let child of this.children) {
             let status = child.tick();
-            console.log(`Sequence ${this.name}: tick: evaluating child: ${child.name}`);
+            //console.log(`Sequence ${this.name}: tick: evaluating child: ${child.name}`);
             switch (status) {
                 case NodeState.SUCCESS:
                     continue;
                 case NodeState.FAILURE:
-                    console.log(`Sequence ${this.name}: tick: child: ${child.name} status: ${status}`);
+                    //console.log(`Sequence ${this.name}: tick: child: ${child.name} status: ${status}`);
                     return NodeState.FAILURE;
                 case NodeState.RUNNING:
-                    console.log(`Sequence ${this.name}: tick: child: ${child.name} status: ${status}`);
+                    //console.log(`Sequence ${this.name}: tick: child: ${child.name} status: ${status}`);
                     return NodeState.RUNNING;
                 default:
                     throw new Error(`Sequence: Invalid node state ${status}`);
             }
         }
-        console.log(`Sequence ${this.name}: status: ${NodeState.SUCCESS}`);
+        //console.log(`Sequence ${this.name}: status: ${NodeState.SUCCESS}`);
         return NodeState.SUCCESS;
     }
 }
@@ -79,23 +79,23 @@ class Serializer extends Composite {
     }
     tick() {
         let status = this.children[this.index].tick();
-        console.log(`Serializer ${this.name}: tick: evaluating child: ${this.children[this.index].name}`);
+        //console.log(`Serializer ${this.name}: tick: evaluating child: ${this.children[this.index].name}`);
         switch (status) {
             case NodeState.SUCCESS:
                 this.index++;
                 if (this.index === this.children.length) {
                     this.index = 0;
-                    console.log(`Serializer ${this.name}: status: ${NodeState.SUCCESS}`);
+                    //console.log(`Serializer ${this.name}: status: ${NodeState.SUCCESS}`);
                     return NodeState.SUCCESS;
                 }
-                console.log(`Serializer ${this.name}: tick: child: ${this.children[this.index].name} status: ${status}`);
+                //console.log(`Serializer ${this.name}: tick: child: ${this.children[this.index].name} status: ${status}`);
                 return NodeState.RUNNING;
             case NodeState.FAILURE:
                 this.index = 0;
-                console.log(`Serializer ${this.name}: status: ${NodeState.FAILURE}`);
+                //console.log(`Serializer ${this.name}: status: ${NodeState.FAILURE}`);
                 return NodeState.FAILURE;
             case NodeState.RUNNING:
-                console.log(`Serializer ${this.name}: tick: child: ${this.children[this.index].name} status: ${status}`);
+                //console.log(`Serializer ${this.name}: tick: child: ${this.children[this.index].name} status: ${status}`);
                 return NodeState.RUNNING;
             default:
                 throw new Error(`Serializer: Invalid node state ${status}`);

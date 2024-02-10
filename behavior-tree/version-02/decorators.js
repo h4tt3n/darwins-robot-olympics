@@ -7,16 +7,16 @@ class Inverter extends Decorator {
         super(name, child);
     }
     tick() {
-        console.log("Inverter: tick");
+        //console.log("Inverter: tick");
         switch (this.child.tick()) {
             case NodeState.SUCCESS:
-                console.log("Inverter: SUCCESS");
+                //console.log("Inverter: SUCCESS");
                 return NodeState.FAILURE;
             case NodeState.FAILURE:
-                console.log("Inverter: FAILURE");
+                //console.log("Inverter: FAILURE");
                 return NodeState.SUCCESS;
             case NodeState.RUNNING:
-                console.log("Inverter: RUNNING");
+                //console.log("Inverter: RUNNING");
                 return NodeState.RUNNING;
             default:
                 throw new Error("Inverter: Invalid node state");

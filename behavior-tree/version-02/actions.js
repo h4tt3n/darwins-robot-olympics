@@ -36,6 +36,7 @@ class HasTimedOut extends Node {
         this.timeout = timeout;
     }
     tick() {
+        console.log("HasTimedOut: tick");
         if(this.robot.ticksAlive > this.timeout) {
             return NodeState.SUCCESS;
         } else {
@@ -59,6 +60,7 @@ class HasReachedTarget extends Node {
         this.target = target;
     }
     tick() {
+        console.log("HasReachedTarget: tick");
         let position = this.robot.body.particles[0].position;
         let distance = position.distance(this.target.position);
         if(distance < this.target.radius + this.robot.body.particles[0].radius) {
@@ -75,6 +77,7 @@ class CalculateFitness extends Node {
         this.robot = robot;
     }
     tick() {
+        console.log("CalculateFitness: tick");
         let fitness = 0;
         let position = this.robot.body.particles[0].position;
         let distance = position.distance(this.target.position);
@@ -85,4 +88,16 @@ class CalculateFitness extends Node {
     }
 }
 
-export { Success, Failure, Running, HasTimedOut, HasReachedTarget, CalculateFitness};
+class BumpTicksAlive extends Action {
+    constructor(robot, name) {
+        super(name);
+        this.robot = robot;
+    }
+    tick() {
+        console.log("BumpTicksAlive: tick");
+        this.robot.ticksAlive++;
+        return NodeState.SUCCESS;
+    }
+}
+
+export { Success, Failure, Running, HasTimedOut, HasReachedTarget, CalculateFitness, BumpTicksAlive};
