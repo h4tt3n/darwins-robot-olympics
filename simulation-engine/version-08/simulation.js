@@ -19,7 +19,7 @@ class Simulation {
         this.world = new SquishyPlanet.World();
         this.renderer = new Renderer('canvas', this);
         this.geneticAlgorithm = new GeneticAlgorithm(params.gaParams);
-        this.fitnessEvaluator = new FitnessEvaluator();
+        this.fitnessEvaluator = new FitnessEvaluator(this);
 
         // Render, UI and mouse / keyboard control
         this.renderRaycasts = false;
@@ -107,18 +107,19 @@ class Simulation {
     evaluate() {
     
         // Check if robot has completed challenge, using challenge-specific functions
-        for (let i = 0; i < this.robots.length; i++) {
+        // for (let i = 0; i < this.robots.length; i++) {
             
-            let robot = this.robots[i];
+        //     let robot = this.robots[i];
             
-            if (this.creatureTimeouts(robot, this.generationMaxTicks) || this.hasReachedTarget(robot, this.wayPoints[0])) {
-                this.calculateFitness(robot, this.wayPoints[0]);
-                console.log("fitness " + robot.fitness);
-                this.deleteRobot(robot);
-            } else {
-                robot.ticksAlive++;
-            }
-        }
+        //     if (this.creatureTimeouts(robot, this.generationMaxTicks) || this.hasReachedTarget(robot, this.wayPoints[0])) {
+        //         this.calculateFitness(robot, this.wayPoints[0]);
+        //         console.log("fitness " + robot.fitness);
+        //         this.deleteRobot(robot);
+        //     } else {
+        //         robot.ticksAlive++;
+        //     }
+        // }
+        this.fitnessEvaluator.evaluate();
     
         // When all robots are disabled, create new generation
         if (this.robots.length === 0) {

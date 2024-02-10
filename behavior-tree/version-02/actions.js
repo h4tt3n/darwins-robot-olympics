@@ -60,8 +60,8 @@ class HasReachedTarget extends Node {
     }
     tick() {
         let position = this.robot.body.particles[0].position;
-        let distance = position.distance(target.position);
-        if(distance < target.radius + creature.body.particles[0].radius) {
+        let distance = position.distance(this.target.position);
+        if(distance < this.target.radius + this.robot.body.particles[0].radius) {
             return NodeState.SUCCESS;
         } else {
             return NodeState.FAILURE;
@@ -77,7 +77,7 @@ class CalculateFitness extends Node {
     tick() {
         let fitness = 0;
         let position = this.robot.body.particles[0].position;
-        let distance = position.distance(target.position);
+        let distance = position.distance(this.target.position);
         fitness += distance;
         fitness += this.robot.ticksAlive;
         this.robot.fitness = fitness;

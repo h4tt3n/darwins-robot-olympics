@@ -105,10 +105,14 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+    simulation.createWaypoint(new Vector2(1500, 200), 50, "black");
+    simulation.createWaypoint(new Vector2(1000, 200), 50, "black");
+    simulation.createWaypoint(new Vector2(2500, 200), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
+    // Create fitness evaluator
+    simulation.fitnessEvaluator.setup(simulation.robots);
     // Run simulation
     simulation.setIntervalId = setInterval(update, 0);
 }
