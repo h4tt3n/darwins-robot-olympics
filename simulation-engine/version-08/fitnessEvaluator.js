@@ -1,38 +1,49 @@
 "use strict";
 
-import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness, BumpTicksAlive } from "../../behavior-tree/version-02/wrapper.js";
+import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness, BumpTicksAlive, NodeState } from "../../behavior-tree/version-02/wrapper.js";
 
+class RobotFitnessState {
+    constructor(robot, behaviorTree) {
+        this.robot = robot;
+        this.behaviorTree = behaviorTree;
+        this.fitnessScore = null;
+        this.isCompleted = false;
+    }
+}
 
 class FitnessEvaluator {
     constructor(simulation) {
         this.simulation = simulation;
-        this.behaviorTrees = [];
+        this.RobotFitnessStates = [];
     }
     evaluate() {
-        for (let behaviorTree of this.behaviorTrees) {
-            behaviorTree.tick();
+        for (let robotFitnessState of this.RobotFitnessStates) {
+            if (!robotFitnessState.isCompleted) {
+                let status = robotFitnessState.behaviorTree.tick();
+                if (status === NodeState.SUCCESS) {
+                    robotFitnessState.isCompleted = true;
+                    robotFitnessState.fitnessScore = robotFitnessState.robot.fitness;
+                    this.simulation.deleteRobot(robotFitnessState.robot);
+                } else if (status === NodeState.RUNNING) {
+                    robotFitnessState.robot.ticksAlive++;
+                }
+            }
         }
+
     }
-    setup(robots) {
-
-        for (let robot of robots) {
+    setup() {
+        for (let robot of this.simulation.robots) {
             
-            let behaviorTree = new BehaviorTree(
-                new Sequence("sequence", [
-                    new Selector("selector", [
-                        new Serializer("serializer", [
-                            new HasReachedTarget(robot, this.simulation.wayPoints[0], "HasReachedTarget 1"),
-                            new HasReachedTarget(robot, this.simulation.wayPoints[1], "HasReachedTarget 2"),
-                            new HasReachedTarget(robot, this.simulation.wayPoints[2], "HasReachedTarget 3"),
-                        ]),
-                        new HasTimedOut(robot, 1000, "HasTimedOut"),
-                        //new BumpTicksAlive(robot, "BumpTicksAlive"),
+            let behaviorTree = new Selector("root", [
+                    new Serializer("target check", [
+                        new HasReachedTarget(robot, this.simulation.wayPoints[0], "HasReachedTarget 1"),
+                        new HasReachedTarget(robot, this.simulation.wayPoints[1], "HasReachedTarget 2"),
+                        new HasReachedTarget(robot, this.simulation.wayPoints[2], "HasReachedTarget 3"),
                     ]),
-                    new CalculateFitness(robot, "CalculateFitness"),
-                ]),
-            );
+                    new HasTimedOut(robot, this.simulation.generationMaxTicks, "hasTimedOut")
+                ]);
 
-            this.behaviorTrees.push(behaviorTree);
+            this.RobotFitnessStates.push(new RobotFitnessState(robot, behaviorTree));
         }
     }
 }

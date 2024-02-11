@@ -60,7 +60,7 @@ class HasReachedTarget extends Node {
         this.target = target;
     }
     tick() {
-        console.log("HasReachedTarget: tick");
+        console.log("HasReachedTarget: tick " + this.name);
         let position = this.robot.body.particles[0].position;
         let distance = position.distance(this.target.position);
         if(distance < this.target.radius + this.robot.body.particles[0].radius) {
@@ -79,9 +79,9 @@ class CalculateFitness extends Node {
     tick() {
         console.log("CalculateFitness: tick");
         let fitness = 0;
-        let position = this.robot.body.particles[0].position;
-        let distance = position.distance(this.target.position);
-        fitness += distance;
+        // let position = this.robot.body.particles[0].position;
+        // let distance = position.distance(this.target.position);
+        // fitness += distance;
         fitness += this.robot.ticksAlive;
         this.robot.fitness = fitness;
         return NodeState.SUCCESS;
