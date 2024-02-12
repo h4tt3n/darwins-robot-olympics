@@ -40,7 +40,7 @@ class HasTimedOut extends Node {
         if(this.robot.ticksAlive > this.timeout) {
             return NodeState.SUCCESS;
         } else {
-            return NodeState.FAILURE;
+            return NodeState.RUNNING;
         }
     }
 }
@@ -66,7 +66,7 @@ class HasReachedTarget extends Node {
         if(distance < this.target.radius + this.robot.body.particles[0].radius) {
             return NodeState.SUCCESS;
         } else {
-            return NodeState.FAILURE;
+            return NodeState.RUNNING;
         }
     }
 }
@@ -88,16 +88,4 @@ class CalculateFitness extends Node {
     }
 }
 
-class BumpTicksAlive extends Action {
-    constructor(robot, name) {
-        super(name);
-        this.robot = robot;
-    }
-    tick() {
-        console.log("BumpTicksAlive: tick");
-        this.robot.ticksAlive++;
-        return NodeState.SUCCESS;
-    }
-}
-
-export { Success, Failure, Running, HasTimedOut, HasReachedTarget, CalculateFitness, BumpTicksAlive};
+export { Success, Failure, Running, HasTimedOut, HasReachedTarget, CalculateFitness};

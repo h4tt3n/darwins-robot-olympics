@@ -1,6 +1,6 @@
 "use strict";
 
-import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness, BumpTicksAlive, NodeState } from "../../behavior-tree/version-02/wrapper.js";
+import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness, NodeState } from "../../behavior-tree/version-02/wrapper.js";
 
 class RobotFitnessState {
     constructor(robot, behaviorTree) {
@@ -19,13 +19,19 @@ class FitnessEvaluator {
     evaluate() {
         for (let robotFitnessState of this.RobotFitnessStates) {
             if (!robotFitnessState.isCompleted) {
+                
                 let status = robotFitnessState.behaviorTree.tick();
+                
                 if (status === NodeState.SUCCESS) {
+
                     robotFitnessState.isCompleted = true;
                     robotFitnessState.fitnessScore = robotFitnessState.robot.fitness;
                     this.simulation.deleteRobot(robotFitnessState.robot);
+
                 } else if (status === NodeState.RUNNING) {
+
                     robotFitnessState.robot.ticksAlive++;
+                    
                 }
             }
         }

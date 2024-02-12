@@ -105,8 +105,8 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    simulation.createWaypoint(new Vector2(1000, 200), 50, "black");
     simulation.createWaypoint(new Vector2(0, 200), 50, "black");
+    simulation.createWaypoint(new Vector2(1000, 200), 50, "black");
     simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
