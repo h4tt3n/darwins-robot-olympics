@@ -1,6 +1,11 @@
 "use strict";
 
-import { BehaviorTree, Sequence, Selector, Serializer, HasReachedTarget, HasTimedOut, CalculateFitness, NodeState } from "../../behavior-tree/version-02/wrapper.js";
+import { 
+    NodeState, BehaviorTree, 
+    Sequence, Selector, Serializer, SequenceOR,
+    HasReachedTarget, HasTimedOut, CalculateFitness,
+    Inverter, Delay, Repeater, UntilFail, UntilSuccess
+} from "../../behavior-tree/version-02/wrapper.js";
 
 class RobotFitnessState {
     constructor(robot, behaviorTree) {
@@ -40,7 +45,7 @@ class FitnessEvaluator {
     setup() {
         for (let robot of this.simulation.robots) {
             
-            let behaviorTree = new Selector("root", [
+            let behaviorTree = new SequenceOR("root", [
                     new Serializer("target check", [
                         new HasReachedTarget(robot, this.simulation.wayPoints[0], "HasReachedTarget 1"),
                         new HasReachedTarget(robot, this.simulation.wayPoints[1], "HasReachedTarget 2"),

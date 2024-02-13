@@ -85,17 +85,16 @@ class Serializer extends Composite {
                 this.index++;
                 if (this.index === this.children.length) {
                     this.index = 0;
-                    //console.log(`Serializer ${this.name}: status: ${NodeState.SUCCESS}`);
+                    console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: SUCCESS;`)
                     return NodeState.SUCCESS;
                 }
-                //console.log(`Serializer ${this.name}: tick: child: ${this.children[this.index].name} status: ${status}`);
+                console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: RUNNING;`)
                 return NodeState.RUNNING;
             case NodeState.FAILURE:
                 this.index = 0;
-                //console.log(`Serializer ${this.name}: status: ${NodeState.FAILURE}`);
                 return NodeState.FAILURE;
             case NodeState.RUNNING:
-                //console.log(`Serializer ${this.name}: tick: child: ${this.children[this.index].name} status: ${status}`);
+                console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: RUNNING;`)
                 return NodeState.RUNNING;
             default:
                 throw new Error(`Serializer: Invalid node state ${status}`);
@@ -129,4 +128,34 @@ class Serializer extends Composite {
 //     }
 // }
 
-export { Selector, Sequence, Serializer };
+// Composite that adheres to the following rules:
+// 1. If any child returns SUCCESS, the sequence will stop evaluating and return SUCCESS
+// 2. If all children returns RUNNING, the sequence will return RUNNING
+// 3. THe composite will effectively work as an "OR" gate, where the first child that returns SUCCESS will stop the evaluation and return SUCCESS
+
+class SequenceOR extends Composite {
+    constructor(name, children=[]) {
+        super(name, children);   
+    }
+    tick() {
+        for (let child of this.children) {
+            let status = child.tick();
+            switch (status) {
+                case NodeState.SUCCESS:
+                    console.log (`class: ${this.constructor.name} | name: ${this.name} | return: SUCCESS;`)
+                    return NodeState.SUCCESS;
+                case NodeState.FAILURE:
+                    return NodeState.FAILURE;
+                case NodeState.RUNNING:
+                    continue;
+                default:
+                    throw new Error(`Unknown result: ${status}`);
+            }
+        }
+        console.log (`class: ${this.constructor.name} | name: ${this.name} | return: RUNNING;`)
+        return NodeState.RUNNING;
+    }
+}
+
+
+export { Selector, Sequence, Serializer, SequenceOR };

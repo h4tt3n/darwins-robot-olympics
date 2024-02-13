@@ -1,7 +1,11 @@
 "use strict";
 
-import { BT } from "../../behavior-tree/version-01/bT.js";
-import { ReturnSuccess } from "../../behavior-tree/version-01/moduleBundler.js";
+import { 
+    NodeState, BehaviorTree, 
+    Sequence, Selector, Serializer, SequenceOR,
+    Success, Failure, Running, HasReachedTarget, HasTimedOut, CalculateFitness,
+    Inverter, Delay, Repeater, UntilFail, UntilSuccess
+} from "../../behavior-tree/version-02/wrapper.js";
 
 class Entity {
     constructor() {
@@ -11,14 +15,16 @@ class Entity {
 
 var entity = new Entity();
 
-var node = BT.BehaviorTreeFactory.repeater( 
-    BT.BehaviorTreeFactory.serialiser(
-        BT.BehaviorTreeFactory.action(new ReturnSuccess()),
-        BT.BehaviorTreeFactory.action(new ReturnSuccess()),
-        BT.BehaviorTreeFactory.action(new ReturnSuccess())
-    )
-);
+var tree = new SequenceOR("root", [
+    new Serializer("target check", [
+        new Delay("delay 1", new Success("success 1"), 1),
+        new Delay("delay 2", new Success("success 2"), 1),
+    ]),
+    new Delay("delay 3", new Success("success 3"), 1),
+]);
 
-var bTree = new BT.BehaviorTree(entity, node);
+let state = null;
 
-bTree.evaluate();
+do {
+    state = tree.tick();
+} while (state === NodeState.RUNNING);

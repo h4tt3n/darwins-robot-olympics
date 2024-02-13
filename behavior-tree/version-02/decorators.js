@@ -33,10 +33,12 @@ class Delay extends Decorator {
     tick() {
         if (this.elapsed < this.delay) {
             this.elapsed++;
+            console.log (`class: ${this.constructor.name} | name: ${this.name} | elapsed: ${this.elapsed} | return: RUNNING;`)
             return NodeState.RUNNING;
+        } else {
+            this.elapsed = 0;
+            return this.child.tick();
         }
-        this.elapsed = 0;
-        return this.child.tick();
     }
 }
 

@@ -37,7 +37,7 @@ class HasTimedOut extends Node {
     }
     tick() {
         console.log("HasTimedOut: tick");
-        if(this.robot.ticksAlive > this.timeout) {
+        if(this.robot.ticksAlive >= this.timeout) {
             return NodeState.SUCCESS;
         } else {
             return NodeState.RUNNING;
