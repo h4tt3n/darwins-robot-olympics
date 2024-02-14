@@ -31,6 +31,7 @@ class FitnessEvaluator {
 
                     robotFitnessState.isCompleted = true;
                     robotFitnessState.fitnessScore = robotFitnessState.robot.fitness;
+                    //robotFitnessState.behaviorTree.reset();
                     this.simulation.deleteRobot(robotFitnessState.robot);
 
                 } else if (status === NodeState.RUNNING) {
@@ -43,6 +44,8 @@ class FitnessEvaluator {
 
     }
     setup() {
+        this.RobotFitnessStates = [];
+        
         for (let robot of this.simulation.robots) {
             
             let behaviorTree = new SequenceOR("root", [

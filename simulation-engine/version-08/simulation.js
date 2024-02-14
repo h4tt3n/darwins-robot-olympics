@@ -134,6 +134,8 @@ class Simulation {
             // Create new robots
             //this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
+
+            this.fitnessEvaluator.setup(this.robots);
             
             // Reset simulation
             this.deadRobots = [];

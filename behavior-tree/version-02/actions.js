@@ -9,6 +9,9 @@ class Success extends Node {
     tick() {
         return NodeState.SUCCESS;
     }
+    reset() {
+        return;
+    }
 }
 
 class Failure extends Node {
@@ -17,6 +20,9 @@ class Failure extends Node {
     }
     tick() {
         return NodeState.FAILURE;
+    }
+    reset() {
+        return;
     }
 }
 
@@ -27,6 +33,9 @@ class Running extends Node {
     tick() {
         return NodeState.RUNNING;
     }
+    reset() {
+        return;
+    }
 }
 
 class HasTimedOut extends Node {
@@ -36,12 +45,15 @@ class HasTimedOut extends Node {
         this.timeout = timeout;
     }
     tick() {
-        console.log("HasTimedOut: tick");
+        //console.log("HasTimedOut: tick");
         if(this.robot.ticksAlive >= this.timeout) {
             return NodeState.SUCCESS;
         } else {
             return NodeState.RUNNING;
         }
+    }
+    reset() {
+        return;
     }
 }
 // JSDoc description with params and return
@@ -60,7 +72,7 @@ class HasReachedTarget extends Node {
         this.target = target;
     }
     tick() {
-        console.log("HasReachedTarget: tick " + this.name);
+        //console.log("HasReachedTarget: tick " + this.name);
         let position = this.robot.body.particles[0].position;
         let distance = position.distance(this.target.position);
         if(distance < this.target.radius + this.robot.body.particles[0].radius) {
@@ -68,6 +80,9 @@ class HasReachedTarget extends Node {
         } else {
             return NodeState.RUNNING;
         }
+    }
+    reset() {
+        return;
     }
 }
 
@@ -77,7 +92,7 @@ class CalculateFitness extends Node {
         this.robot = robot;
     }
     tick() {
-        console.log("CalculateFitness: tick");
+        //console.log("CalculateFitness: tick");
         let fitness = 0;
         // let position = this.robot.body.particles[0].position;
         // let distance = position.distance(this.target.position);
@@ -85,6 +100,9 @@ class CalculateFitness extends Node {
         fitness += this.robot.ticksAlive;
         this.robot.fitness = fitness;
         return NodeState.SUCCESS;
+    }
+    reset() {
+        return;
     }
 }
 

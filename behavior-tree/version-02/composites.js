@@ -24,6 +24,11 @@ class Selector extends Composite {
         //console.log(`Selector ${this.name}: status: ${NodeState.FAILURE}`);
         return NodeState.FAILURE;
     }
+    reset() {
+        for (let child of this.children) {
+            child.reset();
+        }
+    }
 }
 
 /**
@@ -63,6 +68,11 @@ class Sequence extends Composite {
         //console.log(`Sequence ${this.name}: status: ${NodeState.SUCCESS}`);
         return NodeState.SUCCESS;
     }
+    reset() {
+        for (let child of this.children) {
+            child.reset();
+        }
+    }
 }
 
 // Serializer node: runs children in sequence in a stateful way
@@ -84,20 +94,26 @@ class Serializer extends Composite {
             case NodeState.SUCCESS:
                 this.index++;
                 if (this.index === this.children.length) {
-                    this.index = 0;
-                    console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: SUCCESS;`)
+                    this.reset();
+                    //console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: SUCCESS;`)
                     return NodeState.SUCCESS;
                 }
-                console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: RUNNING;`)
+                //console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: RUNNING;`)
                 return NodeState.RUNNING;
             case NodeState.FAILURE:
-                this.index = 0;
+                this.reset();
                 return NodeState.FAILURE;
             case NodeState.RUNNING:
-                console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: RUNNING;`)
+                //console.log (`class: ${this.constructor.name} | name: ${this.name} | index: ${this.index} | return: RUNNING;`)
                 return NodeState.RUNNING;
             default:
                 throw new Error(`Serializer: Invalid node state ${status}`);
+        }
+    }
+    reset() {
+        this.index = 0;
+        for (let child of this.children) {
+            child.reset();
         }
     }
 }
@@ -142,7 +158,7 @@ class SequenceOR extends Composite {
             let status = child.tick();
             switch (status) {
                 case NodeState.SUCCESS:
-                    console.log (`class: ${this.constructor.name} | name: ${this.name} | return: SUCCESS;`)
+                    //console.log (`class: ${this.constructor.name} | name: ${this.name} | return: SUCCESS;`)
                     return NodeState.SUCCESS;
                 case NodeState.FAILURE:
                     return NodeState.FAILURE;
@@ -152,8 +168,13 @@ class SequenceOR extends Composite {
                     throw new Error(`Unknown result: ${status}`);
             }
         }
-        console.log (`class: ${this.constructor.name} | name: ${this.name} | return: RUNNING;`)
+        //console.log (`class: ${this.constructor.name} | name: ${this.name} | return: RUNNING;`)
         return NodeState.RUNNING;
+    }
+    reset() {
+        for (let child of this.children) {
+            child.reset();
+        }
     }
 }
 

@@ -22,6 +22,9 @@ class Inverter extends Decorator {
                 throw new Error("Inverter: Invalid node state");
         }
     }
+    reset() {
+        this.child.reset();
+    }
 }
 
 class Delay extends Decorator {
@@ -33,12 +36,16 @@ class Delay extends Decorator {
     tick() {
         if (this.elapsed < this.delay) {
             this.elapsed++;
-            console.log (`class: ${this.constructor.name} | name: ${this.name} | elapsed: ${this.elapsed} | return: RUNNING;`)
+            //console.log (`class: ${this.constructor.name} | name: ${this.name} | elapsed: ${this.elapsed} | return: RUNNING;`)
             return NodeState.RUNNING;
         } else {
             this.elapsed = 0;
             return this.child.tick();
         }
+    }
+    reset() {
+        this.elapsed = 0;
+        this.child.reset();
     }
 }
 
@@ -59,6 +66,10 @@ class Repeater extends Decorator {
         }
         return NodeState.RUNNING;
     }
+    reset() {
+        this.count = 0;
+        this.child.reset();
+    }
 }
 
 class UntilFail extends Decorator {
@@ -73,6 +84,9 @@ class UntilFail extends Decorator {
             }
         }
     }
+    reset() {
+        this.child.reset();
+    }
 }
 
 class UntilSuccess extends Decorator {
@@ -86,6 +100,9 @@ class UntilSuccess extends Decorator {
                 return NodeState.SUCCESS;
             }
         }
+    }
+    reset() {
+        this.child.reset();
     }
 }
 

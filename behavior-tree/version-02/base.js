@@ -32,6 +32,9 @@ class Node {
     tick() {
         throw new Error("Node: tick method not implemented");
     }
+    reset() {
+        throw new Error("Node: reset method not implemented");
+    }
 }
 
 // Composite base class
@@ -54,6 +57,9 @@ class Composite extends Node {
     }
     tick() {
         throw new Error("Composite: tick method not implemented");
+    }
+    reset() {
+        throw new Error("Composite: reset method not implemented");
     }
 }
 
@@ -78,6 +84,9 @@ class Decorator extends Node {
     tick() {
         throw new Error("Decorator: tick method not implemented");
     }
+    reset() {
+        throw new Error("Decorator: reset method not implemented");
+    }
 }
 
 // Action base class
@@ -87,6 +96,9 @@ class Action extends Node {
     }
     tick() {
         throw new Error("Action: tick method not implemented");
+    }
+    reset() {
+        throw new Error("Action: reset method not implemented");
     }
 }
 
@@ -101,6 +113,9 @@ class BehaviorTree {
     }
     tick() {
         return this.root.tick();
+    }
+    reset() {
+        return this.root.reset();
     }
 }
 
