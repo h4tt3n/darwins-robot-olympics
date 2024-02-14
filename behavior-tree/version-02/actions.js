@@ -70,18 +70,26 @@ class HasReachedTarget extends Node {
         super(name);
         this.robot = robot;
         this.target = target;
+        this.targetReached = false;
     }
     tick() {
         //console.log("HasReachedTarget: tick " + this.name);
         let position = this.robot.body.particles[0].position;
         let distance = position.distance(this.target.position);
         if(distance < this.target.radius + this.robot.body.particles[0].radius) {
+            
+            if(this.targetReached === false) {
+                this.targetReached = true;
+                this.robot.fitness *= 0.5;
+            }
+            
             return NodeState.SUCCESS;
         } else {
             return NodeState.RUNNING;
         }
     }
     reset() {
+        this.targetReached = false;
         return;
     }
 }

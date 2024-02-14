@@ -144,31 +144,31 @@ class Simulation {
             this.generation++;
         }
     }
-    distanceToTarget(creature, target) {
-        let position = creature.body.particles[0].position;
-        let distance = position.distance(target.position);
-        return distance;
-    }
-    hasReachedTarget(creature, target) {
-        let distance = this.distanceToTarget(creature, target);
-        if (distance < target.radius + creature.body.particles[0].radius) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    calculateFitness(creature, target) {
-        let fitness = 0;
-        fitness += this.distanceToTarget(creature, target);
-        fitness += creature.ticksAlive;
-        if (this.hasReachedTarget(creature, target)) {
-            fitness *= 0.5;
-        }
-        creature.fitness = fitness;
-    }
-    creatureTimeouts(creature, timeout) {
-        return (creature.ticksAlive > timeout);
-    }
+    // distanceToTarget(creature, target) {
+    //     let position = creature.body.particles[0].position;
+    //     let distance = position.distance(target.position);
+    //     return distance;
+    // }
+    // hasReachedTarget(creature, target) {
+    //     let distance = this.distanceToTarget(creature, target);
+    //     if (distance < target.radius + creature.body.particles[0].radius) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+    // calculateFitness(creature, target) {
+    //     let fitness = 0;
+    //     fitness += this.distanceToTarget(creature, target);
+    //     fitness += creature.ticksAlive;
+    //     if (this.hasReachedTarget(creature, target)) {
+    //         fitness *= 0.5;
+    //     }
+    //     creature.fitness = fitness;
+    // }
+    // creatureTimeouts(creature, timeout) {
+    //     return (creature.ticksAlive > timeout);
+    // }
     runGeneticAlgorithm() {
         // Clear old individuals
         this.deadIndividuals = [];
