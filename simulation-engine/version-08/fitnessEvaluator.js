@@ -52,7 +52,6 @@ class FitnessEvaluator {
                     new Serializer("target check", [
                         new HasReachedTarget(robot, this.simulation.wayPoints[0], "HasReachedTarget 1"),
                         new HasReachedTarget(robot, this.simulation.wayPoints[1], "HasReachedTarget 2"),
-                        new HasReachedTarget(robot, this.simulation.wayPoints[2], "HasReachedTarget 3"),
                     ]),
                     new HasTimedOut(robot, this.simulation.generationMaxTicks, "hasTimedOut")
                 ]);

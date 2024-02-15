@@ -15,10 +15,10 @@ class NodeState {
     static RUNNING = "RUNNING";
 }
 
-// Node base class
 /**
  * Represents a node in a behavior tree.
  * @abstract
+ * @classdesc The base class for all nodes in a behavior tree.
  */
 class Node {
     /**
@@ -37,8 +37,19 @@ class Node {
     }
 }
 
-// Composite base class
+/**
+ * Represents a composite node in a behavior tree.
+ * @extends Node
+ * @classdesc The base class for all composite nodes in a behavior tree.
+ * 
+ */
 class Composite extends Node {
+    /**
+     * Creates a composite node.
+     * @constructor
+     * @param {string} name - The name of the node
+     * @param {Node[]} children - The child nodes
+     */
     constructor(name, children=[]) {
         super(name);
         if (Array.isArray(children) && children.every(child => child instanceof Node)) {
