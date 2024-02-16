@@ -71,6 +71,7 @@ class HasReachedTarget extends Node {
         this.robot = robot;
         this.target = target;
         this.targetReached = false;
+        this.fitnessScore = 1000;
     }
     tick() {
         //console.log("HasReachedTarget: tick " + this.name);
@@ -80,7 +81,7 @@ class HasReachedTarget extends Node {
             
             if(this.targetReached === false) {
                 this.targetReached = true;
-                this.robot.fitness *= 0.5;
+                this.fitnessScore *= 0.5;
             }
             
             return NodeState.SUCCESS;

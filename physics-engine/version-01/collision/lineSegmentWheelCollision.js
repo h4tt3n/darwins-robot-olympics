@@ -60,6 +60,10 @@ class LineSegmentWheelCollision {
         const deltaVelocityTangent = this.normal.perpDot(deltaVelocity);
         // Error
         const positionErrorNormal = this.normal.dot(deltaPosition);
+        if (positionErrorNormal < 0.0) { 
+            this.restImpulse = Vector2.zero;
+            return; 
+        }
         const velocityErrorNormal = deltaVelocityNormal;
         const velocityErrorTangent = deltaVelocityTangent;
         // Correction
@@ -69,12 +73,12 @@ class LineSegmentWheelCollision {
         //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(-restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
         const restImpulseTangentWithFriction = restImpulseTangent * FrictionCoefficient;
         // Apply
-        //this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
-        if (positionErrorNormal > 0.0) {
-            this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
-        } else {
-            this.restImpulse = Vector2.zero;
-        }
+        this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        // if (positionErrorNormal > 0.0) {
+        //     this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        // } else {
+        //     this.restImpulse = Vector2.zero;
+        // }
     }
     computeReducedMass(){
         const k = this.wheel.inverseMass + this.wheel.radius * this.wheel.radius * this.wheel.inverseInertia;

@@ -39,14 +39,14 @@ class LineSegmentParticleCollision {
         this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
     }
     applyWarmStart() {
-        // const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
-        // if (projectedImpulse > 0.0) { return; }
-        // // State
-        // const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
-        // // Apply
-        // this.particle.addImpulse(warmstartImpulse.mul(this.particle.inverseMass));
-        // // Reset Warmstart
-        // this.accumulatedImpulse = Vector2.zero;
+        const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
+        if (projectedImpulse > 0.0) { return; }
+        // State
+        const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
+        // Apply
+        this.particle.addImpulse(warmstartImpulse.mul(this.particle.inverseMass));
+        // Reset Warmstart
+        this.accumulatedImpulse = Vector2.zero;
     }
     computeRestImpulse() {
         // State
@@ -56,6 +56,10 @@ class LineSegmentParticleCollision {
         const deltaVelocityTangent = this.normal.perpDot(deltaVelocity);
         // Error
         const positionErrorNormal = this.normal.dot(deltaPosition);
+        if (positionErrorNormal < 0.0) { 
+            this.restImpulse = Vector2.zero;
+            return; 
+        }
         const velocityErrorNormal = deltaVelocityNormal;
         const velocityErrorTangent = deltaVelocityTangent;
         // Correction
@@ -65,11 +69,12 @@ class LineSegmentParticleCollision {
         //const restImpulseTangentWithFriction = Math.abs(restImpulseTangent) < FrictionCoefficient * restImpulseNormal ? restImpulseTangent : Math.sign(-restImpulseTangent) * FrictionCoefficient * restImpulseNormal;
         const restImpulseTangentWithFriction = restImpulseTangent * FrictionCoefficient;
         // Apply
-        if (positionErrorNormal > 0.0) {
-            this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
-        } else {
-            this.restImpulse = Vector2.zero;
-        }
+        this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        // if (positionErrorNormal > 0.0) {
+        //     this.restImpulse = this.normal.mul(restImpulseNormal).add(this.normal.perp().mul(restImpulseTangentWithFriction));
+        // } else {
+        //     this.restImpulse = Vector2.zero;
+        // }
     }
     computeReducedMass(){
         const k = this.particle.inverseMass;
