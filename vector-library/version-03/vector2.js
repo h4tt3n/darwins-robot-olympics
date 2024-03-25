@@ -51,19 +51,19 @@ class Vector2 {
         return this;
     }
     normalizeThis() {
-        var length = this.length();
+        const length = this.length();
         length > 0 ? ( this.x /= length, this.y /= length ) : ( this.x = 0, this.y = 0 );
         return this;
-        
-        // if(length > 0){
-        //     this.x /= length; 
-        //     this.y /= length;
-        // } else {
-        //     this.x = 0;
-        //     this.y = 0;
-        // }
-        // return this;
     }
+    absThis() {
+        this.x = Math.abs(this.x); this.y = Math.abs(this.y); return this;
+    }
+    perpThis() { 
+        const temp = this.x; 
+        this.x = -this.y; this.y = temp; 
+        return this;
+    }
+
 
     // Return new vector with value
 
@@ -116,7 +116,7 @@ class Vector2 {
         }
     }
     normalize() {
-        var length = this.length();
+        const length = this.length();
         if(length === 0){
             return new Vector2();
         } else {
@@ -125,7 +125,7 @@ class Vector2 {
     }
     static normalize(v) {
         if(v instanceof Vector2){
-            var length = v.length();
+            const length = v.length();
             if(length === 0){
                 return new Vector2();
             } else {
@@ -147,7 +147,7 @@ class Vector2 {
             if(v === Vector2.zero){
                 return new Vector2();
             } else {
-                var result = v.mul( this.dot(v)) / (v.dot(v) ); 
+                const result = v.mul( this.dot(v)) / (v.dot(v) ); 
                 return new Vector2(result.x, result.y);
             }
         }
@@ -217,14 +217,14 @@ class Vector2 {
             if(this === Vector2.zero){
                 return new Vector2();
             } else {
-                var result = (this.mul( v.dot(this) / this.dot(this) ));
+                const result = (this.mul( v.dot(this) / this.dot(this) ));
                 return new Vector2(result.x, result.y);
             }
         }
     }
     randomizeCircle(b) {	
-        let a = Math.random() * 2.0 * Math.PI; 
-        let r = Math.sqrt( Math.random() * b * b ); 
+        const a = Math.random() * 2.0 * Math.PI; 
+        const r = Math.sqrt( Math.random() * b * b ); 
         return new Vector2( Math.cos(a) * r, Math.sin(a) * r ); 
     }
     randomizeSquare(b) { 
@@ -232,7 +232,7 @@ class Vector2 {
     }
     rotate(v) { 
         if (v instanceof Vector2){
-            var vec = new Vector2(v.x, -v.y);
+            const vec = new Vector2(v.x, -v.y);
             return new Vector2(vec.dot(this), vec.perpDot(this));
         } 
         else {
@@ -241,7 +241,7 @@ class Vector2 {
     }
     rotateRight(v) {
         if (v instanceof Vector2){
-            var vec = new Vector2(-v.x, v.y);
+            const vec = new Vector2(-v.x, v.y);
             return new Vector2(vec.dot(this), vec.perpDot(this));
         } 
         else {
@@ -250,7 +250,7 @@ class Vector2 {
     }
     rotateLeft(v) {
         if (v instanceof Vector2){
-            var vec = new Vector2(v.x, -v.y);
+            const vec = new Vector2(v.x, -v.y);
             return new Vector2(vec.dot(this), vec.perpDot(this));
         } 
         else {
@@ -258,7 +258,7 @@ class Vector2 {
         }
     }
     unit() { 
-        var length = this.length();
+        const length = this.length();
         if(length === 0){
             return new Vector2();
         } else {
