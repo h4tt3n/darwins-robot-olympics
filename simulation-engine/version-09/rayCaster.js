@@ -1,6 +1,6 @@
 "use strict";
 
-import { Vector2 } from '../../vector-library/version-01/vector2.js'
+import { Vector2 } from '../../vector-library/version-02/vector2.js'
 
 class Ray {
     constructor(origin, directionVector) {

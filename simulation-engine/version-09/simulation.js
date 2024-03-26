@@ -1,8 +1,8 @@
 "use strict";
 
-import { Vector2 } from '../../vector-library/version-01/vector2.js';
+import { Vector2 } from '../../vector-library/version-02/vector2.js';
 import { ToolBox } from '../../toolbox/version-01/toolbox.js';
-import { SquishyPlanet } from '../../physics-engine/version-01/squishyPlanet.js';
+import { SquishyPlanet } from '../../physics-engine/version-02/squishyPlanet.js';
 import { Network, ActivationFunctions } from "../../neural-network-engine/version-01/neural-network.js";
 import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { Renderer } from './renderer.js';
@@ -10,7 +10,7 @@ import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
 import { Robot } from './robot.js';
 import { FitnessEvaluator } from './fitnessEvaluator.js';
-import { constants } from '../../physics-engine/version-01/constants.js';
+import { constants } from '../../physics-engine/version-02/constants.js';
 
 class Simulation {
     constructor(params = {}) {
