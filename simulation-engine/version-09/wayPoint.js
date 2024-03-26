@@ -1,7 +1,7 @@
 "use strict";
 
-import { Vector2 } from "../../vector-library/version-02/vector2.js";
-import { Point } from "../../physics-engine/version-02/point.js";
+import { Vector2 } from "../../vector-library/version-01/vector2.js";
+import { Point } from "../../physics-engine/version-01/point.js";
 
 class WayPoint extends Point {
     constructor(position, radius, color) {

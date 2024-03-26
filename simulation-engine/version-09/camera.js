@@ -1,6 +1,6 @@
 "use strict";
 
-import { Vector2 } from '../../vector-library/version-02/vector2.js'
+import { Vector2 } from '../../vector-library/version-01/vector2.js'
 
 // This Camera class is for showing context on the canvas.
 class Camera {

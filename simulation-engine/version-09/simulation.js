@@ -1,9 +1,8 @@
 "use strict";
 
-
-import { Vector2 } from '../../vector-library/version-02/vector2.js';
+import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { ToolBox } from '../../toolbox/version-01/toolbox.js';
-import { SquishyPlanet } from '../../physics-engine/version-02/squishyPlanet.js';
+import { SquishyPlanet } from '../../physics-engine/version-01/squishyPlanet.js';
 import { Network, ActivationFunctions } from "../../neural-network-engine/version-01/neural-network.js";
 import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { Renderer } from './renderer.js';
@@ -11,8 +10,7 @@ import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
 import { Robot } from './robot.js';
 import { FitnessEvaluator } from './fitnessEvaluator.js';
-import { constants } from '../../physics-engine/version-02/constants.js';
-import { MotorConstraint } from '../../physics-engine/version-02/constraints/motorConstraint.js';
+import { constants } from '../../physics-engine/version-01/constants.js';
 
 class Simulation {
     constructor(params = {}) {
@@ -21,7 +19,7 @@ class Simulation {
         this.world = new SquishyPlanet.World();
         this.renderer = new Renderer('canvas', this);
         this.geneticAlgorithm = new GeneticAlgorithm(params.gaParams);
-        this.fitnessEvaluator = new FitnessEvaluator();
+        this.fitnessEvaluator = new FitnessEvaluator(this);
 
         // Render, UI and mouse / keyboard control
         this.renderRaycasts = false;
@@ -92,9 +90,6 @@ class Simulation {
 
         this.generationTicks++;
 
-        // Physics (Robot body)
-        this.world.update();
-
         // Raycasting (Robot vision)
         let raycastableSegments = this.world.lineSegments; //.concat(this.world.linearSprings);
         this.rayCameras.forEach(rayCamera => { rayCamera.castAll(raycastableSegments) });
@@ -103,24 +98,28 @@ class Simulation {
         // Neural network (Robot brain)
         this.robots.forEach(robot => { robot.update(); });
 
+        // Physics (Robot body)
+        this.world.update();
+
         // Evaluate population
         this.evaluate();
     }
     evaluate() {
     
         // Check if robot has completed challenge, using challenge-specific functions
-        for (let i = 0; i < this.robots.length; i++) {
+        // for (let i = 0; i < this.robots.length; i++) {
             
-            let robot = this.robots[i];
+        //     let robot = this.robots[i];
             
-            if (this.creatureTimeouts(robot, this.generationMaxTicks) || this.hasReachedTarget(robot, this.wayPoints[0])) {
-                this.calculateFitness(robot, this.wayPoints[0]);
-                console.log("fitness " + robot.fitness);
-                this.deleteRobot(robot);
-            } else {
-                robot.ticksAlive++;
-            }
-        }
+        //     if (this.creatureTimeouts(robot, this.generationMaxTicks) || this.hasReachedTarget(robot, this.wayPoints[0])) {
+        //         this.calculateFitness(robot, this.wayPoints[0]);
+        //         console.log("fitness " + robot.fitness);
+        //         this.deleteRobot(robot);
+        //     } else {
+        //         robot.ticksAlive++;
+        //     }
+        // }
+        this.fitnessEvaluator.evaluate();
     
         // When all robots are disabled, create new generation
         if (this.robots.length === 0) {
@@ -135,6 +134,8 @@ class Simulation {
             // Create new robots
             //this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
+
+            this.fitnessEvaluator.setup(this.robots);
             
             // Reset simulation
             this.deadRobots = [];
@@ -143,31 +144,31 @@ class Simulation {
             this.generation++;
         }
     }
-    distanceToTarget(creature, target) {
-        let position = creature.body.particles[0].position;
-        let distance = position.distance(target.position);
-        return distance;
-    }
-    hasReachedTarget(creature, target) {
-        let distance = this.distanceToTarget(creature, target);
-        if (distance < target.radius + creature.body.particles[0].radius) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    calculateFitness(creature, target) {
-        let fitness = 0;
-        fitness += this.distanceToTarget(creature, target);
-        fitness += creature.ticksAlive;
-        if (this.hasReachedTarget(creature, target)) {
-            fitness *= 0.5;
-        }
-        creature.fitness = fitness;
-    }
-    creatureTimeouts(creature, timeout) {
-        return (creature.ticksAlive > timeout);
-    }
+    // distanceToTarget(creature, target) {
+    //     let position = creature.body.particles[0].position;
+    //     let distance = position.distance(target.position);
+    //     return distance;
+    // }
+    // hasReachedTarget(creature, target) {
+    //     let distance = this.distanceToTarget(creature, target);
+    //     if (distance < target.radius + creature.body.particles[0].radius) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+    // calculateFitness(creature, target) {
+    //     let fitness = 0;
+    //     fitness += this.distanceToTarget(creature, target);
+    //     fitness += creature.ticksAlive;
+    //     if (this.hasReachedTarget(creature, target)) {
+    //         fitness *= 0.5;
+    //     }
+    //     creature.fitness = fitness;
+    // }
+    // creatureTimeouts(creature, timeout) {
+    //     return (creature.ticksAlive > timeout);
+    // }
     runGeneticAlgorithm() {
         // Clear old individuals
         this.deadIndividuals = [];

@@ -19,9 +19,9 @@
  */
 
 
-import { Vector2 } from '../../vector-library/version-02/vector2.js';
+import { Vector2 } from '../../vector-library/version-01/vector2.js';
 import { GeneticOperators } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
-import { SimulationEngine } from '../../simulation-engine/version-08/simulationEngine.js';
+import { SimulationEngine } from '../../simulation-engine/version-09/simulationEngine.js';
 import { ActivationFunctions } from '../../neural-network-engine/version-01/neural-network.js';
 
 let numRobots = 50;
@@ -105,10 +105,13 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+    simulation.createWaypoint(new Vector2(3000, 200), 50, "black");
+    simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
+    // Create fitness evaluator
+    simulation.fitnessEvaluator.setup(simulation.robots);
     // Run simulation
     simulation.setIntervalId = setInterval(update, 0);
 }
