@@ -23,7 +23,7 @@ class LinearSpring extends LinearLink{
         var correctiveImpulse = this.angleVector.mul(-impulseError*this.reducedMass);
         this.pointA.addImpulse(correctiveImpulse.mul(-this.pointA.inverseMass));
         this.pointB.addImpulse(correctiveImpulse.mul( this.pointB.inverseMass));
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
+        this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart(){
         var projectedImpulse = this.angleVector.dot(this.accumulatedImpulse);
@@ -31,7 +31,7 @@ class LinearSpring extends LinearLink{
         var warmstartImpulse = this.angleVector.mul(projectedImpulse*this.warmStart);
         this.pointA.impulse = this.pointA.impulse.sub(warmstartImpulse.mul(this.pointA.inverseMass));
         this.pointB.impulse = this.pointB.impulse.add(warmstartImpulse.mul(this.pointB.inverseMass));
-        this.accumulatedImpulse = Vector2.zero;
+        this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeRestImpulse(){
         var deltaPosition = this.pointB.position.sub(this.pointA.position);

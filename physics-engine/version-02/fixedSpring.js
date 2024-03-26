@@ -20,16 +20,16 @@ class FixedSpring extends LinearLink{
         var deltaImpulse = this.pointB.impulse.sub(this.pointA.impulse);
         var impulseError = deltaImpulse.sub(this.restImpulse);
         var correctiveImpulse = impulseError.mul(-this.reducedMass);
-        this.pointA.impulse = this.pointA.impulse.sub(correctiveImpulse.mul(this.pointA.inverseMass));
-        this.pointB.impulse = this.pointB.impulse.add(correctiveImpulse.mul(this.pointB.inverseMass));
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
+        this.pointA.impulse.subThis(correctiveImpulse.mul(this.pointA.inverseMass));
+        this.pointB.impulse.addThis(correctiveImpulse.mul(this.pointB.inverseMass));
+        this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart(){
         if( this.accumulatedImpulse == Vector2.zero) { return };
         var warmstartImpulse = this.accumulatedImpulse.mul(this.warmStart);
-        this.pointA.impulse = this.pointA.impulse.sub(warmstartImpulse.mul(this.pointA.inverseMass));
-        this.pointB.impulse = this.pointB.impulse.add(warmstartImpulse.mul(this.pointB.inverseMass));
-        this.accumulatedImpulse = Vector2.zero;
+        this.pointA.impulse.subThis(warmstartImpulse.mul(this.pointA.inverseMass));
+        this.pointB.impulse.addThis(warmstartImpulse.mul(this.pointB.inverseMass));
+        this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeData(){
         super.computeData();

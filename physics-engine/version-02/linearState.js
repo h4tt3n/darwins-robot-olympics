@@ -15,29 +15,29 @@ class LinearState extends Point{
         this.computeInverseMass();
     }
     addImpulse(impulse){
-        if (impulse instanceof Vector2){
-            this.impulse = this.impulse.add(impulse);
-        }
+        //if (impulse instanceof Vector2){
+            this.impulse.addThis(impulse);
+        //}
     }
     addVelocity(velocity){
-        if (velocity instanceof Vector2){
-            this.velocity = this.velocity.add(velocity);
-        }
+        //if (velocity instanceof Vector2){
+            this.velocity.addThis(velocity);
+        //}
     }
     addPosition(position){
-        if (position instanceof Vector2){
-            this.position = this.position.add(position);
-        }
+        //if (position instanceof Vector2){
+            this.position.addThis(position);
+        //}
     }
     computeInverseMass() {
         this.inverseMass = this.mass > 0.0 ? 1.0 / this.mass : 0.0;
     }
     computeNewState(){
         if( this.inverseMass != 0.0 ){ 
-            this.addVelocity(this.impulse);
-            this.addPosition(this.velocity.mul(constants.DT));
+            this.velocity.addThis(this.impulse);
+            this.position.addThis(this.velocity.mul(constants.DT));
         }
-        this.impulse = Vector2.zero;
+        this.impulse.setThis(0.0, 0.0);
     }
     isValid(){
         return this.mass > 0.0;

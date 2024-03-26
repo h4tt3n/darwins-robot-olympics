@@ -3,7 +3,7 @@
 /*
     SquishyPlanet Lite
     A 2D soft-body physics engine for games 
-    v. 0.1.0 - 2023
+    v. 0.2.0 - 2024
 */
 
 // Import

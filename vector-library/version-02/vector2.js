@@ -32,7 +32,6 @@ class Vector2 {
             this.x = x || 0.0;
             this.y = y || 0.0;
         }
-        return this;
     }
 
     static zero = new Vector2(0.0, 0.0);
@@ -69,7 +68,9 @@ class Vector2 {
         return this;
     }
 
-    //
+    // Return new vector with value (more expensive than changing value of existing vector)
+
+
     add(v){ 
         //if (v instanceof Vector2){
             return new Vector2(this.x + v.x, this.y + v.y); 
