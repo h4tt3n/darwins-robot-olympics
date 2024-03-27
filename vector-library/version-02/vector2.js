@@ -24,15 +24,20 @@
 
 class Vector2 {
     
-    constructor(x, y) {
-        if(x instanceof Vector2){
-            this.x = x.x || 0.0;
-            this.y = x.y || 0.0;
-        } else {
-            this.x = x || 0.0;
-            this.y = y || 0.0;
-        }
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
     }
+    
+    // constructor(x, y) {
+    //     if(x instanceof Vector2){
+    //         this.x = x.x || 0.0;
+    //         this.y = x.y || 0.0;
+    //     } else {
+    //         this.x = x || 0.0;
+    //         this.y = y || 0.0;
+    //     }
+    // }
 
     static zero = new Vector2(0.0, 0.0);
 

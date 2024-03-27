@@ -12,12 +12,15 @@ class Ray {
         const q = segment.pointA.position;
         const s = segment.pointB.position.sub(segment.pointA.position);
         const r = this.directionVector;
-        const denominator = Vector2.perpDot(r, s);
+        //const denominator = Vector2.perpDot(r, s);
+        const denominator = r.perpDot(s);
         if (denominator == 0) { return null; }  // Ray is parallel to segment
-        const num_t = Vector2.perpDot(q.sub(this.origin), s);
+        //const num_t = Vector2.perpDot(q.sub(this.origin), s);
+        const num_t = q.sub(this.origin).perpDot(s);
         const t = num_t / denominator;
         if (t < 0) { return null; } // No intersection
-        const num_u = Vector2.perpDot(q.sub(this.origin), r);
+        //const num_u = Vector2.perpDot(q.sub(this.origin), r);
+        const num_u = q.sub(this.origin).perpDot(r);
         const u = num_u / denominator;
         if (u < 0 || u > 1) { return null; }  // No intersection
         const intersectionPoint = this.origin.add(r.mul(t));
