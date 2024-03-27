@@ -64,15 +64,22 @@ class World {
         }
     }
     applyCorrectiveImpulsestoArray(array) {
-        for(let j = 0; j < array.length; j++) {
-            array[j].applyCorrectiveImpulse();
-        }
+        // for(let j = 0; j < array.length; j++) {
+        //     array[j].applyCorrectiveImpulse();
+        // }
+        array.forEach(a => { a.applyCorrectiveImpulse() });
     }
     applyCorrectiveImpulsesToMap(map) {
-        const keys = Array.from(map.keys());
-        for(let j = 0; j < keys.length; j++) {
-            map.get(keys[j]).applyCorrectiveImpulse();
+        for (let [key, value] of map) {
+            value.applyCorrectiveImpulse();
         }
+        
+        // const keys = Array.from(map.keys());
+        // for(let j = 0; j < keys.length; j++) {
+        //     map.get(keys[j]).applyCorrectiveImpulse();
+        // }
+
+        //map.forEach(c => { c.applyCorrectiveImpulse() });
     }
     applyWarmStart(){
         this.angularSprings.forEach(a => { a.applyWarmStart() });

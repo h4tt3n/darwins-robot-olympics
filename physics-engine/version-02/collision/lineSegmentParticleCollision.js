@@ -34,7 +34,7 @@ class LineSegmentParticleCollision {
         // Correction
         const correctiveImpulse = (this.normal.mul(-impulseErrorNormal * this.reducedMass).add(this.normal.perp().mul(-impulseErrorTangent * this.reducedMass)));
         // Apply
-        this.particle.addImpulse(correctiveImpulse.mul(this.particle.inverseMass));
+        this.particle.impulse.addThis(correctiveImpulse.mul(this.particle.inverseMass));
         // Warmstart
         this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
     }
@@ -46,7 +46,7 @@ class LineSegmentParticleCollision {
         // Apply
         this.particle.addImpulse(warmstartImpulse.mul(this.particle.inverseMass));
         // Reset Warmstart
-        this.accumulatedImpulse = Vector2.zero;
+        this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeRestImpulse() {
         // State
@@ -57,7 +57,7 @@ class LineSegmentParticleCollision {
         // Error
         const positionErrorNormal = this.normal.dot(deltaPosition);
         if (positionErrorNormal < 0.0) { 
-            this.restImpulse = Vector2.zero;
+            this.restImpulse.setThis(0.0, 0.0);
             return; 
         }
         const velocityErrorNormal = deltaVelocityNormal;

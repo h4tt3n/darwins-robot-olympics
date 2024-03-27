@@ -338,21 +338,43 @@ class CollisionHandler {
             }
         }
     }
-    // Array-string based
+
+    // Phind version
     createCollisionObjectId(objectA, objectB) {
-        let array = [objectA.objectId, objectB.objectId].sort();
-        let id = array.toString();
-        return id;
-    }
-    getObjectIdsFromCollisionObjectId(collisionObjectId) {
-        //let array = Array.from(collisionObjectId).;
-        //return array;
-        let splitArray = collisionObjectId.split(",");
-        let array = splitArray.map(string => parseInt(string));
-        return array;
+        // Ensures a consistent order for the key regardless of the order of objectA and objectB
+        return objectA.objectId < objectB.objectId ? 
+            `${objectA.objectId}-${objectB.objectId}` : 
+            `${objectB.objectId}-${objectA.objectId}`;
     }
 
-    // JSON based
+    // Checks if the collision is active by looking up the key in the Map
+    isCollisionActive(objectA, objectB) {
+        let key = this.createCollisionObjectId(objectA, objectB);
+        return this.world.collisions.has(key);
+    }
+
+    // Retrieves object IDs from the collision object ID (key)
+    getObjectIdsFromCollisionObjectId(collisionObjectId) {
+        // Ensures collisionObjectId is treated as a string
+        let array = collisionObjectId.toString().split("-");
+        return array.map(id => parseInt(id, 10));
+    }
+
+    // Array-string based
+    // createCollisionObjectId(objectA, objectB) {
+    //     let array = [objectA.objectId, objectB.objectId].sort();
+    //     let id = array.toString();
+    //     return id;
+    // }
+    // getObjectIdsFromCollisionObjectId(collisionObjectId) {
+    //     //let array = Array.from(collisionObjectId).;
+    //     //return array;
+    //     let splitArray = collisionObjectId.split(",");
+    //     let array = splitArray.map(string => parseInt(string));
+    //     return array;
+    // }
+
+    // JSON based, works ok but is slow
     // createCollisionObjectId(objectA, objectB) {
     //     let array = [objectA.objectId, objectB.objectId].sort();
     //     let json = JSON.stringify(array);
@@ -365,18 +387,34 @@ class CollisionHandler {
     
     // Original
     // createCollisionObjectId(objectA, objectB) {
-    //     return objectA.objectId + "-" + objectB.objectId;
+    //     // Use an array to collect parts of the string
+    //     const parts = objectA.objectId > objectB.objectId ? 
+    //         [objectB.objectId, "-", objectA.objectId] : 
+    //         [objectA.objectId, "-", objectB.objectId];
+    //     // Join the parts into a single string
+    //     return parts.join('');
     // }
+    
+    // createCollisionObjectId(objectA, objectB) {
+    //     return objectA.objectId > objectB.objectId ? 
+    //         objectB.objectId + "-" + objectA.objectId : 
+    //         objectA.objectId + "-" + objectB.objectId;
+    // }
+    // getObjectIdsFromCollisionObjectId(collisionObjectId) {
+    //     let array = collisionObjectId.split("-");
+    //     return array;
+    // }
+
     // createCollisionObjectId(...args) {
     //     let id = args.map(arg => arg.objectId).join("-");
     //     //console.log(id);
     //     return id;
     // }
      
-    isCollisionActive(objectA, objectB) {
-        let key = this.createCollisionObjectId(objectA, objectB);
-        return this.world.collisions.has(key);
-    }
+    // isCollisionActive(objectA, objectB) {
+    //     let key = this.createCollisionObjectId(objectA, objectB);
+    //     return this.world.collisions.has(key);
+    // }
 }
 
 export { CollisionHandler };

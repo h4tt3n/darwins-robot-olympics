@@ -34,10 +34,10 @@ class LineSegmentWheelCollision {
         // Correction
         const correctiveImpulse = (this.normal.mul(-impulseErrorNormal * this.reducedMass).add(this.normal.perp().mul(-impulseErrorTangent * this.reducedMass)));
         // Apply
-        this.wheel.addImpulse(correctiveImpulse.mul(this.wheel.inverseMass));
+        this.wheel.impulse.addThis(correctiveImpulse.mul(this.wheel.inverseMass));
         this.wheel.addAngularImpulse(correctiveImpulse.perpDot(relativeCollisionPoint) * this.wheel.inverseInertia);
         // Warmstart
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
+        this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart() {
         const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
@@ -49,7 +49,7 @@ class LineSegmentWheelCollision {
         this.wheel.addImpulse(warmstartImpulse.mul(this.wheel.inverseMass));
         this.wheel.addAngularImpulse(warmstartImpulse.perpDot(relativeCollisionPoint) * this.wheel.inverseInertia);
         // Reset Warmstart
-        this.accumulatedImpulse = Vector2.zero;
+        this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeRestImpulse() {
         // State
@@ -61,7 +61,7 @@ class LineSegmentWheelCollision {
         // Error
         const positionErrorNormal = this.normal.dot(deltaPosition);
         if (positionErrorNormal < 0.0) { 
-            this.restImpulse = Vector2.zero;
+            this.restImpulse.setThis(0.0, 0.0);
             return; 
         }
         const velocityErrorNormal = deltaVelocityNormal;

@@ -27,19 +27,23 @@ class ParticleParticleCollision {
         const impulseError = projectedImpulse - this.restImpulse;
         const correctiveImpulse = this.normal.mul(-impulseError * this.reducedMass);
         
-        this.particleA.addImpulse(correctiveImpulse.mul(-this.particleA.inverseMass));
-        this.particleB.addImpulse(correctiveImpulse.mul( this.particleB.inverseMass));
+        // this.particleA.addImpulse(correctiveImpulse.mul(-this.particleA.inverseMass));
+        // this.particleB.addImpulse(correctiveImpulse.mul( this.particleB.inverseMass));
+        this.particleA.impulse.subThis(correctiveImpulse.mul(this.particleA.inverseMass));
+        this.particleB.impulse.addThis(correctiveImpulse.mul(this.particleB.inverseMass));
 
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
+        this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart() {
         const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
         if (projectedImpulse > 0.0) { return; }
         const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
         //console.log("Warmstart!");
-        this.particleA.addImpulse(warmstartImpulse.mul(-this.particleA.inverseMass));
-        this.particleB.addImpulse(warmstartImpulse.mul( this.particleB.inverseMass));
-        this.accumulatedImpulse = Vector2.zero;
+        // this.particleA.addImpulse(warmstartImpulse.mul(-this.particleA.inverseMass));
+        // this.particleB.addImpulse(warmstartImpulse.mul( this.particleB.inverseMass));
+        this.particleA.impulse.subThis(warmstartImpulse.mul(this.particleA.inverseMass));
+        this.particleB.impulse.addThis(warmstartImpulse.mul(this.particleB.inverseMass));
+        this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeRestImpulse() {
         //console.log("Rest impulse!");
