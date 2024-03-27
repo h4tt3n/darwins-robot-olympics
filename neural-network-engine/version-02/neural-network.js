@@ -70,7 +70,7 @@ class Layer {
         this.init(numberOfNeurons)
     }
     init(numberOfNeurons) {
-        for (var i = 0; i < numberOfNeurons; i++) {
+        for (let i = 0; i < numberOfNeurons; i++) {
             const neuron = new Neuron()
             this.neurons.push(neuron)
         }
@@ -104,20 +104,20 @@ class Network {
         let genome = [];
         // Calculate number of links
         let numLinks = 0;
-        for (var layer = 1; layer < this.layers.length; layer++) {
+        for (let layer = 1; layer < this.layers.length; layer++) {
             const thisLayer = this.layers[layer]
             const prevLayer = this.layers[layer - 1]
             numLinks += prevLayer.neurons.length * thisLayer.neurons.length
         }
         // Calculate number of biases
         let numBiases = 0;
-        for (var layer = 1; layer < this.layers.length; layer++) {
+        for (let layer = 1; layer < this.layers.length; layer++) {
             const thisLayer = this.layers[layer]
             numBiases += thisLayer.neurons.length
         }
         // Calculate number of ns
         let numNs = 0;
-        for (var layer = 1; layer < this.layers.length; layer++) {
+        for (let layer = 1; layer < this.layers.length; layer++) {
             const thisLayer = this.layers[layer]
             numNs += thisLayer.neurons.length;
         }
@@ -137,11 +137,11 @@ class Network {
         })
     }
     connectLayers() {
-        for (var layer = 1; layer < this.layers.length; layer++) {
+        for (let layer = 1; layer < this.layers.length; layer++) {
             const thisLayer = this.layers[layer]
             const prevLayer = this.layers[layer - 1]
-            for (var neuron = 0; neuron < prevLayer.neurons.length; neuron++) {
-                for (var neuronInThisLayer = 0; neuronInThisLayer < thisLayer.neurons.length; neuronInThisLayer++) {
+            for (let neuron = 0; neuron < prevLayer.neurons.length; neuron++) {
+                for (let neuronInThisLayer = 0; neuronInThisLayer < thisLayer.neurons.length; neuronInThisLayer++) {
                     const connection = new Connection(prevLayer.neurons[neuron], thisLayer.neurons[neuronInThisLayer])
                     prevLayer.neurons[neuron].addOutputConnection(connection)
                     thisLayer.neurons[neuronInThisLayer].addInputConnection(connection)
@@ -160,15 +160,15 @@ class Network {
     }
     run() {
         //console.log("Neuron n values:");
-        for (var layer = 1; layer < this.layers.length; layer++) {
+        for (let layer = 1; layer < this.layers.length; layer++) {
             const thisLayer = this.layers[layer]
             const prevLayer = this.layers[layer - 1]
-            for (var neuron = 0; neuron < thisLayer.neurons.length; neuron++) {
+            for (let neuron = 0; neuron < thisLayer.neurons.length; neuron++) {
                 const thisNeuron = thisLayer.neurons[neuron]
                 let sum = 0
-                for (var neuronInPrevLayer = 0; neuronInPrevLayer < prevLayer.neurons.length; neuronInPrevLayer++) {
+                for (let neuronInPrevLayer = 0; neuronInPrevLayer < prevLayer.neurons.length; neuronInPrevLayer++) {
                     const prevNeuron = prevLayer.neurons[neuronInPrevLayer]
-                    for (var connection = 0; connection < prevNeuron.outputConnections.length; connection++) {
+                    for (let connection = 0; connection < prevNeuron.outputConnections.length; connection++) {
                         const thisConnection = prevNeuron.outputConnections[connection]
                         if (thisConnection.to === thisNeuron) {
                             sum += prevNeuron.output * thisConnection.weight
@@ -187,23 +187,23 @@ class Network {
     }
     recur(numNeurons) {
         // Set the the input of the last numNeurons neurons in the input layer to the output of the last numNeurons neurons in the output layer
-        for (var i = 0; i < numNeurons; i++) {
+        for (let i = 0; i < numNeurons; i++) {
             this.layers[0].neurons[this.layers[0].neurons.length - numNeurons + i].output = this.layers[this.layers.length - 1].neurons[this.layers[this.layers.length - 1].neurons.length - numNeurons + i].output;
         }
     }
     // Encode neural network, including all weights and biases, into a "chromosome" array of floats in the range [0, 1]
     encode() {
         let chromosome = [];
-        for (var i = 0; i < this.connections.length; i++) {
+        for (let i = 0; i < this.connections.length; i++) {
             chromosome.push(ToolBox.map(this.connections[i].weight, -10, 10, 0, 1));
         }
-        for (var i = 1; i < this.layers.length; i++) {
-            for (var j = 0; j < this.layers[i].neurons.length; j++) {
+        for (let i = 1; i < this.layers.length; i++) {
+            for (let j = 0; j < this.layers[i].neurons.length; j++) {
                 chromosome.push(ToolBox.map(this.layers[i].neurons[j].bias, -10, 10, 0, 1));
             }
         }
-        for (var i = 1; i < this.layers.length; i++) {
-            for (var j = 0; j < this.layers[i].neurons.length; j++) {
+        for (let i = 1; i < this.layers.length; i++) {
+            for (let j = 0; j < this.layers[i].neurons.length; j++) {
                 chromosome.push(ToolBox.map(this.layers[i].neurons[j].n, 0, 2, 0, 1));
             }
         }
@@ -212,18 +212,18 @@ class Network {
     // Decode a "chromosome" array of floats in the range [0, 1] into a neural network, including all weights and biases
     decode(chromosome) {
         let chromosomeIndex = 0;
-        for (var i = 0; i < this.connections.length; i++) {
+        for (let i = 0; i < this.connections.length; i++) {
             this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10, 10);
             chromosomeIndex++;
         }
-        for (var i = 1; i < this.layers.length; i++) {
-            for (var j = 0; j < this.layers[i].neurons.length; j++) {
+        for (let i = 1; i < this.layers.length; i++) {
+            for (let j = 0; j < this.layers[i].neurons.length; j++) {
                 this.layers[i].neurons[j].bias = ToolBox.map(chromosome[chromosomeIndex], 0, 1, -10, 10);
                 chromosomeIndex++;
             }
         }
-        for (var i = 1; i < this.layers.length; i++) {
-            for (var j = 0; j < this.layers[i].neurons.length; j++) {
+        for (let i = 1; i < this.layers.length; i++) {
+            for (let j = 0; j < this.layers[i].neurons.length; j++) {
                 this.layers[i].neurons[j].n = ToolBox.map(chromosome[chromosomeIndex], 0, 1, 0, 2);
                 chromosomeIndex++;
             }

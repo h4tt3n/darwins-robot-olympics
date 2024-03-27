@@ -17,16 +17,16 @@ class FixedSpring extends LinearLink{
     }
     applyCorrectiveImpulse(){
         if( this.restImpulse == Vector2.zero) { return };
-        var deltaImpulse = this.pointB.impulse.sub(this.pointA.impulse);
-        var impulseError = deltaImpulse.sub(this.restImpulse);
-        var correctiveImpulse = impulseError.mul(-this.reducedMass);
+        let deltaImpulse = this.pointB.impulse.sub(this.pointA.impulse);
+        let impulseError = deltaImpulse.sub(this.restImpulse);
+        let correctiveImpulse = impulseError.mul(-this.reducedMass);
         this.pointA.impulse.subThis(correctiveImpulse.mul(this.pointA.inverseMass));
         this.pointB.impulse.addThis(correctiveImpulse.mul(this.pointB.inverseMass));
         this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart(){
         if( this.accumulatedImpulse == Vector2.zero) { return };
-        var warmstartImpulse = this.accumulatedImpulse.mul(this.warmStart);
+        let warmstartImpulse = this.accumulatedImpulse.mul(this.warmStart);
         this.pointA.impulse.subThis(warmstartImpulse.mul(this.pointA.inverseMass));
         this.pointB.impulse.addThis(warmstartImpulse.mul(this.pointB.inverseMass));
         this.accumulatedImpulse.setThis(0.0, 0.0);
@@ -35,10 +35,10 @@ class FixedSpring extends LinearLink{
         super.computeData();
     }
     computeRestImpulse(){
-        var deltaPosition = this.pointB.position.sub(this.pointA.position);
-        var deltaVelocity = this.pointB.velocity.sub(this.pointA.velocity);
-        var positionError = deltaPosition.sub(this.restLength);
-        var velocityError = deltaVelocity;
+        let deltaPosition = this.pointB.position.sub(this.pointA.position);
+        let deltaVelocity = this.pointB.velocity.sub(this.pointA.velocity);
+        let positionError = deltaPosition.sub(this.restLength);
+        let velocityError = deltaVelocity;
         this.restImpulse = positionError.mul(-this.stiffness*constants.INV_DT).add(velocityError.mul(-this.damping));
     }
     isValid() {

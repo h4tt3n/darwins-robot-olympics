@@ -774,7 +774,7 @@ class Simulation {
         let angle = Math.PI * 2; // * Math.random();
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        var body = this.world.createParticle(position, 20, bodyRadius, randomColor);
+        let body = this.world.createParticle(position, 20, bodyRadius, randomColor);
         bodyParts.particles.push(body);
 
         // Legs
@@ -783,11 +783,11 @@ class Simulation {
             let legAngleVector = new Vector2(Math.cos(legAngle), Math.sin(legAngle));
 
             // Leg anchors
-            var legAnchor = this.world.createParticle(position.add(legAngleVector.mul(body.radius + legJointMaxRadius)), legJointMaxMass, legJointMaxRadius, randomColor);
+            let legAnchor = this.world.createParticle(position.add(legAngleVector.mul(body.radius + legJointMaxRadius)), legJointMaxMass, legJointMaxRadius, randomColor);
             bodyParts.particles.push(legAnchor);
 
             // Leg linear spring to body
-            var legLinear = this.world.createLinearSpring(body, legAnchor, 1.0, 1.0, 0.5);
+            let legLinear = this.world.createLinearSpring(body, legAnchor, 1.0, 1.0, 0.5);
             legLinear.radius = legJointMaxRadius;
             legLinear.color = randomColor2;
             bodyParts.linearSprings.push(legLinear);
@@ -804,17 +804,17 @@ class Simulation {
                 let legJointMass = ToolBox.map(j, 0, numLegSections - 1, legJointMaxMass, legJointMinMass);
 
                 // Leg joints
-                var legJoint = this.world.createParticle(prevLegJoint.position.add(legAngleVector.mul(prevLegJoint.radius+legJointRadius)), legJointMass, legJointRadius, randomColor);
+                let legJoint = this.world.createParticle(prevLegJoint.position.add(legAngleVector.mul(prevLegJoint.radius+legJointRadius)), legJointMass, legJointRadius, randomColor);
                 bodyParts.particles.push(legJoint);
 
                 // Leg sections
-                var legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 0.5, 1.0, 0.5);
+                let legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 0.5, 1.0, 0.5);
                 legSection.radius = legJointRadius;
                 legSection.color = randomColor2;
                 bodyParts.linearSprings.push(legSection);
 
                 // Leg angular spring
-                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 1.0, 0.5);
+                let legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 1.0, 0.5);
                 bodyParts.angularSprings.push(legAngular);
                 legAngulars.push(legAngular);
                 

@@ -32,16 +32,16 @@ class AngularState extends LinearState {
     }
     applyImpulseAtPoint(impulse, point) {
         if (impulse instanceof Vector2 && point instanceof Vector2) {
-            var r = point.sub(this.position);
-            var linearImpulse = impulse.mul(this.inverseMass);
-            var angularImpulse = r.perpDot(impulse) * this.inverseInertia;
+            let r = point.sub(this.position);
+            let linearImpulse = impulse.mul(this.inverseMass);
+            let angularImpulse = r.perpDot(impulse) * this.inverseInertia;
             this.addVelocity(linearImpulse);
             this.addAngularVelocity(angularImpulse);
         }
     }
     getLinearVelocityAtPoint(point) {
         if (point instanceof Vector2) {
-            var r = point.sub(this.position);
+            let r = point.sub(this.position);
             return this.velocity.add(r.perp().mul(this.angularVelocity));
         }
         return Vector2.zero;
@@ -53,7 +53,7 @@ class AngularState extends LinearState {
         this.angleVector = new Vector2(Math.cos(this.angle), Math.sin(this.angle));
     }
     computeAngularVelocityVector(){
-        var deltaAngle = this.angularVelocity * constants.DT;
+        let deltaAngle = this.angularVelocity * constants.DT;
         this.angularVelocityVector = new Vector2(Math.cos(deltaAngle), Math.sin(deltaAngle));
     }
     computeData(){

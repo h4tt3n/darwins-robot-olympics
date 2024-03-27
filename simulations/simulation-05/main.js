@@ -497,8 +497,8 @@ function createMenu() {
 
     menu.style.backgroundColor = 'rgb(160, 160, 160)';
 
-    var height = window.innerHeight * 0.2;
-    var width = window.innerWidth;
+    let height = window.innerHeight * 0.2;
+    let width = window.innerWidth;
 
     menu.style.height = height + 'px';
     menu.style.width = width + 'px';
@@ -508,7 +508,7 @@ function createMenu() {
 
     // Toggle raycasting button
 
-    var button = document.createElement('button');
+    let button = document.createElement('button');
     button.textContent = 'Toggle Raycast rendering';
     button.disabled = true;
 
@@ -533,7 +533,7 @@ function createMenu() {
 
     // Pause button
 
-    var pauseButton = document.createElement('button');
+    let pauseButton = document.createElement('button');
     pauseButton.textContent = 'Pause';
     pauseButton.disabled = true;
 
@@ -550,9 +550,9 @@ function createMenu() {
     // robot selection drop-down menu, based on createRobotFuncs
 
     // Create a new select element
-    var select = document.createElement('select');
+    let select = document.createElement('select');
 
-    var option = document.createElement('option');
+    let option = document.createElement('option');
     option.value = "";
     option.textContent = "Select Robot";
     option.disabled = true;
@@ -561,8 +561,8 @@ function createMenu() {
     select.appendChild(option);
 
     // Loop through all the createRobot functions
-    for (var createRobotFuncName in createRobotFuncs) {
-        var option = document.createElement('option');
+    for (let createRobotFuncName in createRobotFuncs) {
+        let option = document.createElement('option');
         option.value = createRobotFuncName;
         option.textContent = createRobotFuncName;
         select.appendChild(option);
@@ -570,7 +570,7 @@ function createMenu() {
 
     // Add an onchange event handler to the select element
     select.onchange = function() {
-        var selectedValue = select.value;
+        let selectedValue = select.value;
         createRobotFunc = createRobotFuncs[selectedValue];
         simulation.robotSpawner.func = createRobotFunc;
     };
@@ -579,7 +579,7 @@ function createMenu() {
 
     // Challenge selection drop-down menu, based on createChallengeFuncs
 
-    var selectChallenge = document.createElement('select');
+    let selectChallenge = document.createElement('select');
 
     option = document.createElement('option');
     option.value = "";
@@ -589,8 +589,8 @@ function createMenu() {
     option.hidden = true;
     selectChallenge.appendChild(option);
 
-    for (var createChallengeFuncName in createChallengeFuncs) {
-        var option = document.createElement('option');
+    for (let createChallengeFuncName in createChallengeFuncs) {
+        let option = document.createElement('option');
         option.value = createChallengeFuncName;
         option.textContent = createChallengeFuncName;
         selectChallenge.appendChild(option);
@@ -598,7 +598,7 @@ function createMenu() {
 
     // Add an onchange event handler to the select element
     selectChallenge.onchange = function() {
-        var selectedValue = selectChallenge.value;
+        let selectedValue = selectChallenge.value;
         createChallengeFunc = createChallengeFuncs[selectedValue];
         simulation.challengeSpawner.func = createChallengeFunc;
     };
@@ -607,11 +607,11 @@ function createMenu() {
 
     // input field for setting numRobots
 
-    var label = document.createElement('label');
+    let label = document.createElement('label');
     label.textContent = "Number of robots";
     menu.appendChild(label);
 
-    var input = document.createElement('input');
+    let input = document.createElement('input');
     input.type = 'number';
     input.value = numRobots;
     input.min = 1;
@@ -636,7 +636,7 @@ function createMenu() {
 
     // Start / Stop simulation button
 
-    var startStopButton = document.createElement('button');
+    let startStopButton = document.createElement('button');
     startStopButton.textContent = 'Start Challenge!';
 
     // Add an onclick event handler to the button
@@ -668,9 +668,9 @@ function createMenu() {
 
     // Mouse pan
 
-    var isDragging = false;
-    var initialMousePos;
-    var initialCameraPos;
+    let isDragging = false;
+    let initialMousePos;
+    let initialCameraPos;
 
     simulation.renderer.canvas.addEventListener("mousedown", (event) => {
         if (event.button === 0) {
@@ -682,8 +682,8 @@ function createMenu() {
 
     simulation.renderer.canvas.addEventListener("mousemove", (event) => {
         if (isDragging) {
-            var currentMousePos = new Vector2(event.clientX, event.clientY);
-            var deltaMousePos = currentMousePos.sub(initialMousePos);
+            let currentMousePos = new Vector2(event.clientX, event.clientY);
+            let deltaMousePos = currentMousePos.sub(initialMousePos);
             deltaMousePos = deltaMousePos.div(simulation.renderer.camera.zoom);
             simulation.renderer.camera.restPosition.x = (initialCameraPos.x - deltaMousePos.x);
             simulation.renderer.camera.restPosition.y = (initialCameraPos.y - deltaMousePos.y);
@@ -700,20 +700,20 @@ function createMenu() {
     // Mouse select nearest creature
 
     simulation.renderer.canvas.addEventListener("click", (event) => {
-        var mouseX = event.clientX;
-        var mouseY = event.clientY;
+        let mouseX = event.clientX;
+        let mouseY = event.clientY;
        
-        var worldX = (mouseX - simulation.renderer.canvas.width / 2) / simulation.renderer.camera.zoom + simulation.renderer.camera.position.x;
-        var worldY = (mouseY - simulation.renderer.canvas.height / 2) / simulation.renderer.camera.zoom + simulation.renderer.camera.position.y;
+        let worldX = (mouseX - simulation.renderer.canvas.width / 2) / simulation.renderer.camera.zoom + simulation.renderer.camera.position.x;
+        let worldY = (mouseY - simulation.renderer.canvas.height / 2) / simulation.renderer.camera.zoom + simulation.renderer.camera.position.y;
        
-        var mousePos = new Vector2(worldX, worldY);
+        let mousePos = new Vector2(worldX, worldY);
        
-        var nearestCreature = null;
-        var smallestDistance = 50;
+        let nearestCreature = null;
+        let smallestDistance = 50;
        
         simulation.robots.forEach((robot) => {
-           var roboWormPos = new Vector2(robot.body.particles[0].position.x, robot.body.particles[0].position.y);
-           var distance = mousePos.distance(roboWormPos);
+           let roboWormPos = new Vector2(robot.body.particles[0].position.x, robot.body.particles[0].position.y);
+           let distance = mousePos.distance(roboWormPos);
        
            if (distance < smallestDistance) {
               smallestDistance = distance;

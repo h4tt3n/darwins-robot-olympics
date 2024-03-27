@@ -119,7 +119,7 @@ class Vector2 {
         }
     }
     normalize() {
-        var length = this.length();
+        let length = this.length();
         if(length === 0){
             return new Vector2();
         } else {
@@ -128,7 +128,7 @@ class Vector2 {
     }
     static normalize(v) {
         if(v instanceof Vector2){
-            var length = v.length();
+            let length = v.length();
             if(length === 0){
                 return new Vector2();
             } else {
@@ -150,7 +150,7 @@ class Vector2 {
             if(v === Vector2.zero){
                 return new Vector2();
             } else {
-                var result = v.mul( this.dot(v)) / (v.dot(v) ); 
+                let result = v.mul( this.dot(v)) / (v.dot(v) ); 
                 return new Vector2(result.x, result.y);
             }
         }
@@ -220,7 +220,7 @@ class Vector2 {
             if(this === Vector2.zero){
                 return new Vector2();
             } else {
-                var result = (this.mul( v.dot(this) / this.dot(this) ));
+                let result = (this.mul( v.dot(this) / this.dot(this) ));
                 return new Vector2(result.x, result.y);
             }
         }
@@ -235,7 +235,7 @@ class Vector2 {
     }
     rotate(v) { 
         if (v instanceof Vector2){
-            var vec = new Vector2(v.x, -v.y);
+            let vec = new Vector2(v.x, -v.y);
             return new Vector2(vec.dot(this), vec.perpDot(this));
         } 
         else {
@@ -244,7 +244,7 @@ class Vector2 {
     }
     rotateRight(v) {
         if (v instanceof Vector2){
-            var vec = new Vector2(-v.x, v.y);
+            let vec = new Vector2(-v.x, v.y);
             return new Vector2(vec.dot(this), vec.perpDot(this));
         } 
         else {
@@ -253,7 +253,7 @@ class Vector2 {
     }
     rotateLeft(v) {
         if (v instanceof Vector2){
-            var vec = new Vector2(v.x, -v.y);
+            let vec = new Vector2(v.x, -v.y);
             return new Vector2(vec.dot(this), vec.perpDot(this));
         } 
         else {
@@ -261,7 +261,7 @@ class Vector2 {
         }
     }
     unit() { 
-        var length = this.length();
+        let length = this.length();
         if(length === 0){
             return new Vector2();
         } else {

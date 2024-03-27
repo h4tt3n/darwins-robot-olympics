@@ -34,13 +34,13 @@ class LinearLink extends LineSegment{
         this.angleVector = this.lengthVector.unit();
     }
     computeAngularImpulse(){
-        //var impulse = this.linearStateB.impulse.sub(this.linearStateA.impulse);
-        var impulse = this.pointB.impulse.sub(this.pointA.impulse);
+        //let impulse = this.linearStateB.impulse.sub(this.linearStateA.impulse);
+        let impulse = this.pointB.impulse.sub(this.pointA.impulse);
         this.angularImpulse = this.lengthVector.perpDot(impulse) * this.reducedMass * this.inverseInertia;
     }
     computeAngularVelocity(){
-        //var velocity = this.linearStateB.velocity.sub(this.linearStateA.velocity);
-        var velocity = this.pointB.velocity.sub(this.pointA.velocity);
+        //let velocity = this.linearStateB.velocity.sub(this.linearStateA.velocity);
+        let velocity = this.pointB.velocity.sub(this.pointA.velocity);
         this.angularVelocity = this.lengthVector.perpDot(velocity) * this.reducedMass * this.inverseInertia;
     }
     computeData(){
@@ -70,8 +70,8 @@ class LinearLink extends LineSegment{
         this.mass = this.pointA.mass + this.pointB.mass;
     }
     computeReducedMass(){
-        //var k = this.linearStateA.inverseMass + this.linearStateB.inverseMass;
-        var k = this.pointA.inverseMass + this.pointB.inverseMass;
+        //let k = this.linearStateA.inverseMass + this.linearStateB.inverseMass;
+        let k = this.pointA.inverseMass + this.pointB.inverseMass;
         this.reducedMass = k > 0.0 ? 1.0 / k : 0.0;
     }
     getLinearVelocityAtPoint(point){

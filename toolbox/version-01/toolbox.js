@@ -12,7 +12,7 @@
 class ToolBox {
 
     static randomElementFromArray(array) {
-        var i = Math.floor(Math.random() * array.length);
+        let i = Math.floor(Math.random() * array.length);
         return array[i];
     }
 
@@ -103,12 +103,12 @@ class ToolBox {
     }
 
     static randomPrintableAsciiChar() {
-        var asciiCode = randomIntBetween(32, 126);
+        let asciiCode = randomIntBetween(32, 126);
         return String.fromCharCode(asciiCode);
     }
 
     static randomAsciiLetter() {
-        var asciiCode = randomIntBetween(65, 122);
+        let asciiCode = randomIntBetween(65, 122);
         while (asciiCode > 90 && asciiCode < 97) {
             asciiCode = randomIntBetween(65, 122);
         }
@@ -116,7 +116,7 @@ class ToolBox {
     }
 
     static randomCharFromString(string) {
-        var randomIndex = Math.floor(Math.random() * string.length);
+        let randomIndex = Math.floor(Math.random() * string.length);
         return string.charAt(randomIndex);
     }
 
@@ -243,12 +243,12 @@ class ToolBox {
 
     static myTypeOf(value) {
         
-        var instanceOf = value.constructor.name;
-        var typeOf = typeof(value);
-        var constTypeOf = null;
+        let instanceOf = value.constructor.name;
+        let typeOf = typeof(value);
+        let constTypeOf = null;
 
-        //var constTypeStr = new String(value.constructor).slice(9,10);
-        var constTypeStr = new String(value.constructor).charAt(9);
+        //let constTypeStr = new String(value.constructor).slice(9,10);
+        let constTypeStr = new String(value.constructor).charAt(9);
 
         switch(constTypeStr){
             case "A": constTypeOf = "Array"; break;

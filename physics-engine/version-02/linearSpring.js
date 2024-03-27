@@ -17,27 +17,27 @@ class LinearSpring extends LinearLink{
     }
     applyCorrectiveImpulse(){
         if( this.restImpulse == 0.0 ) { return };
-        var deltaImpulse = this.pointB.impulse.sub(this.pointA.impulse);
-        var projectedImpulse = this.angleVector.dot(deltaImpulse);
-        var impulseError = projectedImpulse - this.restImpulse;
-        var correctiveImpulse = this.angleVector.mul(-impulseError*this.reducedMass);
+        let deltaImpulse = this.pointB.impulse.sub(this.pointA.impulse);
+        let projectedImpulse = this.angleVector.dot(deltaImpulse);
+        let impulseError = projectedImpulse - this.restImpulse;
+        let correctiveImpulse = this.angleVector.mul(-impulseError*this.reducedMass);
         this.pointA.addImpulse(correctiveImpulse.mul(-this.pointA.inverseMass));
         this.pointB.addImpulse(correctiveImpulse.mul( this.pointB.inverseMass));
         this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart(){
-        var projectedImpulse = this.angleVector.dot(this.accumulatedImpulse);
+        let projectedImpulse = this.angleVector.dot(this.accumulatedImpulse);
         if( projectedImpulse > 0.0 ) { return };
-        var warmstartImpulse = this.angleVector.mul(projectedImpulse*this.warmStart);
+        let warmstartImpulse = this.angleVector.mul(projectedImpulse*this.warmStart);
         this.pointA.impulse = this.pointA.impulse.sub(warmstartImpulse.mul(this.pointA.inverseMass));
         this.pointB.impulse = this.pointB.impulse.add(warmstartImpulse.mul(this.pointB.inverseMass));
         this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeRestImpulse(){
-        var deltaPosition = this.pointB.position.sub(this.pointA.position);
-        var deltaVelocity = this.pointB.velocity.sub(this.pointA.velocity);
-        var positionError = this.angleVector.dot(deltaPosition) - this.restLength;
-        var velocityError = this.angleVector.dot(deltaVelocity);
+        let deltaPosition = this.pointB.position.sub(this.pointA.position);
+        let deltaVelocity = this.pointB.velocity.sub(this.pointA.velocity);
+        let positionError = this.angleVector.dot(deltaPosition) - this.restLength;
+        let velocityError = this.angleVector.dot(deltaVelocity);
         this.restImpulse = -(positionError * this.stiffness * constants.INV_DT + velocityError * this.damping);
     }
     computeData(){

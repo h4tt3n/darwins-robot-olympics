@@ -339,28 +339,30 @@ class CollisionHandler {
         }
     }
     // Array-string based
-    // createCollisionObjectId(objectA, objectB) {
-    //     let array = [objectA.objectId, objectB.objectId].sort();
-    //     let id = array.toString();
-    //     return id;
-    // }
-    // getObjectIdsFromCollisionObjectId(collisionObjectId) {
-    //     //let array = Array.from(collisionObjectId).;
-    //     //return array;
-    //     let splitArray = collisionObjectId.split(",");
-    //     let array = splitArray.map(string => parseInt(string));
-    //     return array;
-    // }
-    // JSON based
     createCollisionObjectId(objectA, objectB) {
         let array = [objectA.objectId, objectB.objectId].sort();
-        let json = JSON.stringify(array);
-        return json;
+        let id = array.toString();
+        return id;
     }
     getObjectIdsFromCollisionObjectId(collisionObjectId) {
-        let array = JSON.parse(collisionObjectId);
+        //let array = Array.from(collisionObjectId).;
+        //return array;
+        let splitArray = collisionObjectId.split(",");
+        let array = splitArray.map(string => parseInt(string));
         return array;
     }
+
+    // JSON based
+    // createCollisionObjectId(objectA, objectB) {
+    //     let array = [objectA.objectId, objectB.objectId].sort();
+    //     let json = JSON.stringify(array);
+    //     return json;
+    // }
+    // getObjectIdsFromCollisionObjectId(collisionObjectId) {
+    //     let array = JSON.parse(collisionObjectId);
+    //     return array;
+    // }
+    
     // Original
     // createCollisionObjectId(objectA, objectB) {
     //     return objectA.objectId + "-" + objectB.objectId;

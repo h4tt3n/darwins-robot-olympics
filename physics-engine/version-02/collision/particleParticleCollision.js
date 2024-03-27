@@ -50,7 +50,7 @@ class ParticleParticleCollision {
         this.restImpulse = -(positionError * this.stiffness * constants.INV_DT + velocityError * this.damping);
     }
     computeReducedMass(){
-        var k = this.particleA.inverseMass + this.particleB.inverseMass;
+        let k = this.particleA.inverseMass + this.particleB.inverseMass;
         this.reducedMass = k > 0.0 ? 1.0 / k : 0.0;
     }
 }

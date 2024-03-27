@@ -54,7 +54,7 @@ class World {
         this.collisionHandler = new CollisionHandler(this);
     }
     applyImpulses(){
-        for(var i = 0; i < constants.NUM_ITERATIONS; i++){
+        for(let i = 0; i < constants.NUM_ITERATIONS; i++){
             this.applyCorrectiveImpulsestoArray(this.angularSprings);
             this.applyCorrectiveImpulsestoArray(this.linearSprings);
             this.applyCorrectiveImpulsestoArray(this.fixedSprings);
@@ -64,13 +64,13 @@ class World {
         }
     }
     applyCorrectiveImpulsestoArray(array) {
-        for(var j = 0; j < array.length; j++) {
+        for(let j = 0; j < array.length; j++) {
             array[j].applyCorrectiveImpulse();
         }
     }
     applyCorrectiveImpulsesToMap(map) {
         const keys = Array.from(map.keys());
-        for(var j = 0; j < keys.length; j++) {
+        for(let j = 0; j < keys.length; j++) {
             map.get(keys[j]).applyCorrectiveImpulse();
         }
     }
@@ -158,131 +158,131 @@ class World {
         this.lineSegments.splice(this.lineSegments.indexOf(lineSegment), 1);
     }
     createLinearState(position, mass){
-        var linearState = new LinearState(position, mass);
+        let linearState = new LinearState(position, mass);
         linearState.objectId = this.objectIdCounter++;
         this.linearStates.push(linearState);
         return this.linearStates[this.linearStates.length - 1];
     }
     deleteLinearState(linearState){
-        var index = this.linearStates.indexOf(linearState);
+        let index = this.linearStates.indexOf(linearState);
         if (index > -1) {
             this.linearStates.splice(index, 1);
         }
     }
     createAngularState(position, mass, angle, inertia){
-        var angularState = new AngularState(position, mass, angle, inertia);
+        let angularState = new AngularState(position, mass, angle, inertia);
         angularState.objectId = this.objectIdCounter++;
         this.angularStates.push(angularState);
         return this.angularStates[this.angularStates.length - 1];
     }
     deleteAngularState(angularState){
-        var index = this.angularStates.indexOf(angularState);
+        let index = this.angularStates.indexOf(angularState);
         if (index > -1) {
             this.angularStates.splice(index, 1);
         }
     }
     createLinearLink(linearStateA, linearStateB){
-        var linearLink = new LinearLink(linearStateA, linearStateB);
+        let linearLink = new LinearLink(linearStateA, linearStateB);
         linearLink.objectId = this.objectIdCounter++;
         this.linearLinks.push(linearLink);
         return this.linearLinks[this.linearLinks.length - 1];
     }
     deleteLinearLink(linearLink){
-        var index = this.linearLinks.indexOf(linearLink);
+        let index = this.linearLinks.indexOf(linearLink);
         if (index > -1) {
             this.linearLinks.splice(index, 1);
         }
     }
     createFixedSpring(linearStateA, linearStateB, stiffness, damping, warmstart){
-        var fixedSpring = new FixedSpring(linearStateA, linearStateB, stiffness, damping, warmstart);
+        let fixedSpring = new FixedSpring(linearStateA, linearStateB, stiffness, damping, warmstart);
         fixedSpring.objectId = this.objectIdCounter++;
         this.fixedSprings.push(fixedSpring);
         return this.fixedSprings[this.fixedSprings.length - 1];
     }
     deleteFixedSpring(fixedSpring){
-        var index = this.fixedSprings.indexOf(fixedSpring);
+        let index = this.fixedSprings.indexOf(fixedSpring);
         if (index > -1) {
             this.fixedSprings.splice(index, 1);
         }
     }
     createLinearSpring(linearStateA, linearStateB, stiffness, damping, warmstart){
-        var linearSpring = new LinearSpring(linearStateA, linearStateB, stiffness, damping, warmstart);
+        let linearSpring = new LinearSpring(linearStateA, linearStateB, stiffness, damping, warmstart);
         linearSpring.objectId = this.objectIdCounter++;
         this.linearSprings.push(linearSpring);
         return this.linearSprings[this.linearSprings.length - 1];
     }
     deleteLinearSpring(linearSpring){
-        var index = this.linearSprings.indexOf(linearSpring);
+        let index = this.linearSprings.indexOf(linearSpring);
         if (index > -1) {
             this.linearSprings.splice(index, 1);
         }
     }
     createAngularSpring(LinearLinkA, linearLinkB, stiffness, damping, warmstart){
-        var angularSpring = new AngularSpring(LinearLinkA, linearLinkB, stiffness, damping, warmstart);
+        let angularSpring = new AngularSpring(LinearLinkA, linearLinkB, stiffness, damping, warmstart);
         angularSpring.objectId = this.objectIdCounter++;
         this.angularSprings.push(angularSpring);
         return this.angularSprings[this.angularSprings.length - 1];
     }
     deleteAngularSpring(angularSpring){
-        var index = this.angularSprings.indexOf(angularSpring);
+        let index = this.angularSprings.indexOf(angularSpring);
         if (index > -1) {
             this.angularSprings.splice(index, 1);
         }
     }
     createGearConstraint(angularStateA, angularStateB, gearRatio){
-        var gearConstraintParams = {
+        let gearConstraintParams = {
             angularStateA : angularStateA,
             angularStateB : angularStateB,
             gearRatio : gearRatio
         }
-        var gearConstraint = new GearConstraint(gearConstraintParams);
+        let gearConstraint = new GearConstraint(gearConstraintParams);
         gearConstraint.objectId = this.objectIdCounter++;
         this.gearConstraints.push(gearConstraint);
         return this.gearConstraints[this.gearConstraints.length - 1];
     }
     deleteGearConstraint(gearConstraint){
-        var index = this.gearConstraints.indexOf(gearConstraint);
+        let index = this.gearConstraints.indexOf(gearConstraint);
         if (index > -1) {
             this.gearConstraints.splice(index, 1);
         }
     }
     createMotorConstraint(angularStateA, angularStateB, restVelocity){
-        var motorConstraintParams = {
+        let motorConstraintParams = {
             angularStateA : angularStateA,
             angularStateB : angularStateB,
             restVelocity : restVelocity
         }
-        var motorConstraint = new MotorConstraint(motorConstraintParams);
+        let motorConstraint = new MotorConstraint(motorConstraintParams);
         motorConstraint.objectId = this.objectIdCounter++;
         this.motorConstraints.push(motorConstraint);
         return this.motorConstraints[this.motorConstraints.length - 1];
     }
     deleteMotorConstraint(motorConstraint){
-        var index = this.motorConstraints.indexOf(motorConstraint);
+        let index = this.motorConstraints.indexOf(motorConstraint);
         if (index > -1) {
             this.motorConstraints.splice(index, 1);
         }
     }
     createParticle(position, mass, radius, color){
-        var particle = new Particle(position, mass, radius, color);
+        let particle = new Particle(position, mass, radius, color);
         particle.objectId = this.objectIdCounter++;
         this.particles.push(particle);
         return this.particles[this.particles.length - 1];
     }
     deleteParticle(particle){
-        var index = this.particles.indexOf(particle);
+        let index = this.particles.indexOf(particle);
         if (index > -1) {
             this.particles.splice(index, 1);
         }
     }
     createWheel(position, mass, angle, inertia, radius){
-        var wheel = new Wheel(position, mass, angle, inertia, radius);
+        let wheel = new Wheel(position, mass, angle, inertia, radius);
         wheel.objectId = this.objectIdCounter++;
         this.wheels.push(wheel);
         return this.wheels[this.wheels.length - 1];
     }
     deleteWheel(wheel){
-        var index = this.wheels.indexOf(wheel);
+        let index = this.wheels.indexOf(wheel);
         if (index > -1) {
             this.wheels.splice(index, 1);
         }

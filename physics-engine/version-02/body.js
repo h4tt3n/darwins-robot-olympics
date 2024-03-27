@@ -45,35 +45,35 @@ class Body extends AngularState {
     addAngularImpulse(angularImpulse){
         super.addAngularImpulse(angularImpulse);
         this.linearStates.forEach(l => {
-            var localPosition = l.position.sub(this.position);
-            var localImpulse = localPosition.perpDot(angularImpulse);
+            let localPosition = l.position.sub(this.position);
+            let localImpulse = localPosition.perpDot(angularImpulse);
             l.addImpulse(localImpulse);
         });
     }
     addAngularVelocity(angularVelocity){
         super.addAngularVelocity(angularVelocity);
         this.linearStates.forEach(l => {
-            var localPosition = l.position.sub(this.position);
-            var localImpulse = localPosition.perpDot(angularVelocity);
+            let localPosition = l.position.sub(this.position);
+            let localImpulse = localPosition.perpDot(angularVelocity);
             l.addVelocity(localImpulse);
         });
     }
     // Body methods
     computeAngularImpulse(){
         // TODO: Check this
-        var angularImpulse = 0.0;
+        let angularImpulse = 0.0;
         this.linearStates.forEach(l => {
-            var localPosition = l.position.sub(this.position);
-            var localImpulse = localPosition.perpDot(l.impulse);
+            let localPosition = l.position.sub(this.position);
+            let localImpulse = localPosition.perpDot(l.impulse);
             angularImpulse += localImpulse;
         });
         this.angularImpulse = angularImpulse;
     }
     computeAngularVelocity(){
-        var angularMomentum = 0.0;
+        let angularMomentum = 0.0;
         this.linearStates.forEach(l => {
-            var localPosition = l.position.sub(this.position);
-            var localVelocity = l.velocity.sub(this.velocity);
+            let localPosition = l.position.sub(this.position);
+            let localVelocity = l.velocity.sub(this.velocity);
             angularMomentum += localPosition.perpDot(localVelocity.mul(l.mass));
         });
         this.angularVelocity = angularMomentum * this.inverseInertia;
@@ -92,7 +92,7 @@ class Body extends AngularState {
     computeInertia(){
         this.inertia = 0.0;
         this.linearStates.forEach( l => {
-            var localPosition = l.position.sub(this.position);
+            let localPosition = l.position.sub(this.position);
             this.inertia += localPosition.dot(localPosition) * l.mass;
         });
     }

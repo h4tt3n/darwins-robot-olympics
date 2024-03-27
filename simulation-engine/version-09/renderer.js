@@ -102,9 +102,9 @@ class Renderer {
 
         // Draw waypoints
         for (let i = 0; i < this.simulation.wayPoints.length; i++) {
-            var wayPoint = this.simulation.wayPoints[i];
-            var x = wayPoint.position.x;
-            var y = wayPoint.position.y;
+            let wayPoint = this.simulation.wayPoints[i];
+            let x = wayPoint.position.x;
+            let y = wayPoint.position.y;
 
             this.ctx.beginPath();
             this.ctx.arc(x, y, wayPoint.radius * 1.0, 0, Math.PI * 2);
@@ -144,9 +144,9 @@ class Renderer {
             this.ctx.strokeStyle = "rgb(255, 255, 255)";
 
             for (let i = 0; i < this.simulation.rays.length; i++) {
-                var ray = this.simulation.rays[i];
-                var x1 = ray.origin.x;
-                var y1 = ray.origin.y;
+                let ray = this.simulation.rays[i];
+                let x1 = ray.origin.x;
+                let y1 = ray.origin.y;
 
                 // Render origin
                 this.ctx.beginPath();
@@ -154,12 +154,12 @@ class Renderer {
                 this.ctx.fillStyle = "rgb(255, 255, 255)";
                 this.ctx.fill();
 
-                var intersection = ray.closestIntersection;
+                let intersection = ray.closestIntersection;
 
                 if (intersection) {
 
-                    var x2 = intersection.intersection.point.x
-                    var y2 = intersection.intersection.point.y
+                    let x2 = intersection.intersection.point.x
+                    let y2 = intersection.intersection.point.y
 
                     this.ctx.beginPath();
                     this.ctx.moveTo(x1, y1);
@@ -180,9 +180,9 @@ class Renderer {
             //this.ctx.lineJoin = "round";
 
             for (let i = 0; i < this.simulation.rayCameras.length; i++) {
-                var rayCamera = this.simulation.rayCameras[i];
-                var x1 = rayCamera.origin.x;
-                var y1 = rayCamera.origin.y;
+                let rayCamera = this.simulation.rayCameras[i];
+                let x1 = rayCamera.origin.x;
+                let y1 = rayCamera.origin.y;
 
                 // Render origin
                 this.ctx.beginPath();
@@ -190,15 +190,15 @@ class Renderer {
                 this.ctx.fillStyle = "rgb(255, 255, 255)";
                 this.ctx.fill();
 
-                var intersections = rayCamera.closestIntersections;
+                let intersections = rayCamera.closestIntersections;
 
                 if (intersections) {
                     for (let j = 0; j < intersections.length; j++) {
 
                         if (intersections[j] && intersections[j].intersection && intersections[j].intersection.point) {  // temporary bugfix
 
-                            var x2 = intersections[j].intersection.point.x;
-                            var y2 = intersections[j].intersection.point.y;
+                            let x2 = intersections[j].intersection.point.x;
+                            let y2 = intersections[j].intersection.point.y;
 
                             this.ctx.beginPath();
                             this.ctx.moveTo(x1, y1);
@@ -220,7 +220,7 @@ class Renderer {
         // Draw robots from map
         if (this.simulation.robots != undefined) {
             for (let i = this.simulation.robots.length-1; i >= 0; i--) {
-                var robot = this.simulation.robots[i];
+                let robot = this.simulation.robots[i];
 
                 //console.log(robot.body instanceof Map);
 
@@ -229,10 +229,10 @@ class Renderer {
                 // Draw LinearSprings
                 robot.body.forEach((value) => {
                     if(value instanceof LinearSpring) {
-                        var x1 = value.pointA.position.x;
-                        var y1 = value.pointA.position.y;
-                        var x2 = value.pointB.position.x;
-                        var y2 = value.pointB.position.y;
+                        let x1 = value.pointA.position.x;
+                        let y1 = value.pointA.position.y;
+                        let x2 = value.pointB.position.x;
+                        let y2 = value.pointB.position.y;
 
                         this.ctx.lineWidth = value.radius * 2;
                         this.ctx.strokeStyle = value.color;
@@ -248,10 +248,10 @@ class Renderer {
                 // Draw FixedSprings
                 robot.body.forEach((value) => {
                     if(value instanceof FixedSpring) {
-                        var x1 = value.pointA.position.x;
-                        var y1 = value.pointA.position.y;
-                        var x2 = value.pointB.position.x;
-                        var y2 = value.pointB.position.y;
+                        let x1 = value.pointA.position.x;
+                        let y1 = value.pointA.position.y;
+                        let x2 = value.pointB.position.x;
+                        let y2 = value.pointB.position.y;
 
                         this.ctx.lineWidth = value.radius * 2;
                         this.ctx.strokeStyle = value.color;
@@ -267,8 +267,8 @@ class Renderer {
                 // Draw particles
                 robot.body.forEach((value) => {
                     if(value instanceof Particle) {
-                        var x = value.position.x;
-                        var y = value.position.y;
+                        let x = value.position.x;
+                        let y = value.position.y;
 
                         this.ctx.beginPath();
                         this.ctx.arc(x, y, value.radius, 0, Math.PI * 2);
@@ -284,9 +284,9 @@ class Renderer {
                 // Draw wheels
                 robot.body.forEach((value) => {
                     if(value instanceof Wheel) {
-                        var x = value.position.x;
-                        var y = value.position.y;
-                        var r = value.radius * 0.5;
+                        let x = value.position.x;
+                        let y = value.position.y;
+                        let r = value.radius * 0.5;
 
                         this.ctx.beginPath();
                         this.ctx.arc(x, y, value.radius - 5, 0, Math.PI * 2);
@@ -294,11 +294,11 @@ class Renderer {
                         this.ctx.stroke();
                         this.ctx.closePath();
 
-                        var pos = value.position;
+                        let pos = value.position;
 
                         // Light gray line in direction of angle
-                        var x2 = pos.x + value.angleVector.x * r;
-                        var y2 = pos.y + value.angleVector.y * r;
+                        let x2 = pos.x + value.angleVector.x * r;
+                        let y2 = pos.y + value.angleVector.y * r;
 
                         this.ctx.beginPath();
                         this.ctx.moveTo(pos.x, pos.y);
@@ -308,7 +308,7 @@ class Renderer {
                         this.ctx.closePath();
 
                         // Green line in direction of right perpendicular of angle
-                        var right = pos.add(value.angleVector.perp().mul(r));
+                        let right = pos.add(value.angleVector.perp().mul(r));
 
                         this.ctx.beginPath();
                         this.ctx.moveTo(pos.x, pos.y);
@@ -318,7 +318,7 @@ class Renderer {
                         this.ctx.closePath();
 
                         // Red line in direction of left perpendicular of angle
-                        var left = pos.add(value.angleVector.perp().mul(-r));
+                        let left = pos.add(value.angleVector.perp().mul(-r));
 
                         this.ctx.beginPath();
                         this.ctx.moveTo(pos.x, pos.y);
@@ -340,17 +340,17 @@ class Renderer {
 
         // Draw robots
         for (let i = this.simulation.robots.length-1; i >= 0; i--) {
-            var robot = this.simulation.robots[i];
+            let robot = this.simulation.robots[i];
 
             // Draw FixedSprings
             if(robot.body.fixedSprings != undefined) {
                 for (let j = 0; j < robot.body.fixedSprings.length; j++) {
-                    var fixedSpring = robot.body.fixedSprings[j];
+                    let fixedSpring = robot.body.fixedSprings[j];
 
-                    var x1 = fixedSpring.pointA.position.x;
-                    var y1 = fixedSpring.pointA.position.y;
-                    var x2 = fixedSpring.pointB.position.x;
-                    var y2 = fixedSpring.pointB.position.y;
+                    let x1 = fixedSpring.pointA.position.x;
+                    let y1 = fixedSpring.pointA.position.y;
+                    let x2 = fixedSpring.pointB.position.x;
+                    let y2 = fixedSpring.pointB.position.y;
 
                     this.ctx.lineWidth = fixedSpring.radius * 2;
                     this.ctx.strokeStyle = fixedSpring.color;
@@ -366,12 +366,12 @@ class Renderer {
             // Draw linear springs
             if(robot.body.linearSprings != undefined) {
                 for (let j = 0; j < robot.body.linearSprings.length; j++) {
-                    var linearSpring = robot.body.linearSprings[j];
+                    let linearSpring = robot.body.linearSprings[j];
 
-                    var x1 = linearSpring.pointA.position.x;
-                    var y1 = linearSpring.pointA.position.y;
-                    var x2 = linearSpring.pointB.position.x;
-                    var y2 = linearSpring.pointB.position.y;
+                    let x1 = linearSpring.pointA.position.x;
+                    let y1 = linearSpring.pointA.position.y;
+                    let x2 = linearSpring.pointB.position.x;
+                    let y2 = linearSpring.pointB.position.y;
 
                     this.ctx.lineWidth = linearSpring.radius * 2;
                     this.ctx.strokeStyle = linearSpring.color;
@@ -387,9 +387,9 @@ class Renderer {
             // Draw particles
             if (robot.body.particles != undefined) {
                 for (let j = 0; j < robot.body.particles.length; j++) {
-                    var particle = robot.body.particles[j];
-                    var x = particle.position.x;
-                    var y = particle.position.y;
+                    let particle = robot.body.particles[j];
+                    let x = particle.position.x;
+                    let y = particle.position.y;
 
                     this.ctx.beginPath();
                     this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
@@ -406,10 +406,10 @@ class Renderer {
                 this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
                 for (let i = 0; i < robot.body.wheels.length; i++) {
-                    var wheel = robot.body.wheels[i];
-                    var x = wheel.position.x;
-                    var y = wheel.position.y;
-                    var r = wheel.radius * 0.5;
+                    let wheel = robot.body.wheels[i];
+                    let x = wheel.position.x;
+                    let y = wheel.position.y;
+                    let r = wheel.radius * 0.5;
 
                     // Wheel circle
                     this.ctx.beginPath();
@@ -425,7 +425,7 @@ class Renderer {
             // Draw angularStates
             if (robot.body.angularStates != undefined) {
                 for (let j = 0; j < robot.body.angularStates.length; j++) {
-                    var angularState = robot.body.angularStates[j];
+                    let angularState = robot.body.angularStates[j];
 
                     this.renderAngularState(angularState, 24);
                 }
@@ -444,12 +444,12 @@ class Renderer {
 
         // Draw linear springs
         // for (let i = 0; i < this.simulation.world.linearSprings.length; i++) {
-        //     var linearSpring = this.simulation.world.linearSprings[i];
+        //     let linearSpring = this.simulation.world.linearSprings[i];
 
-        //     var x1 = linearSpring.pointA.position.x;
-        //     var y1 = linearSpring.pointA.position.y;
-        //     var x2 = linearSpring.pointB.position.x;
-        //     var y2 = linearSpring.pointB.position.y;
+        //     let x1 = linearSpring.pointA.position.x;
+        //     let y1 = linearSpring.pointA.position.y;
+        //     let x2 = linearSpring.pointB.position.x;
+        //     let y2 = linearSpring.pointB.position.y;
 
         //     this.ctx.lineWidth = linearSpring.radius * 2;
         //     this.ctx.strokeStyle = linearSpring.color;
@@ -465,11 +465,11 @@ class Renderer {
         this.ctx.strokeStyle = "rgb(140, 140, 140)";
 
         for (let i = 0; i < this.simulation.world.lineSegments.length; i++) {
-            var lineSegment = this.simulation.world.lineSegments[i];
-            var x1 = lineSegment.pointA.position.x;
-            var y1 = lineSegment.pointA.position.y;
-            var x2 = lineSegment.pointB.position.x;
-            var y2 = lineSegment.pointB.position.y;
+            let lineSegment = this.simulation.world.lineSegments[i];
+            let x1 = lineSegment.pointA.position.x;
+            let y1 = lineSegment.pointA.position.y;
+            let x2 = lineSegment.pointB.position.x;
+            let y2 = lineSegment.pointB.position.y;
 
             this.ctx.lineWidth = lineSegment.radius * 2;
 
@@ -482,9 +482,9 @@ class Renderer {
 
         // Draw Points
         for (let i = 0; i < this.simulation.world.points.length; i++) {
-            var point = this.simulation.world.points[i];
-            var x = point.position.x;
-            var y = point.position.y;
+            let point = this.simulation.world.points[i];
+            let x = point.position.x;
+            let y = point.position.y;
 
             this.ctx.beginPath();
             this.ctx.arc(x, y, 20, 0, Math.PI * 2);
@@ -499,9 +499,9 @@ class Renderer {
         // //this.ctx.lineJoin = "round";
 
         // for (let i = 0; i < this.simulation.world.particles.length; i++) {
-        //     var particle = this.simulation.world.particles[i];
-        //     var x = particle.position.x;
-        //     var y = particle.position.y;
+        //     let particle = this.simulation.world.particles[i];
+        //     let x = particle.position.x;
+        //     let y = particle.position.y;
 
         //     this.ctx.beginPath();
         //     this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
@@ -515,10 +515,10 @@ class Renderer {
         // this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
         // for (let i = 0; i < this.simulation.world.wheels.length; i++) {
-        //     var wheel = this.simulation.world.wheels[i];
-        //     var x = wheel.position.x;
-        //     var y = wheel.position.y;
-        //     var r = wheel.radius * 0.5;
+        //     let wheel = this.simulation.world.wheels[i];
+        //     let x = wheel.position.x;
+        //     let y = wheel.position.y;
+        //     let r = wheel.radius * 0.5;
 
         //     this.ctx.beginPath();
         //     this.ctx.arc(x, y, wheel.radius, 0, Math.PI * 2);
@@ -526,12 +526,12 @@ class Renderer {
         //     this.ctx.stroke();
         //     this.ctx.closePath();
 
-        //     var pos = wheel.position;
+        //     let pos = wheel.position;
 
         //     // Light gray line in direction of angle
-        //     var x2 = pos.x + wheel.angleVector.x * r;
-        //     var y2 = pos.y + wheel.angleVector.y * r;
-        //     var direction = new Vector2(x2 - x, y2 - y);
+        //     let x2 = pos.x + wheel.angleVector.x * r;
+        //     let y2 = pos.y + wheel.angleVector.y * r;
+        //     let direction = new Vector2(x2 - x, y2 - y);
 
         //     this.ctx.beginPath();
         //     this.ctx.moveTo(pos.x, pos.y);
@@ -541,7 +541,7 @@ class Renderer {
         //     this.ctx.closePath();
 
         //     // Green line in direction of right perpendicular of angle
-        //     var right = pos.add(wheel.angleVector.perp().mul(r));
+        //     let right = pos.add(wheel.angleVector.perp().mul(r));
 
         //     this.ctx.beginPath();
         //     this.ctx.moveTo(pos.x, pos.y);
@@ -551,7 +551,7 @@ class Renderer {
         //     this.ctx.closePath();
 
         //     // Red line in direction of left perpendicular of angle
-        //     var right = pos.add(wheel.angleVector.perp().mul(-r));
+        //     let right = pos.add(wheel.angleVector.perp().mul(-r));
 
         //     this.ctx.beginPath();
         //     this.ctx.moveTo(pos.x, pos.y);
@@ -570,9 +570,9 @@ class Renderer {
 
         // Draw LinearStates
         for (let i = 0; i < this.simulation.world.linearStates.length; i++) {
-            var linearState = this.simulation.world.linearStates[i];
-            var x = linearState.position.x;
-            var y = linearState.position.y;
+            let linearState = this.simulation.world.linearStates[i];
+            let x = linearState.position.x;
+            let y = linearState.position.y;
 
             this.ctx.beginPath();
             this.ctx.arc(x, y, 4, 0, Math.PI * 2);
@@ -588,16 +588,16 @@ class Renderer {
         this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
         // for (let i = 0; i < this.simulation.world.angularStates.length; i++) {
-        //     var angularState = this.simulation.world.angularStates[i];
+        //     let angularState = this.simulation.world.angularStates[i];
 
             //this.renderAngularState(angularState, 24);
 
-            // var pos = angularState.position;
+            // let pos = angularState.position;
 
             // // Light gray line in direction of angle
-            // var x2 = pos.x + angularState.angleVector.x * 16;
-            // var y2 = pos.y + angularState.angleVector.y * 16;
-            // var direction = new Vector2(x2 - x, y2 - y);
+            // let x2 = pos.x + angularState.angleVector.x * 16;
+            // let y2 = pos.y + angularState.angleVector.y * 16;
+            // let direction = new Vector2(x2 - x, y2 - y);
 
             // this.ctx.beginPath();
             // this.ctx.moveTo(pos.x, pos.y);
@@ -607,7 +607,7 @@ class Renderer {
             // this.ctx.closePath();
 
             // // Green line in direction of right perpendicular of angle
-            // var right = pos.add(angularState.angleVector.perp().mul(16));
+            // let right = pos.add(angularState.angleVector.perp().mul(16));
 
             // this.ctx.beginPath();
             // this.ctx.moveTo(pos.x, pos.y);
@@ -617,7 +617,7 @@ class Renderer {
             // this.ctx.closePath();
 
             // // Red line in direction of left perpendicular of angle
-            // var right = pos.add(angularState.angleVector.perp().mul(-16));
+            // let right = pos.add(angularState.angleVector.perp().mul(-16));
 
             // this.ctx.beginPath();
             // this.ctx.moveTo(pos.x, pos.y);
@@ -665,11 +665,11 @@ class Renderer {
         //         this.ctx.stroke();
         //         this.ctx.closePath();
                 
-        //         // var deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
-        //         // var deltaVelocity = particle3.velocity;
-        //         // var positionError = collision.normal.dot(deltaPosition);
-        //         // var velocityError = collision.normal.dot(deltaVelocity);
-        //         // var restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
+        //         // let deltaPosition = collision.particleCollisionPoint.sub(collision.lineSegmentCollisionPoint);
+        //         // let deltaVelocity = particle3.velocity;
+        //         // let positionError = collision.normal.dot(deltaPosition);
+        //         // let velocityError = collision.normal.dot(deltaVelocity);
+        //         // let restImpulse = -(positionError * 1.0 * 60 + velocityError * 1.0);
         //         // particle3.addImpulse(collision.normal.mul(restImpulse));
         //         //console.log({deltaPosition : deltaPosition, deltaVelocity : deltaVelocity, positionError : positionError, velocityError : velocityError, restImpulse : restImpulse});
         //     }
@@ -807,8 +807,8 @@ class Renderer {
 
     renderAngularState(angularState, radius) {
 
-        var x = angularState.position.x;
-        var y = angularState.position.y;
+        let x = angularState.position.x;
+        let y = angularState.position.y;
 
         // Wheel circle
         this.ctx.beginPath();
@@ -817,11 +817,11 @@ class Renderer {
         this.ctx.stroke();
         this.ctx.closePath();
 
-        var pos = angularState.position;
+        let pos = angularState.position;
 
         // Light gray line in direction of angle
-        var x2 = pos.x + angularState.angleVector.x * radius;
-        var y2 = pos.y + angularState.angleVector.y * radius;
+        let x2 = pos.x + angularState.angleVector.x * radius;
+        let y2 = pos.y + angularState.angleVector.y * radius;
 
         this.ctx.beginPath();
         this.ctx.moveTo(pos.x, pos.y);
@@ -831,7 +831,7 @@ class Renderer {
         this.ctx.closePath();
 
         // Green line in direction of right perpendicular of angle
-        var right = pos.add(angularState.angleVector.perp().mul(radius));
+        let right = pos.add(angularState.angleVector.perp().mul(radius));
 
         this.ctx.beginPath();
         this.ctx.moveTo(pos.x, pos.y);
@@ -841,7 +841,7 @@ class Renderer {
         this.ctx.closePath();
 
         // Red line in direction of left perpendicular of angle
-        var left = pos.add(angularState.angleVector.perp().mul(-radius));
+        let left = pos.add(angularState.angleVector.perp().mul(-radius));
 
         this.ctx.beginPath();
         this.ctx.moveTo(pos.x, pos.y);
