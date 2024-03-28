@@ -46,7 +46,7 @@ class LineSegmentWheelCollision {
         const relativeCollisionPoint = this.wheelCollisionPoint.sub(this.wheel.position);
         const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
         // Apply
-        this.wheel.addImpulse(warmstartImpulse.mul(this.wheel.inverseMass));
+        this.wheel.impulse.addThis(warmstartImpulse.mul(this.wheel.inverseMass));
         this.wheel.addAngularImpulse(warmstartImpulse.perpDot(relativeCollisionPoint) * this.wheel.inverseInertia);
         // Reset Warmstart
         this.accumulatedImpulse.setThis(0.0, 0.0);

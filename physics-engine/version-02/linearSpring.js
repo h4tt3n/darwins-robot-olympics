@@ -20,17 +20,17 @@ class LinearSpring extends LinearLink{
         let deltaImpulse = this.pointB.impulse.sub(this.pointA.impulse);
         let projectedImpulse = this.angleVector.dot(deltaImpulse);
         let impulseError = projectedImpulse - this.restImpulse;
-        let correctiveImpulse = this.angleVector.mul(-impulseError*this.reducedMass);
-        this.pointA.addImpulse(correctiveImpulse.mul(-this.pointA.inverseMass));
-        this.pointB.addImpulse(correctiveImpulse.mul( this.pointB.inverseMass));
+        let correctiveImpulse = this.angleVector.mul(-impulseError * this.reducedMass);
+        this.pointA.impulse.subThis(correctiveImpulse.mul(this.pointA.inverseMass));
+        this.pointB.impulse.addThis(correctiveImpulse.mul(this.pointB.inverseMass));
         this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart(){
         let projectedImpulse = this.angleVector.dot(this.accumulatedImpulse);
         if( projectedImpulse > 0.0 ) { return };
-        let warmstartImpulse = this.angleVector.mul(projectedImpulse*this.warmStart);
-        this.pointA.impulse = this.pointA.impulse.sub(warmstartImpulse.mul(this.pointA.inverseMass));
-        this.pointB.impulse = this.pointB.impulse.add(warmstartImpulse.mul(this.pointB.inverseMass));
+        let warmstartImpulse = this.angleVector.mul(projectedImpulse * this.warmStart);
+        this.pointA.impulse.subThis(warmstartImpulse.mul(this.pointA.inverseMass));
+        this.pointB.impulse.addThis(warmstartImpulse.mul(this.pointB.inverseMass));
         this.accumulatedImpulse.setThis(0.0, 0.0);
     }
     computeRestImpulse(){

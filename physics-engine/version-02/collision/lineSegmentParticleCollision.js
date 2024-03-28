@@ -36,7 +36,7 @@ class LineSegmentParticleCollision {
         // Apply
         this.particle.impulse.addThis(correctiveImpulse.mul(this.particle.inverseMass));
         // Warmstart
-        this.accumulatedImpulse = this.accumulatedImpulse.add(correctiveImpulse);
+        this.accumulatedImpulse.addThis(correctiveImpulse);
     }
     applyWarmStart() {
         const projectedImpulse = this.normal.dot(this.accumulatedImpulse);
@@ -44,7 +44,7 @@ class LineSegmentParticleCollision {
         // State
         const warmstartImpulse = this.normal.mul(projectedImpulse * this.warmStart);
         // Apply
-        this.particle.addImpulse(warmstartImpulse.mul(this.particle.inverseMass));
+        this.particle.impulse.addThis(warmstartImpulse.mul(this.particle.inverseMass));
         // Reset Warmstart
         this.accumulatedImpulse.setThis(0.0, 0.0);
     }
