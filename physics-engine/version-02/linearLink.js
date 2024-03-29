@@ -8,8 +8,6 @@ import { LineSegment } from './lineSegment.js';
 class LinearLink extends LineSegment{
     constructor(linearStateA, linearStateB){
         super(linearStateA, linearStateB);
-        // this.linearStateA = linearStateA;
-        // this.linearStateB = linearStateB;
         this.lengthVector = new Vector2();
         this.angleVector = new Vector2();
         this.angularVelocity = new Number();
@@ -19,6 +17,8 @@ class LinearLink extends LineSegment{
         this.length = new Number();
         this.mass = new Number();
         this.reducedMass = new Number();
+        
+        this.computeReducedMass();
         this.computeData();
     }
     addImpulse(impulse){
@@ -47,7 +47,6 @@ class LinearLink extends LineSegment{
         this.computeLengthVector();
 		this.computeAngleVector();
 		this.computeLength();
-		this.computeReducedMass();
         this.computeInertia();
 		this.computeInverseInertia();
 		this.computeAngularVelocity();

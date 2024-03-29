@@ -87,15 +87,18 @@ class RayCamera {
     //     }
     // }
     update() {
+        // TODO: Clean up this mess!
         this.closestIntersections = [];
         for (let i = 0; i < this.rays.length; i++) {
             this.rays[i].directionVector = this.directionVector;
             this.rays[i].directionVector = this.rays[i].directionVector.rotate(this.halfFovVector);
+            //this.rays[i].directionVector.rotateThis(this.halfFovVector);
         }
         // Rotate rays
         for (let i = 0; i < this.rays.length; i++) {
             for (let j = this.rays.length - 1; j > i; j--) {
-                this.rays[j].directionVector = this.rays[j].directionVector.rotate(this.deltaAngleVector);
+                //this.rays[j].directionVector = this.rays[j].directionVector.rotate(this.deltaAngleVector);
+                this.rays[j].directionVector.rotateThis(this.deltaAngleVector);
             }
             this.rays[i].origin = this.origin;
             this.closestIntersections[i] = this.rays[i].closestIntersection;

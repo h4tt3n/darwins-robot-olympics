@@ -48,13 +48,13 @@ class CollisionHandler {
         }
     }
     closestPointOnLineSegment(point, lineSegment) { // Here "Point" refers to vector2 class
-        const p = lineSegment.pointA.position;
-        const s = lineSegment.pointB.position.sub(p);
+        //const p = lineSegment.pointA.position;
+        const s = lineSegment.pointB.position.sub(lineSegment.pointA.position);
         const r = point.sub(lineSegment.pointA.position);
-        const t = Vector2.dot(r, s) / Vector2.dot(s, s);
-        if (t < 0) { return p; }
+        const t = r.dot(s) / s.lengthSquared();
+        if (t < 0) { return lineSegment.pointA.position; }
         if (t > 1) { return lineSegment.pointB.position; }
-        return p.add(s.mul(t));
+        return lineSegment.pointA.position.add(s.mul(t));
     }
     lineSegmentLineSegmentIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;

@@ -72,6 +72,17 @@ class Vector2 {
         this.x = -this.y; this.y = temp; 
         return this;
     }
+    rotateThis(v) { 
+        let vec = new Vector2(v.x, -v.y);
+        let tempx = vec.dot(this);
+        this.y = vec.perpDot(this);
+        this.x = tempx;
+        return this;
+    }
+    // rotate(v) { 
+    //     let vec = new Vector2(v.x, -v.y);
+    //     return new Vector2(vec.dot(this), vec.perpDot(this));
+    // }
 
     // Return new vector with value (more expensive than changing value of existing vector)
 
@@ -239,13 +250,8 @@ class Vector2 {
         return new Vector2( ( Math.random() - Math.random() ) * b, ( Math.random() - Math.random() ) * b ); 
     }
     rotate(v) { 
-        if (v instanceof Vector2){
-            let vec = new Vector2(v.x, -v.y);
-            return new Vector2(vec.dot(this), vec.perpDot(this));
-        } 
-        else {
-            return new Vector2();
-        }
+        let vec = new Vector2(v.x, -v.y);
+        return new Vector2(vec.dot(this), vec.perpDot(this));
     }
     rotateRight(v) {
         if (v instanceof Vector2){
