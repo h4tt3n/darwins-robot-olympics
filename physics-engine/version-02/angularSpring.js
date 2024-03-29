@@ -14,6 +14,8 @@ class AngularSpring {
         this.stiffness = new Number(stiffness);
         this.damping = new Number(damping);
         this.warmStart = new Number(warmStart);
+        this.distanceA = new Vector2();
+        this.distanceB = new Vector2();
         this.linearLinkA = linearLinkA;
         this.linearLinkB = linearLinkB;
         this.objectId = null;
@@ -23,12 +25,6 @@ class AngularSpring {
         this.restAngleVector = this.angleVector;
     }
     applyCorrectiveImpulse(){
-        // distance vector
-        // let distanceA = this.linearLinkA.linearStateB.position.sub(this.linearLinkA.linearStateA.position);
-        // let distanceB = this.linearLinkB.linearStateB.position.sub(this.linearLinkB.linearStateA.position);
-        let distanceA = this.linearLinkA.pointB.position.sub(this.linearLinkA.pointA.position);
-        let distanceB = this.linearLinkB.pointB.position.sub(this.linearLinkB.pointA.position);
-
         // impulse vector
         // let impulseA = this.linearLinkA.linearStateB.impulse.sub(this.linearLinkA.linearStateA.impulse);
         // let impulseB = this.linearLinkB.linearStateB.impulse.sub(this.linearLinkB.linearStateA.impulse);
@@ -36,8 +32,8 @@ class AngularSpring {
         let impulseB = this.linearLinkB.pointB.impulse.sub(this.linearLinkB.pointA.impulse);
 
         // current linear perpendicular impulse scalar
-        let localImpulseA = distanceA.perpDot(impulseA) * this.linearLinkA.reducedMass;
-        let localImpulseB = distanceB.perpDot(impulseB) * this.linearLinkB.reducedMass;
+        let localImpulseA = this.distanceA.perpDot(impulseA) * this.linearLinkA.reducedMass;
+        let localImpulseB = this.distanceB.perpDot(impulseB) * this.linearLinkB.reducedMass;
 
         // convert to angular impulse scalar
         let angularImpulseA = localImpulseA * this.linearLinkA.inverseInertia;
@@ -53,8 +49,8 @@ class AngularSpring {
         let correctiveAngularImpulseB = correctiveImpulse * this.linearLinkB.inverseInertia;
 
         // convert to linear impulse perpendicular vector
-        let correctiveImpulseA = distanceA.perpDot(correctiveAngularImpulseA).mul(this.linearLinkA.reducedMass);
-        let correctiveImpulseB = distanceB.perpDot(correctiveAngularImpulseB).mul(this.linearLinkB.reducedMass);
+        let correctiveImpulseA = this.distanceA.perpDot(correctiveAngularImpulseA * this.linearLinkA.reducedMass);
+        let correctiveImpulseB = this.distanceB.perpDot(correctiveAngularImpulseB * this.linearLinkB.reducedMass);
 
         //  
         // this.linearLinkA.linearStateA.impulse = this.linearLinkA.linearStateA.impulse.add(correctiveImpulseA.mul(this.linearLinkA.linearStateA.inverseMass));
@@ -72,18 +68,13 @@ class AngularSpring {
     applyWarmStart(){
         if(this.accumulatedImpulse === 0){return};
 
-        // let distanceA = this.linearLinkA.linearStateB.position.sub(this.linearLinkA.linearStateA.position);
-        // let distanceB = this.linearLinkB.linearStateB.position.sub(this.linearLinkB.linearStateA.position);
-        let distanceA = this.linearLinkA.pointB.position.sub(this.linearLinkA.pointA.position);
-        let distanceB = this.linearLinkB.pointB.position.sub(this.linearLinkB.pointA.position);
-
         let warmstartImpulse = this.warmStart * this.accumulatedImpulse;
 
         let warmstartAngularImpulseA = warmstartImpulse * this.linearLinkA.inverseInertia;
         let warmstartAngularImpulseB = warmstartImpulse * this.linearLinkB.inverseInertia;
 
-        let warmstartImpulseA = distanceA.perpDot(warmstartAngularImpulseA).mul(this.linearLinkA.reducedMass);
-        let warmstartImpulseB = distanceB.perpDot(warmstartAngularImpulseB).mul(this.linearLinkB.reducedMass);
+        let warmstartImpulseA = this.distanceA.perpDot(warmstartAngularImpulseA * this.linearLinkA.reducedMass);
+        let warmstartImpulseB = this.distanceB.perpDot(warmstartAngularImpulseB * this.linearLinkB.reducedMass);
 
         // this.linearLinkA.linearStateA.impulse = this.linearLinkA.linearStateA.impulse.add(warmstartImpulseA.mul(this.linearLinkA.linearStateA.inverseMass));
         // this.linearLinkA.linearStateB.impulse = this.linearLinkA.linearStateB.impulse.sub(warmstartImpulseA.mul(this.linearLinkA.linearStateB.inverseMass));
@@ -104,6 +95,10 @@ class AngularSpring {
         );
     }
     computeData(){
+
+        this.distanceA = this.linearLinkA.pointB.position.sub(this.linearLinkA.pointA.position);
+        this.distanceB = this.linearLinkB.pointB.position.sub(this.linearLinkB.pointA.position);
+
         this.computeAngle();
         this.computeReducedInertia();
     }
