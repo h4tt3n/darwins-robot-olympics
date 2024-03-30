@@ -110,7 +110,7 @@ function startSimulation() {
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
     // Run simulation
-    simulation.setIntervalId = setInterval(update, 0);
+    simulation.setIntervalId = setInterval(update, simulation.interval);
 }
 
 function stopSimulation() {
@@ -543,6 +543,49 @@ function createMenu() {
 
     menu.appendChild(pauseButton);
 
+    // Add a display for the current simulation interval
+    let displayInterval = document.createElement('span');
+    displayInterval.style.width = "70px";
+    //displayInterval.textContent = "FPS: " + Number((1000 / simulation.interval).toFixed(0));
+    let fps = Number((1000 / simulation.interval).toFixed(0));
+    // if FPS is "infinity", display the word "max"
+    if (fps === Infinity) {
+        displayInterval.textContent = "FPS: Max";
+    } else {
+        displayInterval.textContent = "FPS: " + fps;
+    }
+    menu.appendChild(displayInterval);
+
+    // Slider for setting simulation.interval
+    // let labelInterval = document.createElement('label');
+    // labelInterval.textContent = "Speed";
+    // menu.appendChild(labelInterval);
+
+    let inputInterval = document.createElement('input');
+    inputInterval.type = 'range';
+    inputInterval.min = 0;
+    inputInterval.max = 50;
+    inputInterval.step = 5;
+    inputInterval.value = 0;
+    inputInterval.disabled = true;
+
+    // Add an oninput event handler to the input element
+    inputInterval.oninput = function() {
+        simulation.interval = inputInterval.value;
+        clearInterval(simulation.setIntervalId);
+        simulation.setIntervalId = setInterval(update, simulation.interval);
+        let fps = Number((1000 / simulation.interval).toFixed(0));
+        // if FPS is "infinity", display the word "max"
+        if (fps === Infinity) {
+            displayInterval.textContent = "FPS: Max";
+        } else {
+            displayInterval.textContent = "FPS: " + fps;
+        }
+        // displayInterval.textContent = "FPS: " + Number((1000 / simulation.interval).toFixed(0));
+        console.log("interval: " + simulation.interval);
+    };
+
+    menu.appendChild(inputInterval);
 
     // robot selection drop-down menu, based on createRobotFuncs
 
@@ -647,6 +690,7 @@ function createMenu() {
             selectChallenge.disabled = true;
             button.disabled = false;
             pauseButton.disabled = false;
+            inputInterval.disabled = false;
             input.disabled = true;
             startSimulation();
         } else {
@@ -655,6 +699,7 @@ function createMenu() {
             selectChallenge.disabled = false;
             button.disabled = true;
             pauseButton.disabled = true;
+            inputInterval.disabled = true;
             input.disabled = false;
             stopSimulation();
         }

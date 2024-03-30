@@ -35,6 +35,7 @@ class Simulation {
         this.generationTicks = 0;
         this.generationMaxTicks = 1000;
         this.setIntervalId = null;
+        this.interval = 0;
 
         this.robotSpawner = {
             func : null,

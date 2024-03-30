@@ -12,3 +12,7 @@
   canvas {
     position: absolute;
   }
+
+  span {
+    display: inline-block ;
+}
