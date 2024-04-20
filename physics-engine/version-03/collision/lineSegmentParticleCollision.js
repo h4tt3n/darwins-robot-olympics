@@ -2,6 +2,7 @@
 
 import { Vector2 } from '../../../vector-library/version-02/vector2.js'
 import { constants } from '../constants.js';
+import { Intersection } from './intersection.js';
 
 class LineSegmentParticleCollision {
     constructor(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal) {
@@ -25,7 +26,11 @@ class LineSegmentParticleCollision {
         this.computeReducedMass();
     }
     UpdateStatus() {
-        
+        const point = Intersection.closestPointOnLineSegment(particle.position, lineSegment);
+        const distanceVector = point.sub(particle.position);
+        const distanceSquared = distanceVector.lengthSquared();
+        const radiiSquared = (particle.radius + lineSegment.radius) * (particle.radius + lineSegment.radius);
+        const radiiSquaredBuffer = (particle.radius + lineSegment.radius + this.buffer) * (particle.radius + lineSegment.radius + this.buffer);
     }
     applyCorrectiveImpulse() {
         if (this.restImpulse == Vector2.zero) { return; }

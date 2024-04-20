@@ -1,6 +1,7 @@
 import { ParticleParticleCollision } from './particleParticleCollision.js';
 import { LineSegmentParticleCollision } from './lineSegmentParticleCollision.js';
 import { ObjectType } from './objectType.js';
+import { Intersection } from './intersection.js';
 
 
 class SpatialHashGrid {
@@ -250,18 +251,6 @@ class SpatialHashGrid {
         // Ensures collisionObjectId is treated as a string
         let array = collisionObjectId.toString().split("-");
         return array.map(id => parseInt(id, 10));
-    }
-}
-
-class Intersection {
-
-    static closestPointOnLineSegment(point, lineSegment) { // Here "Point" refers to vector2 class
-        const s = lineSegment.pointB.position.sub(lineSegment.pointA.position);
-        const r = point.sub(lineSegment.pointA.position);
-        const t = r.dot(s) / s.lengthSquared();
-        if (t < 0) { return lineSegment.pointA.position; }
-        if (t > 1) { return lineSegment.pointB.position; }
-        return lineSegment.pointA.position.add(s.mul(t));
     }
 }
 
