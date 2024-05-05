@@ -902,17 +902,18 @@ class Simulation {
     //createRoboWorm(params = {}) {
     createRoboWorm(brainGenome) {
         
+        const position = new Vector2(1000, 400);
         const numRays = 7;
 
         const bodyParams = {
-            position : new Vector2(0, 200),
+            position : position,
             numSegments : 10,
             radius : 14,
             mass : 2,
         }
 
         const visionParams = {
-            position : new Vector2(0, 200),
+            position : position,
             direction : Math.PI * 2 * 0,
             numRays : numRays,
             fieldOfView : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
@@ -954,15 +955,10 @@ class Simulation {
             body.angularSprings.push(angularSpring);
         }
         
-        // let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fieldOfView);
-
         // Create vision
-        //let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fieldOfView);
         let eyes = this.createRayCamera(visionParams);
 
         // Create brain
-        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
         let brain = this.createNeuralNetwork(brainGenome, brainParams);
 
         let update = function update() {

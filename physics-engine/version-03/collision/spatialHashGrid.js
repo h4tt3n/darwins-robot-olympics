@@ -203,7 +203,9 @@ class SpatialHashGrid {
             const collision = new LineSegmentParticleCollision(lineSegment, particle, lineSegmentCollisionPoint, particleCollisionPoint, distance, normal);
             collision.objectId = this.createCollisionObjectId(lineSegment, particle);
             this.world.collisions.set(collision.objectId, collision);
-            return;
+
+            console.log(lineSegment, particle, collision);
+            //return;
         }
     }
 

@@ -99,6 +99,36 @@ class Renderer {
 
         // Global settings
         this.ctx.lineCap = "round";
+        this.ctx.lineWidth = 1;
+
+        // Draw spatial hash grid
+    // Render grid cells, dark if empty, white if not empty
+        const grid = this.simulation.world.spatialHashGrid;
+        for (let x = 0; x < grid.width; x += grid.cellSize) {
+            for (let y = 0; y < grid.height; y += grid.cellSize) {
+                const key = grid.hash(x, y);
+                if (grid.buckets.has(key) && grid.buckets.get(key).size > 0) {
+                    // If the cell contains at least one object, color it lightly
+                    this.ctx.fillStyle = '#FFFFFF'; // Light yellow color
+                    this.ctx.fillRect(x, y, grid.cellSize, grid.cellSize);
+                }
+                this.ctx.strokeStyle = '#999999'; // Light grey color for grid lines
+                this.ctx.strokeRect(x, y, grid.cellSize, grid.cellSize);
+            }
+        }
+
+        //if (this.simulation.renderSpatialHashGrid) {
+        // if (true) {
+        //     this.ctx.lineWidth = 1;
+        //     this.ctx.strokeStyle = "rgb(255, 255, 255)";
+        //     this.ctx.beginPath();
+        //     for (let i = 0; i < this.simulation.world.spatialHashGrid.length; i++) {
+        //         let cell = this.simulation.world.spatialHashGrid[i];
+        //         this.ctx.rect(cell.x, cell.y, cell.width, cell.height);
+        //     }
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
+        // }
 
         // Draw waypoints
         for (let i = 0; i < this.simulation.wayPoints.length; i++) {
@@ -494,21 +524,21 @@ class Renderer {
         }
 
         // Draw particles
-        // this.ctx.lineWidth = 1;
-        // this.ctx.strokeStyle = "rgb(192, 192, 192)";
-        // //this.ctx.lineJoin = "round";
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        //this.ctx.lineJoin = "round";
 
-        // for (let i = 0; i < this.simulation.world.particles.length; i++) {
-        //     let particle = this.simulation.world.particles[i];
-        //     let x = particle.position.x;
-        //     let y = particle.position.y;
+        for (let i = 0; i < this.simulation.world.particles.length; i++) {
+            let particle = this.simulation.world.particles[i];
+            let x = particle.position.x;
+            let y = particle.position.y;
 
-        //     this.ctx.beginPath();
-        //     this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-        //     this.ctx.fillStyle = particle.color;
-        //     this.ctx.fill();
-        //     this.ctx.closePath();
-        // }
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
+            this.ctx.fillStyle = particle.color;
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
 
         // Draw wheels
         // this.ctx.lineWidth = 8;

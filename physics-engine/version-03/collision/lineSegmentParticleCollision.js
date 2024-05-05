@@ -25,13 +25,39 @@ class LineSegmentParticleCollision {
         this.isActive = true;
         this.computeReducedMass();
     }
-    UpdateStatus() {
+    computeData() {
         const point = Intersection.closestPointOnLineSegment(particle.position, lineSegment);
         const distanceVector = point.sub(particle.position);
         const distanceSquared = distanceVector.lengthSquared();
         const radiiSquared = (particle.radius + lineSegment.radius) * (particle.radius + lineSegment.radius);
         const radiiSquaredBuffer = (particle.radius + lineSegment.radius + this.buffer) * (particle.radius + lineSegment.radius + this.buffer);
+
+        // Check if collision is active
+        if (this.isCollisionActive(lineSegment, particle)) {
+            
+            // If objects no longer intersect, remove collision
+            if (distanceSquared > radiiSquaredBuffer) {
+                //console.log("Collision deleted!");
+                this.world.collisions.delete(this.createCollisionObjectId(lineSegment, particle));
+                return;
+            
+            // If they still intersect, update collision
+            } else {
+                const distance = Math.sqrt(distanceSquared);
+                const normal = distanceVector.div(distance);
+                const lineSegmentCollisionPoint = point.sub(normal.mul(lineSegment.radius));
+                const particleCollisionPoint = particle.position.add(normal.mul(particle.radius));
+
+                const collision = this.world.collisions.get(this.createCollisionObjectId(lineSegment, particle));
+                collision.lineSegmentCollisionPoint = lineSegmentCollisionPoint;
+                collision.particleCollisionPoint = particleCollisionPoint;
+                collision.distance = distance;
+                collision.normal = normal;
+                return;
+            }
+        } 
     }
+    
     applyCorrectiveImpulse() {
         if (this.restImpulse == Vector2.zero) { return; }
         // State

@@ -36,7 +36,7 @@ class World {
         this.collisions = new Map();
         this.objectIdCounter = 0;
         //this.collisionHandler = new CollisionHandler(this);
-        this.spatialHashGrid = new SpatialHashGrid(this, 20, 2000, 1000);
+        this.spatialHashGrid = new SpatialHashGrid(this, 100, 4000, 1000);
     }
     reset() {
         this.points = [];
@@ -55,7 +55,7 @@ class World {
         this.collisions = new Map();
         this.objectIdCounter = 0;
         //this.collisionHandler = new CollisionHandler(this);
-        this.spatialHashGrid = new SpatialHashGrid(this, 20, 2000, 1000);
+        this.spatialHashGrid = new SpatialHashGrid(this, 100, 4000, 1000);
     }
     applyImpulses(){
         for(let i = 0; i < constants.NUM_ITERATIONS; i++){
@@ -98,6 +98,7 @@ class World {
         this.fixedSprings.forEach(f => { f.computeData() });
         this.angularSprings.forEach(a => { a.computeData() });
         this.bodys.forEach(b => { b.computeData() });
+        this.collisions.forEach(c => { c.computeData() });
     }
     computeNewState(){
         this.linearStates.forEach(l => {l.computeNewState()});
@@ -121,8 +122,6 @@ class World {
         this.wheels.forEach(w => { w.addImpulse(constants.GRAVITY)});
         
         // Collision detection and creation
-        //this.spatialHashGrid.clear();
-
         this.lineSegments.forEach(lineSegment => {
             this.spatialHashGrid.insertLineSegment(lineSegment);
         });

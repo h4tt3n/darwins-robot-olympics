@@ -105,10 +105,20 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+    target = simulation.createWaypoint(new Vector2(2000, 600), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
+
+    // Create 1000 random particles
+    for (let i = 0; i < 1000; i++) {
+        let x = Math.random() * 2000 - 1000;
+        let y = Math.random() * 2000 - 1000;
+        let particle = simulation.world.createParticle(new Vector2(x, y));
+        particle.radius = 10 + Math.random() * 10;
+        // Random color
+        particle.color = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
+    }
     // Run simulation
     simulation.setIntervalId = setInterval(update, simulation.interval);
 }
@@ -170,10 +180,10 @@ function createTrackers(numRobots = 50, params = {}, genome = null) {
 
 function createWorld() {
     // Params
-    let top = -400;
-    let bottom = 400;
-    let left = -400;
-    let right = 3600;
+    let top = -400 + 400;
+    let bottom = 400 + 400;
+    let left = -400 + 400;
+    let right = 3600 + 400;
     let numSegments = 1;
     let segmentWidth = (right-left) / numSegments;
     let segmentBaseHeight = bottom + 100;
@@ -365,7 +375,7 @@ function helmet() {
     let domeCenter = new Vector2(1000, -200);
     let firstDomePoint = null;
     let lastDomePoint = null;
-    
+
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {
         let angle = -Math.PI * 1 * (i / (numDomeSegments-1));
