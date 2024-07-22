@@ -111,14 +111,14 @@ function startSimulation() {
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
 
     // Create 1000 random particles
-    for (let i = 0; i < 1000; i++) {
-        let x = Math.random() * 2000 - 1000;
-        let y = Math.random() * 2000 - 1000;
-        let particle = simulation.world.createParticle(new Vector2(x, y));
-        particle.radius = 10 + Math.random() * 10;
-        // Random color
-        particle.color = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
-    }
+    // for (let i = 0; i < 1000; i++) {
+    //     let x = Math.random() * 2000 - 1000;
+    //     let y = Math.random() * 2000 - 1000;
+    //     let particle = simulation.world.createParticle(new Vector2(x, y));
+    //     particle.radius = 10 + Math.random() * 10;
+    //     // Random color
+    //     particle.color = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
+    // }
     // Run simulation
     simulation.setIntervalId = setInterval(update, simulation.interval);
 }
