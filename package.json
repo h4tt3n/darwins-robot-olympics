@@ -4,7 +4,9 @@
   "description": "A simple neuroevolution library for playing and experimenting with robots, cars and rockets.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "obfuscate": "node obfuscate-bundle.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,10 @@
   },
   "homepage": "https://github.com/h4tt3n/Darwins-Robot-Olympics#readme",
   "dependencies": {
+    "@babel/core": "^7.24.9",
+    "@babel/preset-env": "^7.24.8",
+    "babel": "^5.8.38",
+    "babel-loader": "^9.1.3",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4",
     "webpack-obfuscator": "^3.5.1"
