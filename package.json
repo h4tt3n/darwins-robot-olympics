@@ -1,0 +1,25 @@
+{
+  "name": "darwins-robot-olympics",
+  "version": "1.0.0",
+  "description": "A simple neuroevolution library for playing and experimenting with robots, cars and rockets.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h4tt3n/Darwins-Robot-Olympics.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/h4tt3n/Darwins-Robot-Olympics/issues"
+  },
+  "homepage": "https://github.com/h4tt3n/Darwins-Robot-Olympics#readme",
+  "dependencies": {
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-obfuscator": "^3.5.1"
+  }
+}
