@@ -201,9 +201,19 @@ class Network {
                     }
                 }
                 sum += thisNeuron.bias
+                // Original version
                 thisNeuron.input = sum
+                
+                // Accumulating input version
+                //thisNeuron.input = ToolBox.lerp(thisNeuron.input, sum, 0.5);
+
                 //thisNeuron.output = this.params.activation.func(sum, this.params.activation.params);
+                
+                // Original version
                 thisNeuron.output = this.params.activation.func(sum, {n : thisNeuron.n});
+                
+                // Accumulating output version
+                //thisNeuron.output = ToolBox.lerp(thisNeuron.output, this.params.activation.func(sum, {n : thisNeuron.n}), 0.5);
                 //thisNeuron.output = this.params.activation.func(sum, {n : 1});
 
                 //console.log(thisNeuron.n);
