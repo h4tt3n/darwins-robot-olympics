@@ -522,6 +522,24 @@ function createMenu() {
 
     document.body.appendChild(menu);
 
+    // Fullscreen toggle
+
+    let fullscreenButton = document.createElement('button');
+    fullscreenButton.textContent = 'Toggle Fullscreen';
+
+    // Add an onclick event handler to the button
+    fullscreenButton.onclick = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
+
+    menu.appendChild(fullscreenButton);
+
 
     // Toggle raycasting button
 
