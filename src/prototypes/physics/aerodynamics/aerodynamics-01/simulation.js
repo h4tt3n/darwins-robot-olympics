@@ -14,18 +14,18 @@ const airDensity = 1.225;
 
 function calculateLiftCoefficient(angleOfAttack) {
     // Approximation for thin airfoil / flat plate
-    const cMin = 0.0, cMax = 1.0;
+    const cMax = 1.0;
     let normalizedLiftCoefficient = 0;
     angleOfAttack = angleOfAttack % (Math.PI);
     
     if ((0 < angleOfAttack && angleOfAttack < Math.PI / 8) || ((7 * Math.PI) / 8 < angleOfAttack && angleOfAttack < Math.PI)) {
-        normalizedLiftCoefficient =  Math.sin(6 * angleOfAttack);
+        normalizedLiftCoefficient = Math.sin(6 * angleOfAttack);
     } else if (Math.PI / 8 < angleOfAttack && angleOfAttack < (7 * Math.PI) / 8) {
-        normalizedLiftCoefficient =  Math.sin(2 * angleOfAttack);
+        normalizedLiftCoefficient = Math.sin(2 * angleOfAttack);
     }
 
     // Lerp
-    return cMin + normalizedLiftCoefficient * (cMax - cMin);
+    return normalizedLiftCoefficient * cMax;
 }
 
 function calculateDragCoefficient(angleOfAttack) {
