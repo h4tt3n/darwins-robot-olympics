@@ -14,22 +14,30 @@ class AerodynamicConstraint {
     constructor(params = {}) {
         this.linearLink = params.linearLink;
         this.airDensity = 1.225;
-        this.restImpulse = 0.0;
+        this.dragRestImpulse = 0.0;
+        this.liftRestImpulse = 0.0;
         this.velocityDirectionVector = new Vector2();
         this.accumulatedImpulse = new Vector2();
     }
     applyCorrectiveImpulse() {
-        if( this.restImpulse == 0.0 ) { return };
+        //if( this.dragRestImpulse == 0.0 ) { return };
 
         let projectedImpulseA = this.velocityDirectionVector.dot(this.linearLink.pointA.impulse);
-        let impulseErrorA = projectedImpulseA - this.restImpulse;
-        let correctiveImpulseA = this.velocityDirectionVector.mul(impulseErrorA * 0.00001);
+        let projectedPerpImpulseA = this.velocityDirectionVector.perpDot(this.linearLink.pointA.impulse);
+        let dragImpulseErrorA = projectedImpulseA - this.dragRestImpulse;
+        let liftImpulseErrorA = projectedPerpImpulseA - this.liftRestImpulse;
+        let correctiveImpulseA = this.velocityDirectionVector.mul(dragImpulseErrorA * 0.000001)
+        correctiveImpulseA.addThis(this.velocityDirectionVector.perp().mul(liftImpulseErrorA * 0.000001));
         this.linearLink.pointA.impulse.subThis(correctiveImpulseA);
 
         let projectedImpulseB = this.velocityDirectionVector.dot(this.linearLink.pointB.impulse);
-        let impulseErrorB = projectedImpulseB - this.restImpulse;
-        let correctiveImpulseB = this.velocityDirectionVector.mul(impulseErrorB * 0.00001);
+        let projectedPerpImpulseB = this.velocityDirectionVector.perpDot(this.linearLink.pointB.impulse);
+        let dragImpulseErrorB = projectedImpulseB - this.dragRestImpulse;
+        let liftImpulseErrorB = projectedPerpImpulseB - this.liftRestImpulse;
+        let correctiveImpulseB = this.velocityDirectionVector.mul(dragImpulseErrorB * 0.000001);
+        correctiveImpulseB.addThis(this.velocityDirectionVector.perp().mul(liftImpulseErrorB * 0.000001));
         this.linearLink.pointB.impulse.subThis(correctiveImpulseB);
+
     }
     applyWarmStart() {
     }
@@ -67,7 +75,8 @@ class AerodynamicConstraint {
         // Calculate lift
         let lift = this.calculateLift(angleOfAttack, velocity);
 
-        this.restImpulse = -(drag);
+        this.dragRestImpulse = -(drag);
+        this.liftRestImpulse = lift;
 
     }
     calculateLiftCoefficient(angleOfAttack) {

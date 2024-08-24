@@ -1136,7 +1136,7 @@ class Simulation {
         }
 
         let position = new Vector2(0, 0); //new Vector2(0, 0);
-        let bigWingSectionLength = 32;
+        let bigWingSectionLength = 48;
         let WingSectionRadius = 10;
         let WingJointRadius = 8;
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
