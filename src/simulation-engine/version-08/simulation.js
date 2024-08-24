@@ -1163,9 +1163,9 @@ class Simulation {
 
         // Left Wing 1
         //var leftWing1Joint1 = this.world.createLinearState(leftWingAnchor.position.add(new Vector2(-30, -50)), 1.0);
-        var leftWing1Joint1 = this.world.createParticle(leftWingAnchor.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var leftWing1Joint1 = this.world.createParticle(leftWingAnchor.position.add(new Vector2(-bigWingSectionLength * 0.5, 0)), 5, WingJointRadius, randomColor);
         var leftWing1Joint2 = this.world.createParticle(leftWing1Joint1.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
-        var leftWing1Foot = this.world.createParticle(leftWing1Joint2.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var leftWing1Foot = this.world.createParticle(leftWing1Joint2.position.add(new Vector2(-bigWingSectionLength * 2, 0)), 5, WingJointRadius, randomColor);
         bodyParts.particles.push(leftWing1Joint1);
         bodyParts.particles.push(leftWing1Joint2);
         bodyParts.particles.push(leftWing1Foot);
@@ -1189,9 +1189,9 @@ class Simulation {
         bodyParts.leftWing1AngularSprings.push(leftWing1Angular3);
 
         // Right Wing 1
-        var rightWing1Joint1 = this.world.createParticle(rightWingAnchor.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var rightWing1Joint1 = this.world.createParticle(rightWingAnchor.position.add(new Vector2(bigWingSectionLength * 0.5, 0)), 5, WingJointRadius, randomColor);
         var rightWing1Joint2 = this.world.createParticle(rightWing1Joint1.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
-        var rightWing1Foot = this.world.createParticle(rightWing1Joint2.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var rightWing1Foot = this.world.createParticle(rightWing1Joint2.position.add(new Vector2(bigWingSectionLength * 2, 0)), 5, WingJointRadius, randomColor);
 
         var rightWing1Section1 = this.world.createLinearSpring(rightWingAnchor, rightWing1Joint1, 1.0, 1.0, 0.5);
         var rightWing1Section2 = this.world.createLinearSpring(rightWing1Joint1, rightWing1Joint2, 1.0, 1.0, 0.5);

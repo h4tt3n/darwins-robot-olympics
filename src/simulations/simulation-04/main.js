@@ -109,7 +109,7 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+    //target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
@@ -197,11 +197,15 @@ function createTrackers(numRobots = 50, params = {}, genome = null) {
 
 // Level creation functions
 function createAviary() {
+    
+    target = simulation.createWaypoint(new Vector2(2500, 500), 50, "black");
+    //target = simulation.createWaypoint(new Vector2(1000, 1000), 50, "black");
+    
     // Params
-    let top = -800;
-    let bottom = 3200;
+    let top = -400;
+    let bottom = 1600;
     let left = -800;
-    let right = 3600;
+    let right = 3200;
     let numSegments = 1;
     let segmentWidth = (right-left) / numSegments;
     let segmentBaseHeight = bottom + 100;
@@ -230,41 +234,44 @@ function createAviary() {
 
     bottomPoints.push(simulation.world.createLineSegment(p1, bottomRightPoint));
 
-    let numSprings = 64;
-    let angle = 0;
-    let deltaAngle = (Math.PI * 2) / numSprings;
-    let springLength = 50;
-    let position = new Vector2(500, -200);
+    // let numSprings = 128;
+    // let angle = 0;
+    // let deltaAngle = (Math.PI * 2) / numSprings;
+    // let springLength = 50;
+    // let position = new Vector2(500, -200);
 
-    // Drag as function of angle
-    for (let i = 0; i < numSprings; i++) {
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-        let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-        let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-        let spring = simulation.world.createLinearSpring(p1, p2, 0.5, 0.5, 0.5);
-        spring.radius = 8;
-        let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-        angle += deltaAngle;
-    }
+    // // Drag as function of angle
+    // for (let i = 0; i < numSprings; i++) {
+    //     let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+    //     let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
+    //     let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
+    //     let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
+    //     let spring = simulation.world.createLinearSpring(p1, p2, 0.25, 0.5, 0.5);
+    //     spring.radius = 8;
+    //     let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
+    //     angle += deltaAngle;
+    // }
 
-    position = new Vector2(1000, -200);
-    angle = 0;
+    // position = new Vector2(1000, -200);
+    // angle = 0;
 
-    // Drag as function of spring length
-    for (let i = 0; i < numSprings; i++) {
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let springLength = 0 + i * 2;
-        let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-        let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-        let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-        let spring = simulation.world.createLinearSpring(p1, p2, 0.5, 0.5, 0.5);
-        spring.radius = 8;
-        let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-    }
+    // // Drag as function of spring length
+    // for (let i = 0; i < numSprings; i++) {
+    //     let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+    //     let springLength = 0 + i * 2;
+    //     let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
+    //     let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
+    //     let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
+    //     let spring = simulation.world.createLinearSpring(p1, p2, 0.25, 0.5, 0.5);
+    //     spring.radius = 8;
+    //     let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
+    // }
 };
 
 function createWorld() {
+    
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+
     // Params
     let top = -400;
     let bottom = 400;
@@ -333,6 +340,9 @@ function createWorld() {
 };
 
 function createWorld2() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+
     // Params
     let top = -400;
     let bottom = 400;
@@ -356,6 +366,8 @@ function createWorld2() {
 };
 
 function createWorld3() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     
     // Params
     let topLeft = 0;
@@ -378,6 +390,9 @@ function createWorld3() {
 };
 
 function pitFall() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+
     // Params
     let top = -800;
     let bottom = 400;
@@ -412,6 +427,9 @@ function pitFall() {
 };
 
 function pitFall2() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+
     // Params
     let top = -400;
     let bottom = 400;
@@ -475,6 +493,8 @@ function pitFall2() {
 };
 
 function helmet() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
 
     // Params
     let levelCenter = new Vector2(1000, 0);
@@ -554,6 +574,9 @@ function helmet() {
 };
 
 function thunderDome() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+
     // Params
     let levelCenter = new Vector2(0, 500);
 
@@ -579,6 +602,9 @@ function thunderDome() {
 }
 
 function createStairwayMap() {
+
+    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+
     // Params
     let levelCenter = new Vector2(1100, 800);
     let stepWidth = 650;

@@ -9,18 +9,19 @@ import { Vector2 } from '../../../vector-library/version-02/vector2.js';
 // TODO:
 // - Refactor drag so that max drag impulse exactly cancels out velocity along the velocity vector
 // - Make rest impulse a vector that combines drag and lift.
+// - Refactor constraint to work on linear spring as a whole, not individual points
+// - Optimize for speed, if possible
 
 class AerodynamicConstraint {
     constructor(params = {}) {
         this.linearLink = params.linearLink;
-        this.airDensity = 1.225;
+        this.fluidDensity = 1.225;
         this.dragRestImpulse = 0.0;
         this.liftRestImpulse = 0.0;
         this.velocityDirectionVector = new Vector2();
         this.accumulatedImpulse = new Vector2();
     }
     applyCorrectiveImpulse() {
-        //if( this.dragRestImpulse == 0.0 ) { return };
 
         let projectedImpulseA = this.velocityDirectionVector.dot(this.linearLink.pointA.impulse);
         let projectedPerpImpulseA = this.velocityDirectionVector.perpDot(this.linearLink.pointA.impulse);
@@ -37,7 +38,6 @@ class AerodynamicConstraint {
         let correctiveImpulseB = this.velocityDirectionVector.mul(dragImpulseErrorB * 0.000001);
         correctiveImpulseB.addThis(this.velocityDirectionVector.perp().mul(liftImpulseErrorB * 0.000001));
         this.linearLink.pointB.impulse.subThis(correctiveImpulseB);
-
     }
     applyWarmStart() {
     }
@@ -51,37 +51,25 @@ class AerodynamicConstraint {
         let velocityY = (this.linearLink.pointA.velocity.y * this.linearLink.pointA.mass +
                         this.linearLink.pointB.velocity.y * this.linearLink.pointB.mass) /
                         (this.linearLink.pointA.mass + this.linearLink.pointB.mass);
-
-        //console.log(velocityX, velocityY);
         
-        let velocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+        let velocitySquared = velocityX * velocityX + velocityY * velocityY;
 
         this.velocityDirectionVector = new Vector2(velocityX, velocityY).unit();
 
-        let wingDirectionVector = this.linearLink.angleVector;
-
         let angleOfAttack = Math.atan2(
-            this.velocityDirectionVector.perpDot(wingDirectionVector), 
-            this.velocityDirectionVector.dot(wingDirectionVector)
-        );
+            this.velocityDirectionVector.perpDot(this.linearLink.angleVector), 
+            this.velocityDirectionVector.dot(this.linearLink.angleVector)
+        ) + Math.PI;
 
-        //console.log(angleOfAttack);
+        let drag = this.calculateDrag(angleOfAttack, velocitySquared);
+        let lift = this.calculateLift(angleOfAttack, velocitySquared);
 
-        // Calculate drag
-        let drag = this.calculateDrag(angleOfAttack, velocity);
-
-        //console.log(drag);
-
-        // Calculate lift
-        let lift = this.calculateLift(angleOfAttack, velocity);
-
-        this.dragRestImpulse = -(drag);
+        this.dragRestImpulse = -drag;
         this.liftRestImpulse = lift;
-
     }
     calculateLiftCoefficient(angleOfAttack) {
         // Approximation for thin airfoil / flat plate
-        const c = 1.0;
+        const c = 0.6;
         let normalizedLiftCoefficient = 0;
         angleOfAttack = angleOfAttack % (Math.PI);
         
@@ -91,26 +79,25 @@ class AerodynamicConstraint {
             normalizedLiftCoefficient = Math.sin(2 * angleOfAttack);
         }
     
-        // Lerp
         return normalizedLiftCoefficient * c;
     }
     
     calculateDragCoefficient(angleOfAttack) {
         // Approximation for thin airfoil / flat plate
-        const cMin = 0.0, cMax = 1.0;
+        const cMin = 0.01, cMax = 0.6;
         return cMin + Math.sin(angleOfAttack) ** 2 * (cMax - cMin);
     }
     
-    calculateLift(angle, velocity) {
+    calculateLift(angle, velocitySquared) {
         const liftCoefficient = this.calculateLiftCoefficient(angle);
         const area = this.linearLink.length;
-        return 0.5 * this.airDensity * velocity ** 2 * area * liftCoefficient;
+        return 0.5 * this.fluidDensity * velocitySquared * area * liftCoefficient;
     }
     
-    calculateDrag(angle, velocity) {
+    calculateDrag(angle, velocitySquared) {
         const dragCoefficient = this.calculateDragCoefficient(angle);
         const area = this.linearLink.length;
-        return 0.5 * this.airDensity * velocity ** 2 * area * dragCoefficient;
+        return 0.5 * this.fluidDensity * velocitySquared * area * dragCoefficient;
     }
 }
 
