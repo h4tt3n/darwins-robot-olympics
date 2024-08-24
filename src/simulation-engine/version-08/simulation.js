@@ -244,6 +244,11 @@ class Simulation {
                 this.world.deleteMotorConstraint(robot.body.motorConstraints[i]);
             }
         }
+        if (robot.body.aerodynamicConstraints != undefined) {
+            for (let i = 0; i < robot.body.aerodynamicConstraints.length; i++) {
+                this.world.deleteAerodynamicConstraint(robot.body.aerodynamicConstraints[i]);
+            }
+        }
         if (robot.body.gearConstraints != undefined) {
             for (let i = 0; i < robot.body.gearConstraints.length; i++) {
                 this.world.deleteGearConstraint(robot.body.gearConstraints[i]);
@@ -1115,6 +1120,208 @@ class Simulation {
         let robot = new Robot(brain, body, eyes, update);
         this.robots.push(robot);
         return robot;
+    }
+
+    createRoboBird(brainGenome) {
+
+        let bodyParts = {
+            particles : [],
+            linearSprings : [],
+            angularSprings : [],
+            aerodynamicConstraints : [],
+            leftWing1AngularSprings : [],
+            rightWing1AngularSprings : [],
+            leftWing1JointAngularSpring : null,
+            rightWing1JointAngularSpring : null,
+        }
+
+        let position = new Vector2(0, 0); //new Vector2(0, 0);
+        let bigWingSectionLength = 32;
+        let WingSectionRadius = 10;
+        let WingJointRadius = 8;
+        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+
+        // Body
+        var body = this.world.createParticle(position, 10, 30, randomColor);
+        bodyParts.particles.push(body);
+
+        // Wing anchors
+        var leftWingAnchor  = this.world.createParticle(position.add(new Vector2(-(body.radius+WingJointRadius+2), 0)), 5, WingJointRadius, randomColor);
+        var rightWingAnchor = this.world.createParticle(position.add(new Vector2( (body.radius+WingJointRadius+2), 0)), 5, WingJointRadius, randomColor);
+
+        var leftWingLinear = this.world.createLinearSpring(body, leftWingAnchor, 1.0, 1.0, 0.5);
+        var rightWingLinear = this.world.createLinearSpring(body, rightWingAnchor, 1.0, 1.0, 0.5);
+        leftWingLinear.radius = WingSectionRadius;
+        rightWingLinear.radius = WingSectionRadius;
+        leftWingLinear.color = randomColor2;
+        rightWingLinear.color = randomColor2;
+
+        var WingAngular = this.world.createAngularSpring(leftWingLinear, rightWingLinear, 0.5, 0.5, 0.5)
+
+        // Wings
+
+        // Left Wing 1
+        //var leftWing1Joint1 = this.world.createLinearState(leftWingAnchor.position.add(new Vector2(-30, -50)), 1.0);
+        var leftWing1Joint1 = this.world.createParticle(leftWingAnchor.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var leftWing1Joint2 = this.world.createParticle(leftWing1Joint1.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var leftWing1Foot = this.world.createParticle(leftWing1Joint2.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        bodyParts.particles.push(leftWing1Joint1);
+        bodyParts.particles.push(leftWing1Joint2);
+        bodyParts.particles.push(leftWing1Foot);
+
+        var leftWing1Section1 = this.world.createLinearSpring(leftWingAnchor, leftWing1Joint1, 1.0, 1.0, 0.5);
+        var leftWing1Section2 = this.world.createLinearSpring(leftWing1Joint1, leftWing1Joint2, 1.0, 1.0, 0.5);
+        var leftWing1Section3 = this.world.createLinearSpring(leftWing1Joint2, leftWing1Foot, 1.0, 1.0, 0.5);
+        leftWing1Section1.radius = WingSectionRadius;
+        leftWing1Section2.radius = WingSectionRadius;
+        leftWing1Section3.radius = WingSectionRadius;
+        leftWing1Section1.color = randomColor2;
+        leftWing1Section2.color = randomColor2;
+        leftWing1Section3.color = randomColor2;
+
+        var leftWing1Angular1 = this.world.createAngularSpring(leftWingLinear, leftWing1Section1, 0.25, 0.5, 0.5);
+        var leftWing1Angular2 = this.world.createAngularSpring(leftWing1Section1, leftWing1Section2, 0.25, 0.5, 0.5);
+        var leftWing1Angular3 = this.world.createAngularSpring(leftWing1Section2, leftWing1Section3, 0.25, 0.5, 0.5);
+        
+        bodyParts.leftWing1JointAngularSpring = leftWing1Angular1;
+        bodyParts.leftWing1AngularSprings.push(leftWing1Angular2);
+        bodyParts.leftWing1AngularSprings.push(leftWing1Angular3);
+
+        // Right Wing 1
+        var rightWing1Joint1 = this.world.createParticle(rightWingAnchor.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var rightWing1Joint2 = this.world.createParticle(rightWing1Joint1.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+        var rightWing1Foot = this.world.createParticle(rightWing1Joint2.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
+
+        var rightWing1Section1 = this.world.createLinearSpring(rightWingAnchor, rightWing1Joint1, 1.0, 1.0, 0.5);
+        var rightWing1Section2 = this.world.createLinearSpring(rightWing1Joint1, rightWing1Joint2, 1.0, 1.0, 0.5);
+        var rightWing1Section3 = this.world.createLinearSpring(rightWing1Joint2, rightWing1Foot, 1.0, 1.0, 0.5);
+        rightWing1Section1.radius = WingSectionRadius;
+        rightWing1Section2.radius = WingSectionRadius;
+        rightWing1Section3.radius = WingSectionRadius;
+        rightWing1Section1.color = randomColor2;
+        rightWing1Section2.color = randomColor2;
+        rightWing1Section3.color = randomColor2;
+
+        var rightWing1Angular1 = this.world.createAngularSpring(rightWingLinear, rightWing1Section1, 0.25, 0.5, 0.5);
+        var rightWing1Angular2 = this.world.createAngularSpring(rightWing1Section1, rightWing1Section2, 0.25, 0.5, 0.5);
+        var rightWing1Angular3 = this.world.createAngularSpring(rightWing1Section2, rightWing1Section3, 0.25, 0.5, 0.5);
+
+        bodyParts.rightWing1JointAngularSpring = rightWing1Angular1;
+        bodyParts.rightWing1AngularSprings.push(rightWing1Angular2);
+        bodyParts.rightWing1AngularSprings.push(rightWing1Angular3);
+
+        // Add aerodynamic constraints to wings
+        var rightWing1Section2aerodynamics = this.world.createAerodynamicConstraint({ linearLink : rightWing1Section2 });
+        var rightWing1Section3aerodynamics = this.world.createAerodynamicConstraint({ linearLink : rightWing1Section3 });
+        var leftWing1Section2aerodynamics = this.world.createAerodynamicConstraint({ linearLink : leftWing1Section2 });
+        var leftWing1Section3aerodynamics = this.world.createAerodynamicConstraint({ linearLink : leftWing1Section3 });
+
+        //console.log(rightWing1Section2aerodynamics);
+
+        // Push all Particles, LiearSprings and AngularSprings to BodyParts arrays
+        bodyParts.angularSprings.push(WingAngular);
+        bodyParts.angularSprings.push(leftWing1Angular1);
+        bodyParts.angularSprings.push(leftWing1Angular2);
+        bodyParts.angularSprings.push(leftWing1Angular3);
+        bodyParts.angularSprings.push(rightWing1Angular1);
+        bodyParts.angularSprings.push(rightWing1Angular2);
+        bodyParts.angularSprings.push(rightWing1Angular3);
+
+        bodyParts.linearSprings.push(leftWingLinear);
+        bodyParts.linearSprings.push(rightWingLinear);
+        bodyParts.linearSprings.push(leftWing1Section1);
+        bodyParts.linearSprings.push(leftWing1Section2);
+        bodyParts.linearSprings.push(leftWing1Section3);
+        bodyParts.linearSprings.push(rightWing1Section1);
+        bodyParts.linearSprings.push(rightWing1Section2);
+        bodyParts.linearSprings.push(rightWing1Section3);
+
+        bodyParts.particles.push(body);
+        bodyParts.particles.push(leftWingAnchor);
+        bodyParts.particles.push(rightWingAnchor);
+        bodyParts.particles.push(leftWing1Joint1);
+        bodyParts.particles.push(leftWing1Joint2);
+        bodyParts.particles.push(leftWing1Foot);
+        bodyParts.particles.push(rightWing1Joint1);
+        bodyParts.particles.push(rightWing1Joint2);
+        bodyParts.particles.push(rightWing1Foot);
+
+        bodyParts.aerodynamicConstraints.push(rightWing1Section2aerodynamics);
+        bodyParts.aerodynamicConstraints.push(rightWing1Section3aerodynamics);
+        bodyParts.aerodynamicConstraints.push(leftWing1Section2aerodynamics);
+        bodyParts.aerodynamicConstraints.push(leftWing1Section3aerodynamics);
+
+        // Create vision
+        let numRays = 12;
+
+        const visionParams = {
+            position : new Vector2(0, 0),
+            direction : Math.PI * 2 * 0,
+            numRays : numRays,
+            fieldOfView : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
+        }
+
+        let eyes = this.createRayCamera(visionParams);
+
+        // Create brain
+        let brainParams = {
+            layers : [numRays, 16, 8],
+            activation : {
+                func : ActivationFunctions.parametricTanhLike,
+            },
+        }
+
+        let brain = this.createNeuralNetwork(brainGenome, brainParams);
+
+        let update = function update() {
+
+            // Update eyes
+            const angleVector = this.body.linearSprings[1].angleVector;
+            this.eyes.directionVector = angleVector.perp();
+            this.eyes.origin = this.body.particles[0].position;
+    
+            this.eyes.update();
+    
+            // Update brain
+            let inputs = [];
+    
+            let intersections = this.eyes.getOutput();
+
+            for (let i = 0; i < intersections.length; i++) {
+                if( intersections[i] ) {
+                    let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
+                    inputs.push(invDistance);
+                }
+            }
+    
+            this.brain.setInput(inputs);
+            this.brain.run();
+            let output = this.brain.getOutput();
+    
+            let jointAngle = Math.PI * 2 * 0.15;
+            let WingAngle = Math.PI * 2 * 0.15;
+    
+            // Update body
+            let angle = ToolBox.map(output[0], -1, 1, -WingAngle, WingAngle);
+    
+            for (let i = 0; i < this.body.leftWing1AngularSprings.length; i++) {
+                this.body.leftWing1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            angle = ToolBox.map(output[2], -1, 1, -WingAngle, WingAngle);
+    
+            for (let i = 0; i < this.body.rightWing1AngularSprings.length; i++) {
+                this.body.rightWing1AngularSprings[i].setRestAngleVector(angle);
+            }
+    
+            this.body.leftWing1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, -jointAngle, jointAngle));
+            this.body.rightWing1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, -jointAngle, jointAngle));
+        }
+
+        let bird = new Robot(brain, bodyParts, eyes, update);
+        this.robots.push(bird);
+        return bird;
     }
 
     //createRoboCrab(params = {}) {

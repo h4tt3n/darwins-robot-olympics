@@ -30,6 +30,7 @@ import { LinearSpring } from './linearSpring.js'
 import { AngularSpring } from './angularSpring.js'
 import { GearConstraint } from './constraints/gearConstraint.js'
 import { MotorConstraint } from './constraints/motorConstraint.js'
+import { AerodynamicConstraint } from './constraints/aerodynamicCostraint.js'
 
 // Compound bodys
 import { Body } from './body.js'
@@ -56,6 +57,7 @@ export {
     AngularSpring,
     GearConstraint,
     MotorConstraint,
+    AerodynamicConstraint,
     Particle, 
     Wheel,
     Body,

@@ -12,6 +12,7 @@ import { FixedSpring } from './fixedSpring.js';
 import { AngularSpring } from './angularSpring.js'
 import { GearConstraint } from './constraints/gearConstraint.js'
 import { MotorConstraint } from './constraints/motorConstraint.js'
+import { AerodynamicConstraint } from './constraints/aerodynamicCostraint.js'
 import { CollisionHandler } from './collision/collisionHandler.js'
 import { Wheel } from './wheel.js'
 import { Body } from './body.js';
@@ -28,6 +29,7 @@ class World {
         this.angularSprings = [];
         this.gearConstraints = [];
         this.motorConstraints = [];
+        this.aerodynamicConstraints = [];
         this.particles = [];
         this.wheels = [];
         this.bodys = [];
@@ -46,6 +48,7 @@ class World {
         this.angularSprings = [];
         this.gearConstraints = [];
         this.motorConstraints = [];
+        this.aerodynamicConstraints = [];
         this.particles = [];
         this.wheels = [];
         this.bodys = [];
@@ -60,6 +63,7 @@ class World {
             this.applyCorrectiveImpulsestoArray(this.fixedSprings);
             this.applyCorrectiveImpulsestoArray(this.gearConstraints);
             this.applyCorrectiveImpulsestoArray(this.motorConstraints);
+            this.applyCorrectiveImpulsestoArray(this.aerodynamicConstraints);
             this.applyCorrectiveImpulsesToMap(this.collisions);
         }
     }
@@ -87,6 +91,7 @@ class World {
         this.fixedSprings.forEach(f => { f.applyWarmStart() });
         this.gearConstraints.forEach(g => { g.applyWarmStart() });
         this.motorConstraints.forEach(m => { m.applyWarmStart() });
+        this.aerodynamicConstraints.forEach(a => { a.applyWarmStart() });
         this.collisions.forEach(c => { c.applyWarmStart() });
     }
     computeData(){
@@ -107,6 +112,7 @@ class World {
         this.fixedSprings.forEach(f => { f.computeRestImpulse() });
         this.gearConstraints.forEach(g => { g.computeRestImpulse() });
         this.motorConstraints.forEach(m => { m.computeRestImpulse() });
+        this.aerodynamicConstraints.forEach(a => { a.computeRestImpulse() });
         this.collisions.forEach(c => { c.computeRestImpulse() });
     }
     update(){
@@ -268,6 +274,18 @@ class World {
         let index = this.motorConstraints.indexOf(motorConstraint);
         if (index > -1) {
             this.motorConstraints.splice(index, 1);
+        }
+    }
+    createAerodynamicConstraint(params = {}){
+        let aerodynamicConstraint = new AerodynamicConstraint(params);
+        aerodynamicConstraint.objectId = this.objectIdCounter++;
+        this.aerodynamicConstraints.push(aerodynamicConstraint);
+        return this.aerodynamicConstraints[this.aerodynamicConstraints.length - 1];
+    }
+    deleteAerodynamicConstraint(aerodynamicConstraint){
+        let index = this.aerodynamicConstraints.indexOf(aerodynamicConstraint);
+        if (index > -1) {
+            this.aerodynamicConstraints.splice(index, 1);
         }
     }
     createParticle(position, mass, radius, color){

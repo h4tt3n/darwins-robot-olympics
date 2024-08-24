@@ -62,6 +62,7 @@ const createRobotFuncs = {
     "RoboWorm" : createRoboWorms,
     "RoboStarfish" : createRoboStarfishes,
     "RoboCrab" : createRoboCrabs,
+    "RoboBird" : createRoboBirds,
     "RoboBlob" : createRoboBlobs,
     "RoboCar" : createRoboCars,
     "TopDownTracker" : createTrackers,
@@ -161,6 +162,13 @@ function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
     }
 }
 
+function createRoboBirds(numRobots = 50, params = {}, genome = null) {
+    for (let i = 0; i < numRobots; i++) {
+        let brainGenome = genome ? genome[i].genome : null;
+        simulation.createRoboBird(brainGenome);
+    }
+}
+
 function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         //params.brain.genome = genome ? genome[i].genome : null;
@@ -213,14 +221,47 @@ function createWorld() {
 
     let p1 = bottomLeftPoint;
 
-    for (let i = 0; i < numSegments-1; i++) {
-        let height = segmentBaseHeight + (Math.random() * segmentRandomization * 2 - segmentRandomization);
-        let p2 = simulation.world.createPoint(new Vector2(left + segmentWidth * (i + 1), height));
-        bottomPoints.push(simulation.world.createLineSegment(p1, p2));
-        p1 = p2;
-    }
+    // for (let i = 0; i < numSegments-1; i++) {
+    //     let height = segmentBaseHeight + (Math.random() * segmentRandomization * 2 - segmentRandomization);
+    //     let p2 = simulation.world.createPoint(new Vector2(left + segmentWidth * (i + 1), height));
+    //     bottomPoints.push(simulation.world.createLineSegment(p1, p2));
+    //     p1 = p2;
+    // }
 
     bottomPoints.push(simulation.world.createLineSegment(p1, bottomRightPoint));
+
+    let numSprings = 64;
+    let angle = 0;
+    let deltaAngle = (Math.PI * 2) / numSprings;
+    let springLength = 50;
+    let position = new Vector2(500, -200);
+
+    // Drag as function of angle
+    for (let i = 0; i < numSprings; i++) {
+        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
+        let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
+        let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
+        let spring = simulation.world.createLinearSpring(p1, p2, 0.5, 0.5, 0.5);
+        spring.radius = 8;
+        let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
+        angle += deltaAngle;
+    }
+
+    position = new Vector2(1000, -200);
+    angle = 0;
+
+    // Drag as function of spring length
+    for (let i = 0; i < numSprings; i++) {
+        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+        let springLength = 0 + i * 2;
+        let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
+        let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
+        let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
+        let spring = simulation.world.createLinearSpring(p1, p2, 0.5, 0.5, 0.5);
+        spring.radius = 8;
+        let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
+    }
 };
 
 function createWorld2() {
@@ -500,8 +541,9 @@ function createStairwayMap() {
 //
 
 function deleteWorld() {
-    simulation.world.lineSegments = [];
-    simulation.world.points = [];
+    //simulation.world.lineSegments = [];
+    //simulation.world.points = [];
+    simulation.world.reset();
 }
 
 
