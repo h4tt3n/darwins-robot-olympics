@@ -8,9 +8,9 @@ class Camera {
         this.zoom = zoom;
         this.angle = 0.0;
         this.maxZoom = 1.0;
-        this.minZoom = 0.25;
-        this.minPosition = new Vector2(-4000, -4000);
-        this.maxPosition = new Vector2(4000, 4000);
+        this.minZoom = 0.125;
+        this.minPosition = new Vector2(-6000, -6000);
+        this.maxPosition = new Vector2(6000, 6000);
         this.deltaPan = 0.2;
         this.deltaZoom = 0.2;
         this.restZoom = 0.5;

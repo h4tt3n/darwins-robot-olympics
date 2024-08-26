@@ -18,6 +18,7 @@ class AerodynamicConstraint {
         this.fluidDensity = 1.225;
         this.dragRestImpulse = 0.0;
         this.liftRestImpulse = 0.0;
+        this.angleOfAttack = 0.0;
         this.velocityDirectionVector = new Vector2();
         this.accumulatedImpulse = new Vector2();
     }
@@ -56,27 +57,27 @@ class AerodynamicConstraint {
 
         this.velocityDirectionVector = new Vector2(velocityX, velocityY).unit();
 
-        let angleOfAttack = Math.atan2(
+        this.angleOfAttack = Math.atan2(
             this.velocityDirectionVector.perpDot(this.linearLink.angleVector), 
             this.velocityDirectionVector.dot(this.linearLink.angleVector)
         ) + Math.PI;
 
-        let drag = this.calculateDrag(angleOfAttack, velocitySquared);
-        let lift = this.calculateLift(angleOfAttack, velocitySquared);
+        let drag = this.calculateDrag(this.angleOfAttack, velocitySquared);
+        let lift = this.calculateLift(this.angleOfAttack, velocitySquared);
 
         this.dragRestImpulse = -drag;
         this.liftRestImpulse = lift;
     }
     calculateLiftCoefficient(angleOfAttack) {
         // Approximation for thin airfoil / flat plate
-        const c = 0.6;
+        const c = 0.6; // 0.6
         let normalizedLiftCoefficient = 0;
         angleOfAttack = angleOfAttack % (Math.PI);
         
-        if ((0 < angleOfAttack && angleOfAttack < Math.PI / 8) || ((7 * Math.PI) / 8 < angleOfAttack && angleOfAttack < Math.PI)) {
-            normalizedLiftCoefficient = Math.sin(6 * angleOfAttack);
+         if ((0 < angleOfAttack && angleOfAttack < Math.PI / 8) || ((7 * Math.PI) / 8 < angleOfAttack && angleOfAttack < Math.PI)) {
+             normalizedLiftCoefficient = Math.sin(6 * angleOfAttack); // 6
         } else if (Math.PI / 8 < angleOfAttack && angleOfAttack < (7 * Math.PI) / 8) {
-            normalizedLiftCoefficient = Math.sin(2 * angleOfAttack);
+            normalizedLiftCoefficient = Math.sin(2 * angleOfAttack); // 2
         }
     
         return normalizedLiftCoefficient * c;

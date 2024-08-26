@@ -198,20 +198,14 @@ function createTrackers(numRobots = 50, params = {}, genome = null) {
 // Level creation functions
 function createAviary() {
     
-    target = simulation.createWaypoint(new Vector2(2500, 500), 50, "black");
+    target = simulation.createWaypoint(new Vector2(5000, 600), 50, "black");
     //target = simulation.createWaypoint(new Vector2(1000, 1000), 50, "black");
     
     // Params
     let top = -400;
     let bottom = 1600;
     let left = -800;
-    let right = 3200;
-    let numSegments = 1;
-    let segmentWidth = (right-left) / numSegments;
-    let segmentBaseHeight = bottom + 100;
-    let segmentRandomization = 25;
-
-    let bottomPoints = [];
+    let right = 7200;
 
     // Create world
     let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
@@ -222,23 +216,27 @@ function createAviary() {
     simulation.world.createLineSegment(topLeftPoint, topRightPoint);
     simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
     simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
+    simulation.world.createLineSegment(bottomLeftPoint, bottomRightPoint)
 
-    let p1 = bottomLeftPoint;
-
-    // for (let i = 0; i < numSegments-1; i++) {
-    //     let height = segmentBaseHeight + (Math.random() * segmentRandomization * 2 - segmentRandomization);
-    //     let p2 = simulation.world.createPoint(new Vector2(left + segmentWidth * (i + 1), height));
-    //     bottomPoints.push(simulation.world.createLineSegment(p1, p2));
-    //     p1 = p2;
-    // }
-
-    bottomPoints.push(simulation.world.createLineSegment(p1, bottomRightPoint));
-
-    // let numSprings = 128;
+    // let numSprings = 32;
     // let angle = 0;
-    // let deltaAngle = (Math.PI * 2) / numSprings;
+    // let deltaAngle = (Math.PI) / numSprings;
     // let springLength = 50;
-    // let position = new Vector2(500, -200);
+    // let position = new Vector2(500, 500);
+
+    // // Lift as function of angle
+    // for (let i = 0; i < numSprings; i++) {
+    //     let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
+    //     let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
+    //     let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
+    //     let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
+    //     p1.velocity = new Vector2(100, 0);
+    //     p2.velocity = new Vector2(100, 0);
+    //     let spring = simulation.world.createLinearSpring(p1, p2, 0.25, 0.5, 0.5);
+    //     spring.radius = 8;
+    //     let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
+    //     angle += deltaAngle;
+    // }
 
     // // Drag as function of angle
     // for (let i = 0; i < numSprings; i++) {

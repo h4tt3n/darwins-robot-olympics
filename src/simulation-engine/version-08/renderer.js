@@ -443,23 +443,23 @@ class Renderer {
         //this.ctx.strokeStyle = "rgb(192, 192, 192)";
 
         // Draw linear springs
-        for (let i = 0; i < this.simulation.world.linearSprings.length; i++) {
-            let linearSpring = this.simulation.world.linearSprings[i];
+        // for (let i = 0; i < this.simulation.world.linearSprings.length; i++) {
+        //     let linearSpring = this.simulation.world.linearSprings[i];
 
-            let x1 = linearSpring.pointA.position.x;
-            let y1 = linearSpring.pointA.position.y;
-            let x2 = linearSpring.pointB.position.x;
-            let y2 = linearSpring.pointB.position.y;
+        //     let x1 = linearSpring.pointA.position.x;
+        //     let y1 = linearSpring.pointA.position.y;
+        //     let x2 = linearSpring.pointB.position.x;
+        //     let y2 = linearSpring.pointB.position.y;
 
-            this.ctx.lineWidth = linearSpring.radius * 2;
-            this.ctx.strokeStyle = linearSpring.color;
+        //     this.ctx.lineWidth = linearSpring.radius * 2;
+        //     this.ctx.strokeStyle = linearSpring.color;
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(x1, y1);
-            this.ctx.lineTo(x2, y2);
-            this.ctx.stroke();
-            this.ctx.closePath();
-        }
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(x1, y1);
+        //     this.ctx.lineTo(x2, y2);
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
+        // }
 
         // Draw LineSegments
         this.ctx.strokeStyle = "rgb(140, 140, 140)";
@@ -494,21 +494,21 @@ class Renderer {
         }
 
         // Draw particles
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = "rgb(192, 192, 192)";
-        //this.ctx.lineJoin = "round";
+        // this.ctx.lineWidth = 1;
+        // this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        // //this.ctx.lineJoin = "round";
 
-        for (let i = 0; i < this.simulation.world.particles.length; i++) {
-            let particle = this.simulation.world.particles[i];
-            let x = particle.position.x;
-            let y = particle.position.y;
+        // for (let i = 0; i < this.simulation.world.particles.length; i++) {
+        //     let particle = this.simulation.world.particles[i];
+        //     let x = particle.position.x;
+        //     let y = particle.position.y;
 
-            this.ctx.beginPath();
-            this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-            this.ctx.fillStyle = particle.color;
-            this.ctx.fill();
-            this.ctx.closePath();
-        }
+        //     this.ctx.beginPath();
+        //     this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
+        //     this.ctx.fillStyle = particle.color;
+        //     this.ctx.fill();
+        //     this.ctx.closePath();
+        // }
 
         // Draw wheels
         // this.ctx.lineWidth = 8;
