@@ -136,6 +136,15 @@ class ToolBox {
         return a + (b - a) * t;
     }
 
+    static clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    static angleDifference(angle1, angle2) {
+        let diff = Math.abs(angle1 - angle2) % (2 * Math.PI);
+        return diff > Math.PI ? 2 * Math.PI - diff : diff;
+    }
+
     static map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
