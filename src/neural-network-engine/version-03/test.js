@@ -1,5 +1,6 @@
 "use strict";
 
+import { ToolBox } from "../../toolbox/version-01/toolbox.js";
 import { ActivationFunctions } from "./activation-functions.js";
 import { NeuralNetwork } from "./neural-network.js";
 
@@ -13,8 +14,7 @@ let nnParams = {
                 func : ActivationFunctions.parameterizedIdentity,
                 param : { min : -1000, max : 1000 }
             },
-            bias : { min : -100, max : 100 },
-            weight : { min : -10000, max : 10000 }
+            bias : { min : -100, max : 100 }
         },
         {
             label : "hidden",
@@ -23,8 +23,7 @@ let nnParams = {
                 func : ActivationFunctions.parameterizedIdentity,
                 param : { min : 0, max : 1000 }
             },
-            bias : { min : -100, max : 100 },
-            weight : { min : -10000, max : 10000 }
+            bias : { min : -100, max : 100 }
         },
         {
             label : "output",
@@ -33,8 +32,7 @@ let nnParams = {
                 func : ActivationFunctions.parameterizedSoftSign,
                 param : { min : 0, max : 1000 }
             },
-            bias : { min : -100, max : 100 },
-            weight : { min : -100, max : 100 }
+            bias : { min : -100, max : 100 }
         },
     ],
     linkLayers : [
@@ -42,38 +40,44 @@ let nnParams = {
             label : "input-internal",
             from : "input",
             to : "input",
-            connectivity : 8/16
+            weight : { min : -100, max : 100 },
+            connectivity : 1,
         },
-        // {
-        //     label : "hidden-internal",
-        //     from : "hidden",
-        //     to : "hidden",
-        //     connectivity : 0.5 * Math.PI * 2,
-        // },
-        // {
-        //     label : "output-internal",
-        //     from : "output",
-        //     to : "output",
-        //     connectivity : 0.5 * Math.PI * 2,
-        // },
-        // {
-        //     label : "input-hidden",
-        //     from : "input",
-        //     to : "hidden",
-        //     connectivity : 0.5 * Math.PI * 2,
-        // },
-        // {
-        //     label : "hidden-output",
-        //     from : "hidden",
-        //     to : "output",
-        //     connectivity : 0.5 * Math.PI * 2,
-        // },
-        // {
-        //     label : "output-input",
-        //     from : "output",
-        //     to : "input",
-        //     connectivity : 0.5 * Math.PI * 2,
-        // },
+        {
+            label : "hidden-internal",
+            from : "hidden",
+            to : "hidden",
+            weight : { min : -100, max : 100 },
+            connectivity : 1,
+        },
+        {
+            label : "output-internal",
+            from : "output",
+            to : "output",
+            weight : { min : -100, max : 100 },
+            connectivity : 1,
+        },
+        {
+            label : "input-hidden",
+            from : "input",
+            to : "hidden",
+            weight : { min : -100, max : 100 },
+            connectivity : 1,
+        },
+        {
+            label : "hidden-output",
+            from : "hidden",
+            to : "output",
+            weight : { min : -100, max : 100 },
+            connectivity : 1,
+        },
+        {
+            label : "output-input",
+            from : "output",
+            to : "input",
+            weight : { min : -100, max : 100 },
+            connectivity : 1,
+        },
     ]
 };
 

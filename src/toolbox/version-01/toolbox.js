@@ -132,6 +132,20 @@ class ToolBox {
         return true;
     }
 
+    static async loadJSON(filePath) {
+        try {
+            const response = await fetch(filePath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const jsonData = await response.json();
+            return jsonData;
+        } catch (error) {
+            console.error('Error loading JSON:', error);
+        }
+    }
+
+
     static lerp(a, b, t) {
         return a + (b - a) * t;
     }

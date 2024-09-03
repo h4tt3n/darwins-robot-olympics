@@ -14,8 +14,7 @@
 //                 func : ActivationFunctions.parameterizedIdentity,
 //                 param : { min : -1000, max : 1000 }
 //             },
-//             bias : { min : -100, max : 100 },
-//             weight : { min : -10000, max : 10000 }
+//             bias : { min : -100, max : 100 }
 //         },
 //         {
 //             label : "hidden",
@@ -24,8 +23,7 @@
 //                 func : ActivationFunctions.parameterizedIdentity,
 //                 param : { min : 0, max : 1000 }
 //             },
-//             bias : { min : -100, max : 100 },
-//             weight : { min : -10000, max : 10000 }
+//             bias : { min : -100, max : 100 }
 //         },
 //         {
 //             label : "output",
@@ -34,8 +32,7 @@
 //                 func : ActivationFunctions.parameterizedSoftSign,
 //                 param : { min : 0, max : 1000 }
 //             },
-//             bias : { min : -100, max : 100 },
-//             weight : { min : -100, max : 100 }
+//             bias : { min : -100, max : 100 }
 //         },
 //     ],
 //     linkLayers : [
@@ -43,24 +40,28 @@
 //             label : "hidden-internal",
 //             from : "hidden",
 //             to : "hidden",
+//             weight : { min : -1, max : 1 },
 //             connectivity : 1.0
 //         },
 //         {
 //             label : "output-internal",
 //             from : "output",
 //             to : "output",
+//             weight : { min : -10, max : 10 },
 //             connectivity : 0.5
 //         },
 //         {
 //             label : "input-hidden",
 //             from : "input",
 //             to : "hidden",
+//             weight : { min : -100, max : 100 },
 //             connectivity : 0.5
 //         },
 //         {
 //             label : "hidden-output",
 //             from : "hidden",
 //             to : "output",
+//             weight : { min : -10000, max : 10000 },
 //             connectivity : 0.5
 //         }
 //     ]
@@ -147,7 +148,9 @@ class NeuralNetwork {
         }
 
         // Create links
-        for (let i = 0; i < numLinkLayers; i++) {
+        for (let i = 0; i < this.linkLayers.length; i++) {
+
+            console.log(this.params.linkLayers[i]);
             
             let fromNodeLayerLabel = this.params.linkLayers[i].from;
             let toNodeLayerLabel = this.params.linkLayers[i].to;
@@ -158,19 +161,52 @@ class NeuralNetwork {
 
             let numLinksPerNode = Math.max(1, Math.round(connectivity * toNodeLayer.nodes.length) - 1);
 
+            // log layer label
+            console.log("label: " + this.params.linkLayers[i].label);
+            
             //console.log("numLinksPerNode: " + numLinksPerNode);
+            console.log("connectivity: " + connectivity);
+
+            let index = 0;
 
             for (let j = 0; j < fromNodeLayer.nodes.length; j++) {
-                let nodeA = fromNodeLayer.nodes[j];
-                let nodeB = fromNodeLayer.nodes[j % toNodeLayer.nodes.length - 1];
+                for (let k = 0; k < toNodeLayer.nodes.length; k++) {
+                    
+                    if( fromNodeLayer.label === toNodeLayer.label && j === k ) {
+                        continue;
+                    }
+                    
+                    let nodeA = fromNodeLayer.nodes[j];
+                    let nodeB = toNodeLayer.nodes[k];
 
-                // console.log(fromNodeLayer.nodeAngle(nodeA));
-                // console.log(toNodeLayer.nodeAngle(nodeB));
-                let angle = ToolBox.angleDifference(fromNodeLayer.nodeAngle(nodeA), toNodeLayer.nodeAngle(nodeB));
-                let angleCapped = ToolBox.round(angle, 8);
-                console.log(angleCapped);
-            }   
+                    let angleDifference = ToolBox.angleDifference(fromNodeLayer.nodeAngle(nodeA), toNodeLayer.nodeAngle(nodeB));
+
+                    if( connectivity + 1e-8 >= angleDifference / Math.PI ) {
+                        console.log("j: " + j + ", k: " + k + ", index: " + index);
+
+                        index++;
+
+                        let link = new Link();
+                        link.weight = ToolBox.randomFloatBetween(this.params.linkLayers[i].weight.min, this.params.linkLayers[i].weight.max);
+                        link.inputNode = nodeA;
+                        link.outputNode = nodeB;
+                        this.linkLayers[i].links.push(link);
+                    }
+                }
+            }
         }
+    }
+
+    step() {
+
+    }
+
+    toJson() {
+        return JSON.stringify(this);
+    }
+
+    fromJson(json) {
+
     }
 }
 
