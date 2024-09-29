@@ -4,7 +4,8 @@
 import { Vector2 } from '../../vector-library/version-02/vector2.js';
 import { ToolBox } from '../../toolbox/version-01/toolbox.js';
 import { SquishyPlanet } from '../../physics-engine/version-02/squishyPlanet.js';
-import { Network, ActivationFunctions } from "../../neural-network-engine/version-01/neural-network.js";
+import { Network } from "../../neural-network-engine/version-02/neural-network.js";
+import { ActivationFunctions } from "../../neural-network-engine/version-02/activation-functions.js";
 import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';

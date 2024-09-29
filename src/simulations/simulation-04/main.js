@@ -22,7 +22,6 @@
 import { Vector2 } from '../../vector-library/version-02/vector2.js';
 import { GeneticOperators } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { SimulationEngine } from '../../simulation-engine/version-08/simulationEngine.js';
-import { ActivationFunctions } from '../../neural-network-engine/version-01/neural-network.js';
 
 let numRobots = 50;
 
