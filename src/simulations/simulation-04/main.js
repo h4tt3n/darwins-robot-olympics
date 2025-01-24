@@ -897,6 +897,9 @@ function createMenu() {
             simulation.renderer.camera.position.y
         );
 
+        // Capture the pointer to ensure we get all pointermove events
+        event.target.setPointerCapture(event.pointerId);
+
         // Prevent default to avoid issues with touch scrolling
         event.preventDefault();
     });
@@ -909,7 +912,7 @@ function createMenu() {
             simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
             simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
 
-            // Prevent default to avoid issues with touch gestures
+            // Prevent default to avoid touch gestures
             event.preventDefault();
         }
     });
@@ -917,6 +920,9 @@ function createMenu() {
     simulation.renderer.canvas.addEventListener("pointerup", (event) => {
         if (isDragging) {
             isDragging = false;
+
+            // Release the pointer capture
+            event.target.releasePointerCapture(event.pointerId);
 
             // Prevent default for consistency
             event.preventDefault();
@@ -927,8 +933,10 @@ function createMenu() {
     simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
         if (isDragging) {
             isDragging = false;
+            event.target.releasePointerCapture(event.pointerId);
         }
     });
+
 
     // // Mouse pan
 
