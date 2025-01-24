@@ -49,12 +49,20 @@ class CollisionHandler {
     }
     closestPointOnLineSegment(point, lineSegment) { // Here "Point" refers to vector2 class
         //const p = lineSegment.pointA.position;
-        const s = lineSegment.pointB.position.sub(lineSegment.pointA.position);
-        const r = point.sub(lineSegment.pointA.position);
-        const t = r.dot(s) / s.lengthSquared();
+        // const s = lineSegment.pointB.position.sub(lineSegment.pointA.position);
+        // const r = point.sub(lineSegment.pointA.position);
+        // const t = r.dot(s) / s.lengthSquared();
+        // if (t < 0) { return lineSegment.pointA.position; }
+        // if (t > 1) { return lineSegment.pointB.position; }
+        // return lineSegment.pointA.position.add(s.mul(t));
+        const sx = lineSegment.pointB.position.x - lineSegment.pointA.position.x;
+        const sy = lineSegment.pointB.position.y - lineSegment.pointA.position.y;
+        const rx = point.x - lineSegment.pointA.position.x;
+        const ry = point.y - lineSegment.pointA.position.y;
+        const t = (rx * sx + ry * sy) / (sx * sx + sy * sy);
         if (t < 0) { return lineSegment.pointA.position; }
         if (t > 1) { return lineSegment.pointB.position; }
-        return lineSegment.pointA.position.add(s.mul(t));
+        return new Vector2(lineSegment.pointA.position.x + t * sx, lineSegment.pointA.position.y + t * sy);
     }
     lineSegmentLineSegmentIntersection(lineSegmentA, lineSegmentB) {
         const p = lineSegmentA.pointA.position;
@@ -342,9 +350,10 @@ class CollisionHandler {
     // Phind version
     createCollisionObjectId(objectA, objectB) {
         // Ensures a consistent order for the key regardless of the order of objectA and objectB
-        return objectA.objectId < objectB.objectId ? 
-            `${objectA.objectId}-${objectB.objectId}` : 
-            `${objectB.objectId}-${objectA.objectId}`;
+        // return objectA.objectId < objectB.objectId ? 
+        //     `${objectA.objectId}-${objectB.objectId}` : 
+        //     `${objectB.objectId}-${objectA.objectId}`;
+        return objectA.objectId << 16 | objectB.objectId;
     }
 
     // Checks if the collision is active by looking up the key in the Map
@@ -356,8 +365,9 @@ class CollisionHandler {
     // Retrieves object IDs from the collision object ID (key)
     getObjectIdsFromCollisionObjectId(collisionObjectId) {
         // Ensures collisionObjectId is treated as a string
-        let array = collisionObjectId.toString().split("-");
-        return array.map(id => parseInt(id, 10));
+        // let array = collisionObjectId.toString().split("-");
+        // return array.map(id => parseInt(id, 10));
+        return [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
     }
 
     // Array-string based
