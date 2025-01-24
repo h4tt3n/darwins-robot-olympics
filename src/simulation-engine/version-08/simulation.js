@@ -14,6 +14,7 @@ import { Robot } from './robot.js';
 import { FitnessEvaluator } from './fitnessEvaluator.js';
 import { constants } from '../../physics-engine/version-02/constants.js';
 import { MotorConstraint } from '../../physics-engine/version-02/constraints/motorConstraint.js';
+import { CollisionHandler } from '../../physics-engine/version-02/collision/collisionHandler.js';
 
 class Simulation {
     constructor(params = {}) {
@@ -139,6 +140,10 @@ class Simulation {
             this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             
             // Reset simulation
+            //this.world.reset();
+            //this.world.collisions = new Map();
+            //this.world.objectIdCounter = 0;
+            //this.world.collisionHandler = new CollisionHandler(this.world);
             this.deadRobots = [];
             //this.world.collisions = new Map();
             this.generationTicks = 0;

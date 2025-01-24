@@ -635,6 +635,8 @@ function deleteWorld() {
     //simulation.world.lineSegments = [];
     //simulation.world.points = [];
     simulation.world.reset();
+
+    console.log("simulation.world.reset()");
 }
 
 
@@ -877,37 +879,86 @@ function createMenu() {
     }
 
     menu.appendChild(startStopButton);
-
-
-    // Mouse pan
+        
+    // Pointer pan
 
     let isDragging = false;
-    let initialMousePos;
+    let initialPointerPos;
     let initialCameraPos;
 
-    simulation.renderer.canvas.addEventListener("mousedown", (event) => {
-        if (event.button === 0) {
-            isDragging = true;
-            initialMousePos = new Vector2(event.clientX, event.clientY);
-            initialCameraPos = new Vector2(simulation.renderer.camera.position.x, simulation.renderer.camera.position.y);
+    simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) {
+            return; // Only handle left mouse button for mouse
         }
+        isDragging = true;
+        initialPointerPos = new Vector2(event.clientX, event.clientY);
+        initialCameraPos = new Vector2(
+            simulation.renderer.camera.position.x,
+            simulation.renderer.camera.position.y
+        );
+
+        // Prevent default to avoid issues with touch scrolling
+        event.preventDefault();
     });
 
-    simulation.renderer.canvas.addEventListener("mousemove", (event) => {
+    simulation.renderer.canvas.addEventListener("pointermove", (event) => {
         if (isDragging) {
-            let currentMousePos = new Vector2(event.clientX, event.clientY);
-            let deltaMousePos = currentMousePos.sub(initialMousePos);
-            deltaMousePos = deltaMousePos.div(simulation.renderer.camera.zoom);
-            simulation.renderer.camera.restPosition.x = (initialCameraPos.x - deltaMousePos.x);
-            simulation.renderer.camera.restPosition.y = (initialCameraPos.y - deltaMousePos.y);
+            let currentPointerPos = new Vector2(event.clientX, event.clientY);
+            let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
+            deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
+            simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
+            simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
+
+            // Prevent default to avoid issues with touch gestures
+            event.preventDefault();
         }
     });
 
-    simulation.renderer.canvas.addEventListener("mouseup", (event) => {
-        if (event.button === 0) {
+    simulation.renderer.canvas.addEventListener("pointerup", (event) => {
+        if (isDragging) {
+            isDragging = false;
+
+            // Prevent default for consistency
+            event.preventDefault();
+        }
+    });
+
+    // Optional: handle pointer cancel to properly stop dragging on touch interruptions
+    simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
+        if (isDragging) {
             isDragging = false;
         }
     });
+
+    // // Mouse pan
+
+    // let isDragging = false;
+    // let initialMousePos;
+    // let initialCameraPos;
+
+    // simulation.renderer.canvas.addEventListener("mousedown", (event) => {
+    //     if (event.button === 0) {
+    //         isDragging = true;
+    //         initialMousePos = new Vector2(event.clientX, event.clientY);
+    //         initialCameraPos = new Vector2(simulation.renderer.camera.position.x, simulation.renderer.camera.position.y);
+    //     }
+    // });
+
+    // simulation.renderer.canvas.addEventListener("mousemove", (event) => {
+    //     if (isDragging) {
+    //         let currentMousePos = new Vector2(event.clientX, event.clientY);
+    //         let deltaMousePos = currentMousePos.sub(initialMousePos);
+    //         deltaMousePos = deltaMousePos.div(simulation.renderer.camera.zoom);
+    //         simulation.renderer.camera.restPosition.x = (initialCameraPos.x - deltaMousePos.x);
+    //         simulation.renderer.camera.restPosition.y = (initialCameraPos.y - deltaMousePos.y);
+    //     }
+    // });
+
+    // simulation.renderer.canvas.addEventListener("mouseup", (event) => {
+    //     if (event.button === 0) {
+    //         isDragging = false;
+    //     }
+    // });
 
 
     // Mouse select nearest creature

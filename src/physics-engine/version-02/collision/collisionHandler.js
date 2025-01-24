@@ -347,33 +347,57 @@ class CollisionHandler {
         }
     }
 
-    // Phind version
     createCollisionObjectId(objectA, objectB) {
-        // Ensures a consistent order for the key regardless of the order of objectA and objectB
-        // return objectA.objectId < objectB.objectId ? 
-        //     `${objectA.objectId}-${objectB.objectId}` : 
-        //     `${objectB.objectId}-${objectA.objectId}`;
-        return objectA.objectId < objectB.objectId ? 
-            (objectA.objectId << 16) | objectB.objectId : 
-            (objectB.objectId << 16) | objectA.objectId;
+        // Use BigInt for large object IDs
+        const idA = BigInt(objectA.objectId);
+        const idB = BigInt(objectB.objectId);
+    
+        // Ensure consistent order of IDs (smallest first)
+        return idA < idB ? (idA << 32n) | idB : (idB << 32n) | idA;
     }
-
+    
     // Checks if the collision is active by looking up the key in the Map
     isCollisionActive(objectA, objectB) {
-        let key = this.createCollisionObjectId(objectA, objectB);
+        const key = this.createCollisionObjectId(objectA, objectB);
         return this.world.collisions.has(key);
     }
-
+    
     // Retrieves object IDs from the collision object ID (key)
     getObjectIdsFromCollisionObjectId(collisionObjectId) {
-        // Ensures collisionObjectId is treated as a string
-        // let array = collisionObjectId.toString().split("-");
-        // return array.map(id => parseInt(id, 10));
-        
-        // let ids = [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
-        // return ids.sort();
-        return [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
+        // Use BigInt to handle large numbers
+        const idA = collisionObjectId >> 32n;
+        const idB = collisionObjectId & 0xFFFFFFFFn;
+    
+        return [Number(idA), Number(idB)];
     }
+
+    // Phind version
+    // createCollisionObjectId(objectA, objectB) {
+    //     // Ensures a consistent order for the key regardless of the order of objectA and objectB
+    //     // return objectA.objectId < objectB.objectId ? 
+    //     //     `${objectA.objectId}-${objectB.objectId}` : 
+    //     //     `${objectB.objectId}-${objectA.objectId}`;
+    //     return objectA.objectId < objectB.objectId ? 
+    //         (objectA.objectId << 16) | objectB.objectId : 
+    //         (objectB.objectId << 16) | objectA.objectId;
+    // }
+
+    // // Checks if the collision is active by looking up the key in the Map
+    // isCollisionActive(objectA, objectB) {
+    //     let key = this.createCollisionObjectId(objectA, objectB);
+    //     return this.world.collisions.has(key);
+    // }
+
+    // // Retrieves object IDs from the collision object ID (key)
+    // getObjectIdsFromCollisionObjectId(collisionObjectId) {
+    //     // Ensures collisionObjectId is treated as a string
+    //     // let array = collisionObjectId.toString().split("-");
+    //     // return array.map(id => parseInt(id, 10));
+        
+    //     // let ids = [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
+    //     // return ids.sort();
+    //     return [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
+    // }
 
 
     // Array-string based
