@@ -15,6 +15,8 @@ class LineSegment {
         this.directionVector = new Vector2();
         this.radius = 48;
         this.objectId = null;
+        this.color = null;
+
     }
 }
 

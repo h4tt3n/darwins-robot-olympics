@@ -20,6 +20,8 @@ class AngularSpring {
         this.linearLinkB = linearLinkB;
         this.objectId = null;
 
+        Object.seal(this);
+
         this.computeData();
 
         this.restAngleVector = this.angleVector;
@@ -142,12 +144,18 @@ class AngularSpring {
         this.accumulatedImpulse = 0.0;
     }
     computeAngle(){
+        // return this.x * v.x + this.y * v.y; 
+        // return this.x * v.y - this.y * v.x; 
         // this.angleVector = new Vector2(
         //     this.linearLinkA.angleVector.dot(this.linearLinkB.angleVector),
         //     this.linearLinkA.angleVector.perpDot(this.linearLinkB.angleVector)
         // );
-        this.angleVector.x = this.linearLinkA.angleVector.x * this.linearLinkB.angleVector.x + this.linearLinkA.angleVector.y * this.linearLinkB.angleVector.y;
-        this.angleVector.y = this.linearLinkA.angleVector.x * this.linearLinkB.angleVector.y - this.linearLinkA.angleVector.y * this.linearLinkB.angleVector.x;
+        //this.angleVector.x = this.linearLinkA.angleVector.x * this.linearLinkB.angleVector.x + this.linearLinkA.angleVector.y * this.linearLinkB.angleVector.y;
+        //this.angleVector.y = this.linearLinkA.angleVector.x * this.linearLinkB.angleVector.y - this.linearLinkA.angleVector.y * this.linearLinkB.angleVector.x;
+        this.angleVector = new Vector2(
+            this.linearLinkA.angleVector.x * this.linearLinkB.angleVector.x + this.linearLinkA.angleVector.y * this.linearLinkB.angleVector.y,
+            this.linearLinkA.angleVector.x * this.linearLinkB.angleVector.y - this.linearLinkA.angleVector.y * this.linearLinkB.angleVector.x
+        );
     }
     computeData(){
 

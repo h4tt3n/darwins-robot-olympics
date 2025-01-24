@@ -35,13 +35,21 @@ class LinearLink extends LineSegment{
     }
     computeAngularImpulse(){
         //let impulse = this.linearStateB.impulse.sub(this.linearStateA.impulse);
-        let impulse = this.pointB.impulse.sub(this.pointA.impulse);
-        this.angularImpulse = this.lengthVector.perpDot(impulse) * this.reducedMass * this.inverseInertia;
+        // let impulse = this.pointB.impulse.sub(this.pointA.impulse);
+        // this.angularImpulse = this.lengthVector.perpDot(impulse) * this.reducedMass * this.inverseInertia;
+
+        let impulseX = this.pointB.impulse.x - this.pointA.impulse.x;
+        let impulseY = this.pointB.impulse.y - this.pointA.impulse.y;
+        this.angularImpulse = (this.lengthVector.x * impulseY - this.lengthVector.y * impulseX) * this.reducedMass * this.inverseInertia;
     }
     computeAngularVelocity(){
         //let velocity = this.linearStateB.velocity.sub(this.linearStateA.velocity);
-        let velocity = this.pointB.velocity.sub(this.pointA.velocity);
-        this.angularVelocity = this.lengthVector.perpDot(velocity) * this.reducedMass * this.inverseInertia;
+        // let velocity = this.pointB.velocity.sub(this.pointA.velocity);
+        // this.angularVelocity = this.lengthVector.perpDot(velocity) * this.reducedMass * this.inverseInertia;
+
+        let velocityX = this.pointB.velocity.x - this.pointA.velocity.x;
+        let velocityY = this.pointB.velocity.y - this.pointA.velocity.y;
+        this.angularVelocity = (this.lengthVector.x * velocityY - this.lengthVector.y * velocityX) * this.reducedMass * this.inverseInertia;
     }
     computeData(){
         this.computeLengthVector();
@@ -52,17 +60,21 @@ class LinearLink extends LineSegment{
 		this.computeAngularVelocity();
     }
     computeInertia(){
-        this.inertia = this.lengthVector.lengthSquared() * this.reducedMass;
+        //this.inertia = this.lengthVector.lengthSquared() * this.reducedMass;
+        this.inertia = (this.lengthVector.x * this.lengthVector.x + this.lengthVector.y * this.lengthVector.y) * this.reducedMass;
     }
     computeInverseInertia(){
         this.inverseInertia = this.inertia > 0.0 ? 1.0 / this.inertia : 0.0;
     }
     computeLength(){
-        this.length = this.lengthVector.dot(this.angleVector);
+        //this.length = this.lengthVector.dot(this.angleVector);
+        this.length = this.lengthVector.x * this.angleVector.x + this.lengthVector.y * this.angleVector.y;
     }
     computeLengthVector(){
         //this.lengthVector = this.linearStateB.position.sub(this.linearStateA.position);
-        this.lengthVector = this.pointB.position.sub(this.pointA.position);
+        //this.lengthVector = this.pointB.position.sub(this.pointA.position);
+        this.lengthVector.x = this.pointB.position.x - this.pointA.position.x;
+        this.lengthVector.y = this.pointB.position.y - this.pointA.position.y;
     }
     computeMass(){
         //this.mass = this.linearStateA.mass + this.linearStateB.mass;
