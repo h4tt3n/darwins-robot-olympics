@@ -353,7 +353,9 @@ class CollisionHandler {
         // return objectA.objectId < objectB.objectId ? 
         //     `${objectA.objectId}-${objectB.objectId}` : 
         //     `${objectB.objectId}-${objectA.objectId}`;
-        return objectA.objectId << 16 | objectB.objectId;
+        return objectA.objectId < objectB.objectId ? 
+            (objectA.objectId << 16) | objectB.objectId : 
+            (objectB.objectId << 16) | objectA.objectId;
     }
 
     // Checks if the collision is active by looking up the key in the Map
@@ -367,8 +369,12 @@ class CollisionHandler {
         // Ensures collisionObjectId is treated as a string
         // let array = collisionObjectId.toString().split("-");
         // return array.map(id => parseInt(id, 10));
+        
+        // let ids = [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
+        // return ids.sort();
         return [collisionObjectId >> 16, collisionObjectId & 0xFFFF];
     }
+
 
     // Array-string based
     // createCollisionObjectId(objectA, objectB) {
