@@ -899,6 +899,7 @@ simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
 
     // Add the current pointer to activePointers
     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
+    console.log("Pointer down", event.pointerId, activePointers);
 
     if (activePointers.size === 1) {
         // Single pointer (start panning)
@@ -914,6 +915,7 @@ simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
         initialDistance = pointers[0].sub(pointers[1]).mag();
         initialZoom = simulation.renderer.camera.restZoom;
         initialCenter = pointers[0].add(pointers[1]).mul(0.5);
+        console.log("Two-finger gesture started. Initial distance:", initialDistance);
     }
 
     // Capture the pointer to ensure we get all pointermove events
@@ -928,6 +930,7 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
 
     // Update the current pointer position in activePointers
     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
+    console.log("Pointer move", activePointers);
 
     if (activePointers.size === 1 && isDragging) {
         // Single pointer (panning)
@@ -936,6 +939,8 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
         deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
         simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
         simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
+
+        console.log("Panning. Rest position:", simulation.renderer.camera.restPosition);
 
         // Prevent default to avoid touch gestures
         event.preventDefault();
@@ -946,6 +951,10 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
         const zoomFactor = currentDistance / initialDistance;
 
         simulation.renderer.camera.restZoom = initialZoom * zoomFactor;
+        simulation.renderer.camera.restZoom = Math.max(
+            simulation.renderer.camera.minZoom,
+            Math.min(simulation.renderer.camera.restZoom, simulation.renderer.camera.maxZoom)
+        );
 
         const currentCenter = pointers[0].add(pointers[1]).mul(0.5);
         const deltaCenter = currentCenter.sub(initialCenter);
@@ -955,6 +964,13 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
 
         initialCenter = currentCenter;
 
+        console.log(
+            "Zooming. Rest zoom:",
+            simulation.renderer.camera.restZoom,
+            "Rest position:",
+            simulation.renderer.camera.restPosition
+        );
+
         // Prevent default to avoid touch gestures
         event.preventDefault();
     }
@@ -962,6 +978,7 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
 
 simulation.renderer.canvas.addEventListener("pointerup", (event) => {
     activePointers.delete(event.pointerId);
+    console.log("Pointer up", event.pointerId, activePointers);
 
     if (isDragging && activePointers.size === 0) {
         // End single-finger panning
@@ -977,6 +994,7 @@ simulation.renderer.canvas.addEventListener("pointerup", (event) => {
 
 simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
     activePointers.delete(event.pointerId);
+    console.log("Pointer cancel", event.pointerId, activePointers);
 
     if (isDragging && activePointers.size === 0) {
         // End single-finger panning
