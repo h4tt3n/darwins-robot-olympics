@@ -930,7 +930,6 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
 
     // Update the current pointer position in activePointers
     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
-    console.log("Pointer move", activePointers);
 
     if (activePointers.size === 1 && isDragging) {
         // Single pointer (panning)
@@ -940,41 +939,42 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
         simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
         simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
 
-        console.log("Panning. Rest position:", simulation.renderer.camera.restPosition);
-
-        // Prevent default to avoid touch gestures
-        event.preventDefault();
     } else if (activePointers.size === 2) {
         // Two pointers (zooming and panning)
         const pointers = Array.from(activePointers.values());
-        const currentDistance = pointers[0].sub(pointers[1]).mag();
-        const zoomFactor = currentDistance / initialDistance;
+        const pointer1 = pointers[0];
+        const pointer2 = pointers[1];
 
-        simulation.renderer.camera.restZoom = initialZoom * zoomFactor;
+        // Calculate current distance and center
+        const currentDistance = pointer1.sub(pointer2).mag();
+        const currentCenter = pointer1.add(pointer2).mul(0.5);
+
+        // Zoom factor
+        const zoomFactor = currentDistance / initialDistance;
+        const newZoom = initialZoom * zoomFactor;
         simulation.renderer.camera.restZoom = Math.max(
             simulation.renderer.camera.minZoom,
-            Math.min(simulation.renderer.camera.restZoom, simulation.renderer.camera.maxZoom)
+            Math.min(newZoom, simulation.renderer.camera.maxZoom)
         );
 
-        const currentCenter = pointers[0].add(pointers[1]).mul(0.5);
-        const deltaCenter = currentCenter.sub(initialCenter);
-        simulation.renderer.camera.restPosition = simulation.renderer.camera.restPosition.sub(
-            deltaCenter.div(simulation.renderer.camera.zoom)
-        );
+        // Calculate delta center for panning
+        const deltaCenter = currentCenter.sub(initialCenter).div(simulation.renderer.camera.zoom);
+        simulation.renderer.camera.restPosition.x -= deltaCenter.x;
+        simulation.renderer.camera.restPosition.y -= deltaCenter.y;
 
+        // Update initial center to prevent drift
         initialCenter = currentCenter;
 
-        console.log(
-            "Zooming. Rest zoom:",
-            simulation.renderer.camera.restZoom,
-            "Rest position:",
-            simulation.renderer.camera.restPosition
-        );
-
-        // Prevent default to avoid touch gestures
-        event.preventDefault();
+        // Log debugging data
+        console.log({
+            zoomFactor,
+            newZoom: simulation.renderer.camera.restZoom,
+            restPosition: simulation.renderer.camera.restPosition,
+            deltaCenter,
+        });
     }
 });
+
 
 simulation.renderer.canvas.addEventListener("pointerup", (event) => {
     activePointers.delete(event.pointerId);
