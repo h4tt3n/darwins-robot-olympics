@@ -1005,6 +1005,30 @@ simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
     event.target.releasePointerCapture(event.pointerId);
 });
 
+// Debugging data display
+
+let debugInfo = document.createElement('div');
+debugInfo.textContent = 'Active Pointers: 0';
+
+// Style the debug info (optional)
+debugInfo.style.marginTop = '10px';
+debugInfo.style.fontSize = '14px';
+debugInfo.style.color = '#333';
+
+// Function to update the debugging data
+function updateDebugInfo() {
+    debugInfo.textContent = `Active Pointers: ${activePointers.size}`;
+}
+
+// Append the debug info element to the menu
+menu.appendChild(debugInfo);
+
+// Update the debugging data when the active pointers change
+simulation.renderer.canvas.addEventListener('pointerdown', updateDebugInfo);
+simulation.renderer.canvas.addEventListener('pointermove', updateDebugInfo);
+simulation.renderer.canvas.addEventListener('pointerup', updateDebugInfo);
+simulation.renderer.canvas.addEventListener('pointercancel', updateDebugInfo);
+
 
     // // Pointer pan
 
