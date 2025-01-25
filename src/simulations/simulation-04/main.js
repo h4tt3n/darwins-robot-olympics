@@ -946,7 +946,7 @@ simulation.renderer.canvas.addEventListener("pointermove", (event) => {
         const pointer2 = pointers[1];
 
         // Calculate current distance and center
-        const currentDistance = pointer1.sub(pointer2).mag();
+        const currentDistance = pointer1.sub(pointer2).length();
         const currentCenter = pointer1.add(pointer2).mul(0.5);
 
         // Zoom factor
