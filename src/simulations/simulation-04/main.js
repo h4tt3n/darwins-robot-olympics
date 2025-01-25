@@ -880,62 +880,170 @@ function createMenu() {
 
     menu.appendChild(startStopButton);
         
-    // Pointer pan
+// Pointer pan and zoom
 
-    let isDragging = false;
-    let initialPointerPos;
-    let initialCameraPos;
+let isDragging = false;
+let initialPointerPos;
+let initialCameraPos;
 
-    simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
-        if (event.pointerType === "mouse" && event.button !== 0) {
-            return; // Only handle left mouse button for mouse
-        }
+// Multi-pointer handling for two-finger zoom and pan
+let activePointers = new Map();
+let initialDistance = 0;
+let initialZoom = 0;
+let initialCenter = null;
+
+simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) {
+        return; // Only handle left mouse button for mouse
+    }
+
+    // Add the current pointer to activePointers
+    activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
+
+    if (activePointers.size === 1) {
+        // Single pointer (start panning)
         isDragging = true;
         initialPointerPos = new Vector2(event.clientX, event.clientY);
         initialCameraPos = new Vector2(
             simulation.renderer.camera.position.x,
             simulation.renderer.camera.position.y
         );
+    } else if (activePointers.size === 2) {
+        // Two pointers (start zooming/panning)
+        const pointers = Array.from(activePointers.values());
+        initialDistance = pointers[0].sub(pointers[1]).mag();
+        initialZoom = simulation.renderer.camera.restZoom;
+        initialCenter = pointers[0].add(pointers[1]).mul(0.5);
+    }
 
-        // Capture the pointer to ensure we get all pointermove events
-        event.target.setPointerCapture(event.pointerId);
+    // Capture the pointer to ensure we get all pointermove events
+    event.target.setPointerCapture(event.pointerId);
 
-        // Prevent default to avoid issues with touch scrolling
+    // Prevent default to avoid issues with touch scrolling
+    event.preventDefault();
+});
+
+simulation.renderer.canvas.addEventListener("pointermove", (event) => {
+    if (!activePointers.has(event.pointerId)) return;
+
+    // Update the current pointer position in activePointers
+    activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
+
+    if (activePointers.size === 1 && isDragging) {
+        // Single pointer (panning)
+        let currentPointerPos = new Vector2(event.clientX, event.clientY);
+        let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
+        deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
+        simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
+        simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
+
+        // Prevent default to avoid touch gestures
         event.preventDefault();
-    });
+    } else if (activePointers.size === 2) {
+        // Two pointers (zooming and panning)
+        const pointers = Array.from(activePointers.values());
+        const currentDistance = pointers[0].sub(pointers[1]).mag();
+        const zoomFactor = currentDistance / initialDistance;
 
-    simulation.renderer.canvas.addEventListener("pointermove", (event) => {
-        if (isDragging) {
-            let currentPointerPos = new Vector2(event.clientX, event.clientY);
-            let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
-            deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
-            simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
-            simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
+        simulation.renderer.camera.restZoom = initialZoom * zoomFactor;
 
-            // Prevent default to avoid touch gestures
-            event.preventDefault();
-        }
-    });
+        const currentCenter = pointers[0].add(pointers[1]).mul(0.5);
+        const deltaCenter = currentCenter.sub(initialCenter);
+        simulation.renderer.camera.restPosition = simulation.renderer.camera.restPosition.sub(
+            deltaCenter.div(simulation.renderer.camera.zoom)
+        );
 
-    simulation.renderer.canvas.addEventListener("pointerup", (event) => {
-        if (isDragging) {
-            isDragging = false;
+        initialCenter = currentCenter;
 
-            // Release the pointer capture
-            event.target.releasePointerCapture(event.pointerId);
+        // Prevent default to avoid touch gestures
+        event.preventDefault();
+    }
+});
 
-            // Prevent default for consistency
-            event.preventDefault();
-        }
-    });
+simulation.renderer.canvas.addEventListener("pointerup", (event) => {
+    activePointers.delete(event.pointerId);
 
-    // Optional: handle pointer cancel to properly stop dragging on touch interruptions
-    simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
-        if (isDragging) {
-            isDragging = false;
-            event.target.releasePointerCapture(event.pointerId);
-        }
-    });
+    if (isDragging && activePointers.size === 0) {
+        // End single-finger panning
+        isDragging = false;
+    }
+
+    // Release the pointer capture
+    event.target.releasePointerCapture(event.pointerId);
+
+    // Prevent default for consistency
+    event.preventDefault();
+});
+
+simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
+    activePointers.delete(event.pointerId);
+
+    if (isDragging && activePointers.size === 0) {
+        // End single-finger panning
+        isDragging = false;
+    }
+
+    // Release the pointer capture
+    event.target.releasePointerCapture(event.pointerId);
+});
+
+
+    // // Pointer pan
+
+    // let isDragging = false;
+    // let initialPointerPos;
+    // let initialCameraPos;
+
+    // simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
+    //     if (event.pointerType === "mouse" && event.button !== 0) {
+    //         return; // Only handle left mouse button for mouse
+    //     }
+    //     isDragging = true;
+    //     initialPointerPos = new Vector2(event.clientX, event.clientY);
+    //     initialCameraPos = new Vector2(
+    //         simulation.renderer.camera.position.x,
+    //         simulation.renderer.camera.position.y
+    //     );
+
+    //     // Capture the pointer to ensure we get all pointermove events
+    //     event.target.setPointerCapture(event.pointerId);
+
+    //     // Prevent default to avoid issues with touch scrolling
+    //     event.preventDefault();
+    // });
+
+    // simulation.renderer.canvas.addEventListener("pointermove", (event) => {
+    //     if (isDragging) {
+    //         let currentPointerPos = new Vector2(event.clientX, event.clientY);
+    //         let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
+    //         deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
+    //         simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
+    //         simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
+
+    //         // Prevent default to avoid touch gestures
+    //         event.preventDefault();
+    //     }
+    // });
+
+    // simulation.renderer.canvas.addEventListener("pointerup", (event) => {
+    //     if (isDragging) {
+    //         isDragging = false;
+
+    //         // Release the pointer capture
+    //         event.target.releasePointerCapture(event.pointerId);
+
+    //         // Prevent default for consistency
+    //         event.preventDefault();
+    //     }
+    // });
+
+    // // Optional: handle pointer cancel to properly stop dragging on touch interruptions
+    // simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
+    //     if (isDragging) {
+    //         isDragging = false;
+    //         event.target.releasePointerCapture(event.pointerId);
+    //     }
+    // });
 
 
     // // Mouse pan
