@@ -17,7 +17,7 @@ class Renderer {
     constructor(canvasId, simulation) {
         this.canvas = document.getElementById(canvasId);
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight; // * 0.8;
+        this.canvas.height = window.innerHeight //* 0.8;
         this.ctx = canvas.getContext('2d');
         this.camera = new Camera(0, 0, 0.7);
         this.simulation = simulation;
@@ -51,19 +51,12 @@ class Renderer {
         this.ctx.fillStyle = "rgb(0, 0, 0)";
         this.ctx.font = "italic 26px Arial";
         this.ctx.fillText("Play and experiment with evolving, challenge-solving robots", 20, 170);
-
-        // Documentation
-        this.ctx.fillStyle = "rgb(0, 0, 0)";
-        this.ctx.font = "italic 16px Arial";
-        this.ctx.fillText("To start the simulation, please select a robot, a challenge, and a population size anc click start button.", 20, 580);
-        this.ctx.fillText("Each robot has a unique neural network that translates input (vision) into movement.", 20, 600);
-        this.ctx.fillText("The robots earn points by getting as close to the target as possible.", 20, 620);
-        this.ctx.fillText("Every new generation of robots is created from the previous generation.", 20, 640);
         
-        // Version and copyright
-        this.ctx.fillStyle = "rgb(128, 128, 128)";
-        this.ctx.font = "14px Arial";
-        this.ctx.fillText("Version 0.4.0 - 30.01.2025 - Copyright \u00A9 Michael Schmidt Nissen 2023-2025", 20, this.canvas.height * 0.87);
+        // // Version and copyright
+        // this.ctx.fillStyle = "rgb(128, 128, 128)";
+        // this.ctx.font = "14px Arial";
+        // this.ctx.fillText("Version 0.1.0 beta - 08.01.2024", 20, this.canvas.height-40);
+        // this.ctx.fillText("Copyright \u00A9 Michael Schmidt Nissen", 20, this.canvas.height-20);
 
         // Render logo
         this.ctx.translate(240, 200);
@@ -76,10 +69,10 @@ class Renderer {
     }
     draw() {
 
-        // if (this.simulation.followSelectedCreature && this.simulation.selectedCreature) {
-        //     this.camera.restPosition = this.simulation.selectedCreature.body.particles[0].position;
+        if (this.simulation.followSelectedCreature && this.simulation.selectedCreature) {
+            this.camera.restPosition = this.simulation.selectedCreature.body.particles[0].position;
 
-        // }
+        }
         // // Make camera follow robot
         // if (this.simulation.robots.length > 0) {
         //     this.camera.restPosition = this.simulation.robots[0].body.particles[0].position;
@@ -94,7 +87,7 @@ class Renderer {
 
         // Clear canvas
         //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "rgb(64, 96, 128)"; //"rgb(64, 96, 128)" // "rgb(64, 80, 96)"
+        this.ctx.fillStyle = "rgb(64, 80, 96)";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.save(); // Save the current context state
@@ -106,6 +99,36 @@ class Renderer {
 
         // Global settings
         this.ctx.lineCap = "round";
+        this.ctx.lineWidth = 1;
+
+        // Draw spatial hash grid
+    // Render grid cells, dark if empty, white if not empty
+        const grid = this.simulation.world.spatialHashGrid;
+        for (let x = 0; x < grid.width; x += grid.cellSize) {
+            for (let y = 0; y < grid.height; y += grid.cellSize) {
+                const key = grid.hash(x, y);
+                if (grid.buckets.has(key) && grid.buckets.get(key).size > 0) {
+                    // If the cell contains at least one object, color it lightly
+                    this.ctx.fillStyle = '#FFFFFF'; // Light yellow color
+                    this.ctx.fillRect(x, y, grid.cellSize, grid.cellSize);
+                }
+                this.ctx.strokeStyle = '#999999'; // Light grey color for grid lines
+                this.ctx.strokeRect(x, y, grid.cellSize, grid.cellSize);
+            }
+        }
+
+        //if (this.simulation.renderSpatialHashGrid) {
+        // if (true) {
+        //     this.ctx.lineWidth = 1;
+        //     this.ctx.strokeStyle = "rgb(255, 255, 255)";
+        //     this.ctx.beginPath();
+        //     for (let i = 0; i < this.simulation.world.spatialHashGrid.length; i++) {
+        //         let cell = this.simulation.world.spatialHashGrid[i];
+        //         this.ctx.rect(cell.x, cell.y, cell.width, cell.height);
+        //     }
+        //     this.ctx.stroke();
+        //     this.ctx.closePath();
+        // }
 
         // Draw waypoints
         for (let i = 0; i < this.simulation.wayPoints.length; i++) {
@@ -501,21 +524,21 @@ class Renderer {
         }
 
         // Draw particles
-        // this.ctx.lineWidth = 1;
-        // this.ctx.strokeStyle = "rgb(192, 192, 192)";
-        // //this.ctx.lineJoin = "round";
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = "rgb(192, 192, 192)";
+        //this.ctx.lineJoin = "round";
 
-        // for (let i = 0; i < this.simulation.world.particles.length; i++) {
-        //     let particle = this.simulation.world.particles[i];
-        //     let x = particle.position.x;
-        //     let y = particle.position.y;
+        for (let i = 0; i < this.simulation.world.particles.length; i++) {
+            let particle = this.simulation.world.particles[i];
+            let x = particle.position.x;
+            let y = particle.position.y;
 
-        //     this.ctx.beginPath();
-        //     this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
-        //     this.ctx.fillStyle = particle.color;
-        //     this.ctx.fill();
-        //     this.ctx.closePath();
-        // }
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, particle.radius, 0, Math.PI * 2);
+            this.ctx.fillStyle = particle.color;
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
 
         // Draw wheels
         // this.ctx.lineWidth = 8;
@@ -799,7 +822,7 @@ class Renderer {
         this.ctx.restore(); // Restore the context state
 
         // Render info in top-left corner of screen
-        this.ctx.font = "24px Arial";
+        this.ctx.font = "20px Arial";
         this.ctx.fillStyle = "rgb(255, 255, 255)";
         this.ctx.fillText("Generation: " + this.simulation.generation, 10, 30);
         this.ctx.fillText("Ticks: " + this.simulation.generationTicks + " / " + this.simulation.generationMaxTicks, 10, 60);

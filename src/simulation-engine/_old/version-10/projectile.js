@@ -1,6 +1,6 @@
 "use strict";
 
-import { Particle } from "../../physics-engine/version-03/objects/particle.js";
+import { Particle } from "../../physics-engine/version-02/particle.js";
 
 class Projectile extends Particle{
     constructor(position, velocity, radius, mass, color, lifespan) {

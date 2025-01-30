@@ -19,9 +19,10 @@
  */
 
 
-import { Vector2 } from '../../vector-library/version-02/vector2.js';
-import { GeneticOperators } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
-import { SimulationEngine } from '../../simulation-engine/version-08/simulationEngine.js';
+import { Vector2 } from '../../../vector-library/version-02/vector2.js';
+import { GeneticOperators } from "../../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
+import { SimulationEngine } from '../../simulation-engine/version-10/simulationEngine.js';
+import { ActivationFunctions } from '../../../neural-network-engine/version-01/neural-network.js';
 
 let numRobots = 50;
 
@@ -45,7 +46,7 @@ const gaParams = {
     mutation : { // Mutate individuals.
         func : GeneticOperators.randomizeMutation,
         params : {
-            mutationChance : 0.01, 
+            mutationChance : 0.02, 
             minValue : 0, 
             maxValue : 1
         },
@@ -58,29 +59,25 @@ const simParams = {
 }
 
 const createRobotFuncs = {
-    "Worm" : createRoboWorms,
-    "Starfish" : createRoboStarfishes,
-    // "RoboCrab" : createRoboCrabs,
-    "Bird" : createRoboBirds,
-    // "RoboBlob" : createRoboBlobs,
-    "Car" : createRoboCars,
-    // "TopDownTracker" : createTrackers,
+    "RoboWorm" : createRoboWorms,
+    "RoboStarfish" : createRoboStarfishes,
+    "RoboCar" : createRoboCars,
+    "TopDownTracker" : createTrackers,
 }
 
 const createChallengeFuncs = { 
-    "Sprint" : createWorld,
-    "Jump" : createWorld2,
-    //"Climb" : createWorld3,
+    "100-meter Sprint" : createWorld,
+    "Long Jump" : createWorld2,
+    "Climbing" : createWorld3,
     "Pitfall" : pitFall,
-    // "Pitfall2" : pitFall2,
-    //"Helmet" : helmet,
-    // "Thunder Dome" : thunderDome,
+    "Pitfall2" : pitFall2,
+    "Helmet" : helmet,
+    "Thunder Dome" : thunderDome,
     "Stairway" : createStairwayMap,
-    "Aviary" : createAviary,
 }
 
-let createRobotFunc = createRobotFuncs["Worm"];
-let createChallengeFunc = createChallengeFuncs["Sprint"];
+let createRobotFunc = createRobotFuncs["RoboWorm"];
+let createChallengeFunc = createChallengeFuncs["100-meter Sprint"];
 
 // Create simulation
 const simulation = new SimulationEngine.Simulation(simParams);
@@ -108,10 +105,20 @@ window.requestAnimationFrame(render); // Rendering
 
 function startSimulation() {
     simulation.challengeSpawner.func();
-    //target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
+    target = simulation.createWaypoint(new Vector2(2000, 600), 50, "black");
     // Create robots
     //simulation.robotSpawner.func(simulation.robotSpawner.numRobots, simulation.robotSpawner.robotParams, simulation.robotSpawner.genome);
     simulation.robotSpawner.func(simulation.robotSpawner.numRobots, null, simulation.robotSpawner.genome);
+
+    // Create 1000 random particles
+    // for (let i = 0; i < 1000; i++) {
+    //     let x = Math.random() * 2000 - 1000;
+    //     let y = Math.random() * 2000 - 1000;
+    //     let particle = simulation.world.createParticle(new Vector2(x, y));
+    //     particle.radius = 10 + Math.random() * 10;
+    //     // Random color
+    //     particle.color = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
+    // }
     // Run simulation
     simulation.setIntervalId = setInterval(update, simulation.interval);
 }
@@ -144,31 +151,6 @@ function createRoboWorms(numRobots = 50, params = {}, genome = null) {
     }
 }
 
-function createRoboBlobs(numRobots = 50, params = {}, genome = null) {
-    for (let i = 0; i < numRobots; i++) {
-        //params.brain.genome = genome ? genome[i].genome : null;
-        let brainGenome = genome ? genome[i].genome : null;
-        //simulation.createRoboBlob(params);
-        simulation.createRoboBlob(brainGenome);
-    }
-}
-
-function createRoboCrabs(numRobots = 50, params = {}, genome = null) {
-    for (let i = 0; i < numRobots; i++) {
-        //params.brain.genome = genome ? genome[i].genome : null;
-        let brainGenome = genome ? genome[i].genome : null;
-        //simulation.createRoboCrab(params);
-        simulation.createRoboCrab(brainGenome);
-    }
-}
-
-function createRoboBirds(numRobots = 50, params = {}, genome = null) {
-    for (let i = 0; i < numRobots; i++) {
-        let brainGenome = genome ? genome[i].genome : null;
-        simulation.createRoboBird(brainGenome);
-    }
-}
-
 function createRoboStarfishes(numRobots = 50, params = {}, genome = null) {
     for (let i = 0; i < numRobots; i++) {
         //params.brain.genome = genome ? genome[i].genome : null;
@@ -195,85 +177,13 @@ function createTrackers(numRobots = 50, params = {}, genome = null) {
 }
 
 // Level creation functions
-function createAviary() {
-    
-    target = simulation.createWaypoint(new Vector2(5000, 600), 50, "black");
-    //target = simulation.createWaypoint(new Vector2(1000, 1000), 50, "black");
-    
-    // Params
-    let top = -400;
-    let bottom = 1600;
-    let left = -800;
-    let right = 7200;
-
-    // Create world
-    let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
-    let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
-    let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom));
-    let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
-
-    simulation.world.createLineSegment(topLeftPoint, topRightPoint);
-    simulation.world.createLineSegment(topRightPoint, bottomRightPoint);
-    simulation.world.createLineSegment(topLeftPoint, bottomLeftPoint);
-    simulation.world.createLineSegment(bottomLeftPoint, bottomRightPoint)
-
-    // let numSprings = 32;
-    // let angle = 0;
-    // let deltaAngle = (Math.PI) / numSprings;
-    // let springLength = 50;
-    // let position = new Vector2(500, 500);
-
-    // // Lift as function of angle
-    // for (let i = 0; i < numSprings; i++) {
-    //     let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-    //     let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-    //     let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-    //     let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-    //     p1.velocity = new Vector2(100, 0);
-    //     p2.velocity = new Vector2(100, 0);
-    //     let spring = simulation.world.createLinearSpring(p1, p2, 0.25, 0.5, 0.5);
-    //     spring.radius = 8;
-    //     let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-    //     angle += deltaAngle;
-    // }
-
-    // // Drag as function of angle
-    // for (let i = 0; i < numSprings; i++) {
-    //     let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-    //     let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-    //     let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-    //     let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-    //     let spring = simulation.world.createLinearSpring(p1, p2, 0.25, 0.5, 0.5);
-    //     spring.radius = 8;
-    //     let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-    //     angle += deltaAngle;
-    // }
-
-    // position = new Vector2(1000, -200);
-    // angle = 0;
-
-    // // Drag as function of spring length
-    // for (let i = 0; i < numSprings; i++) {
-    //     let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-    //     let springLength = 0 + i * 2;
-    //     let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-    //     let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-    //     let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-    //     let spring = simulation.world.createLinearSpring(p1, p2, 0.25, 0.5, 0.5);
-    //     spring.radius = 8;
-    //     let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-    // }
-};
 
 function createWorld() {
-    
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
-    let top = -400;
-    let bottom = 400;
-    let left = -400;
-    let right = 3600;
+    let top = -400 + 400;
+    let bottom = 400 + 400;
+    let left = -400 + 400;
+    let right = 3600 + 400;
     let numSegments = 1;
     let segmentWidth = (right-left) / numSegments;
     let segmentBaseHeight = bottom + 100;
@@ -293,53 +203,17 @@ function createWorld() {
 
     let p1 = bottomLeftPoint;
 
-    // for (let i = 0; i < numSegments-1; i++) {
-    //     let height = segmentBaseHeight + (Math.random() * segmentRandomization * 2 - segmentRandomization);
-    //     let p2 = simulation.world.createPoint(new Vector2(left + segmentWidth * (i + 1), height));
-    //     bottomPoints.push(simulation.world.createLineSegment(p1, p2));
-    //     p1 = p2;
-    // }
+    for (let i = 0; i < numSegments-1; i++) {
+        let height = segmentBaseHeight + (Math.random() * segmentRandomization * 2 - segmentRandomization);
+        let p2 = simulation.world.createPoint(new Vector2(left + segmentWidth * (i + 1), height));
+        bottomPoints.push(simulation.world.createLineSegment(p1, p2));
+        p1 = p2;
+    }
 
     bottomPoints.push(simulation.world.createLineSegment(p1, bottomRightPoint));
-
-    let numSprings = 64;
-    let angle = 0;
-    let deltaAngle = (Math.PI * 2) / numSprings;
-    let springLength = 50;
-    let position = new Vector2(500, -200);
-
-    // Drag as function of angle
-    for (let i = 0; i < numSprings; i++) {
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-        let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-        let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-        let spring = simulation.world.createLinearSpring(p1, p2, 0.5, 0.5, 0.5);
-        spring.radius = 8;
-        let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-        angle += deltaAngle;
-    }
-
-    position = new Vector2(1000, -200);
-    angle = 0;
-
-    // Drag as function of spring length
-    for (let i = 0; i < numSprings; i++) {
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let springLength = 0 + i * 2;
-        let springAngle = new Vector2(Math.cos(angle) * springLength, Math.sin(angle) * springLength);
-        let p1 = simulation.world.createParticle(position.add(springAngle), 1.0, 10.0, randomColor);
-        let p2 = simulation.world.createParticle(position.sub(springAngle), 1.0, 10.0, randomColor);
-        let spring = simulation.world.createLinearSpring(p1, p2, 0.5, 0.5, 0.5);
-        spring.radius = 8;
-        let aerodynamicConstraint = simulation.world.createAerodynamicConstraint({linearLink : spring});
-    }
 };
 
 function createWorld2() {
-
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
     let top = -400;
     let bottom = 400;
@@ -363,8 +237,6 @@ function createWorld2() {
 };
 
 function createWorld3() {
-
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
     
     // Params
     let topLeft = 0;
@@ -387,9 +259,6 @@ function createWorld3() {
 };
 
 function pitFall() {
-
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
     let top = -800;
     let bottom = 400;
@@ -424,9 +293,6 @@ function pitFall() {
 };
 
 function pitFall2() {
-
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
     let top = -400;
     let bottom = 400;
@@ -491,8 +357,6 @@ function pitFall2() {
 
 function helmet() {
 
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
     let levelCenter = new Vector2(1000, 0);
     let levelWidth = 3800;
@@ -511,7 +375,7 @@ function helmet() {
     let domeCenter = new Vector2(1000, -200);
     let firstDomePoint = null;
     let lastDomePoint = null;
-    
+
     // Create dome Points
     for(let i = 0; i < numDomeSegments; i++) {
         let angle = -Math.PI * 1 * (i / (numDomeSegments-1));
@@ -571,9 +435,6 @@ function helmet() {
 };
 
 function thunderDome() {
-
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
     let levelCenter = new Vector2(0, 500);
 
@@ -599,9 +460,6 @@ function thunderDome() {
 }
 
 function createStairwayMap() {
-
-    target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
-
     // Params
     let levelCenter = new Vector2(1100, 800);
     let stepWidth = 650;
@@ -632,11 +490,8 @@ function createStairwayMap() {
 //
 
 function deleteWorld() {
-    //simulation.world.lineSegments = [];
-    //simulation.world.points = [];
-    simulation.world.reset();
-
-    console.log("simulation.world.reset()");
+    simulation.world.lineSegments = [];
+    simulation.world.points = [];
 }
 
 
@@ -649,33 +504,13 @@ function createMenu() {
 
     menu.style.backgroundColor = 'rgb(160, 160, 160)';
 
-    let height = window.innerHeight * 0.1;
+    let height = window.innerHeight * 0.2;
     let width = window.innerWidth;
 
     menu.style.height = height + 'px';
     menu.style.width = width + 'px';
 
     document.body.appendChild(menu);
-
-    // Fullscreen toggle
-
-    // let fullscreenButton = document.createElement('button');
-    // fullscreenButton.textContent = 'Toggle Fullscreen';
-
-    // // Add an onclick event handler to the button
-    // fullscreenButton.onclick = function() {
-    //     if (!document.fullscreenElement) {
-    //         document.documentElement.requestFullscreen();
-    //         simulation.renderer.canvas.width = window.innerWidth;
-    //         simulation.renderer.canvas.height = window.innerHeight// * 0.8;
-    //     } else {
-    //         if (document.exitFullscreen) {
-    //             document.exitFullscreen();
-    //         }
-    //     }
-    // };
-
-    // menu.appendChild(fullscreenButton);
 
 
     // Toggle raycasting button
@@ -725,9 +560,9 @@ function createMenu() {
     let fps = Number((1000 / simulation.interval).toFixed(0));
     // if FPS is "infinity", display the word "max"
     if (fps === Infinity) {
-        displayInterval.textContent = " FPS: Max ";
+        displayInterval.textContent = "FPS: Max";
     } else {
-        displayInterval.textContent = " FPS: " + fps;
+        displayInterval.textContent = "FPS: " + fps;
     }
     menu.appendChild(displayInterval);
 
@@ -752,9 +587,9 @@ function createMenu() {
         let fps = Number((1000 / simulation.interval).toFixed(0));
         // if FPS is "infinity", display the word "max"
         if (fps === Infinity) {
-            displayInterval.textContent = " FPS: Max ";
+            displayInterval.textContent = "FPS: Max";
         } else {
-            displayInterval.textContent = " FPS: " + fps;
+            displayInterval.textContent = "FPS: " + fps;
         }
         // displayInterval.textContent = "FPS: " + Number((1000 / simulation.interval).toFixed(0));
         console.log("interval: " + simulation.interval);
@@ -823,7 +658,7 @@ function createMenu() {
     // input field for setting numRobots
 
     let label = document.createElement('label');
-    label.textContent = " Population size ";
+    label.textContent = "Number of robots";
     menu.appendChild(label);
 
     let input = document.createElement('input');
@@ -881,213 +716,6 @@ function createMenu() {
     }
 
     menu.appendChild(startStopButton);
-        
-// Pointer pan and zoom
-
-// let isDragging = false;
-// let initialPointerPos;
-// let initialCameraPos;
-
-// // Multi-pointer handling for two-finger zoom and pan
-// let activePointers = new Map();
-// let initialDistance = 0;
-// let initialZoom = 0;
-// let initialCenter = null;
-
-// simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
-//     if (event.pointerType === "mouse" && event.button !== 0) {
-//         return; // Only handle left mouse button for mouse
-//     }
-
-//     // Add the current pointer to activePointers
-//     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
-//     console.log("Pointer down", event.pointerId, activePointers);
-
-//     if (activePointers.size === 1) {
-//         // Single pointer (start panning)
-//         isDragging = true;
-//         initialPointerPos = new Vector2(event.clientX, event.clientY);
-//         initialCameraPos = new Vector2(
-//             simulation.renderer.camera.position.x,
-//             simulation.renderer.camera.position.y
-//         );
-//     } else if (activePointers.size === 2) {
-//         // Two pointers (start zooming/panning)
-//         const pointers = Array.from(activePointers.values());
-//         initialDistance = pointers[0].sub(pointers[1]).mag();
-//         initialZoom = simulation.renderer.camera.restZoom;
-//         initialCenter = pointers[0].add(pointers[1]).mul(0.5);
-//         console.log("Two-finger gesture started. Initial distance:", initialDistance);
-//     }
-
-//     // Capture the pointer to ensure we get all pointermove events
-//     event.target.setPointerCapture(event.pointerId);
-
-//     // Prevent default to avoid issues with touch scrolling
-//     event.preventDefault();
-// });
-
-// simulation.renderer.canvas.addEventListener("pointermove", (event) => {
-//     if (!activePointers.has(event.pointerId)) return;
-
-//     // Update the current pointer position in activePointers
-//     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
-
-//     if (activePointers.size === 1 && isDragging) {
-//         // Single pointer (panning)
-//         let currentPointerPos = new Vector2(event.clientX, event.clientY);
-//         let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
-//         deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
-//         simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
-//         simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
-
-//     } else if (activePointers.size === 2) {
-//         // Two pointers (zooming and panning)
-//         const pointers = Array.from(activePointers.values());
-//         const pointer1 = pointers[0];
-//         const pointer2 = pointers[1];
-
-//         // Calculate current distance and center
-//         const currentDistance = pointer1.sub(pointer2).length();
-//         const currentCenter = pointer1.add(pointer2).mul(0.5);
-
-//         // Zoom factor
-//         const zoomFactor = currentDistance / initialDistance;
-//         const newZoom = initialZoom * zoomFactor;
-//         simulation.renderer.camera.restZoom = Math.max(
-//             simulation.renderer.camera.minZoom,
-//             Math.min(newZoom, simulation.renderer.camera.maxZoom)
-//         );
-
-//         // Calculate delta center for panning
-//         const deltaCenter = currentCenter.sub(initialCenter).div(simulation.renderer.camera.zoom);
-//         simulation.renderer.camera.restPosition.x -= deltaCenter.x;
-//         simulation.renderer.camera.restPosition.y -= deltaCenter.y;
-
-//         // Update initial center to prevent drift
-//         initialCenter = currentCenter;
-
-//         // Log debugging data
-//         console.log({
-//             zoomFactor,
-//             newZoom: simulation.renderer.camera.restZoom,
-//             restPosition: simulation.renderer.camera.restPosition,
-//             deltaCenter,
-//         });
-//     }
-// });
-
-
-// simulation.renderer.canvas.addEventListener("pointerup", (event) => {
-//     activePointers.delete(event.pointerId);
-//     console.log("Pointer up", event.pointerId, activePointers);
-
-//     if (isDragging && activePointers.size === 0) {
-//         // End single-finger panning
-//         isDragging = false;
-//     }
-
-//     // Release the pointer capture
-//     event.target.releasePointerCapture(event.pointerId);
-
-//     // Prevent default for consistency
-//     event.preventDefault();
-// });
-
-// simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
-//     activePointers.delete(event.pointerId);
-//     console.log("Pointer cancel", event.pointerId, activePointers);
-
-//     if (isDragging && activePointers.size === 0) {
-//         // End single-finger panning
-//         isDragging = false;
-//     }
-
-//     // Release the pointer capture
-//     event.target.releasePointerCapture(event.pointerId);
-// });
-
-// // Debugging data display
-
-// let debugInfo = document.createElement('div');
-// debugInfo.textContent = 'Active Pointers: 0';
-
-// // Style the debug info (optional)
-// debugInfo.style.marginTop = '10px';
-// debugInfo.style.fontSize = '14px';
-// debugInfo.style.color = '#333';
-
-// // Function to update the debugging data
-// function updateDebugInfo() {
-//     debugInfo.textContent = `Active Pointers: ${activePointers.size}`;
-// }
-
-// // Append the debug info element to the menu
-// menu.appendChild(debugInfo);
-
-// // Update the debugging data when the active pointers change
-// simulation.renderer.canvas.addEventListener('pointerdown', updateDebugInfo);
-// simulation.renderer.canvas.addEventListener('pointermove', updateDebugInfo);
-// simulation.renderer.canvas.addEventListener('pointerup', updateDebugInfo);
-// simulation.renderer.canvas.addEventListener('pointercancel', updateDebugInfo);
-
-
-    // // Pointer pan
-
-    // let isDragging = false;
-    // let initialPointerPos;
-    // let initialCameraPos;
-
-    // simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
-    //     if (event.pointerType === "mouse" && event.button !== 0) {
-    //         return; // Only handle left mouse button for mouse
-    //     }
-    //     isDragging = true;
-    //     initialPointerPos = new Vector2(event.clientX, event.clientY);
-    //     initialCameraPos = new Vector2(
-    //         simulation.renderer.camera.position.x,
-    //         simulation.renderer.camera.position.y
-    //     );
-
-    //     // Capture the pointer to ensure we get all pointermove events
-    //     event.target.setPointerCapture(event.pointerId);
-
-    //     // Prevent default to avoid issues with touch scrolling
-    //     event.preventDefault();
-    // });
-
-    // simulation.renderer.canvas.addEventListener("pointermove", (event) => {
-    //     if (isDragging) {
-    //         let currentPointerPos = new Vector2(event.clientX, event.clientY);
-    //         let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
-    //         deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
-    //         simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
-    //         simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
-
-    //         // Prevent default to avoid touch gestures
-    //         event.preventDefault();
-    //     }
-    // });
-
-    // simulation.renderer.canvas.addEventListener("pointerup", (event) => {
-    //     if (isDragging) {
-    //         isDragging = false;
-
-    //         // Release the pointer capture
-    //         event.target.releasePointerCapture(event.pointerId);
-
-    //         // Prevent default for consistency
-    //         event.preventDefault();
-    //     }
-    // });
-
-    // // Optional: handle pointer cancel to properly stop dragging on touch interruptions
-    // simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
-    //     if (isDragging) {
-    //         isDragging = false;
-    //         event.target.releasePointerCapture(event.pointerId);
-    //     }
-    // });
 
 
     // Mouse pan

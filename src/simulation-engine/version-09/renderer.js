@@ -4,20 +4,20 @@
 
 import { Vector2 } from '../../vector-library/version-02/vector2.js';
 import { Camera } from './camera.js';
-import { LineSegmentParticleCollision } from '../../physics-engine/version-02/collision/lineSegmentParticleCollision.js';
-import { ParticleParticleCollision } from '../../physics-engine/version-02/collision/particleParticleCollision.js';
-import { LineSegmentWheelCollision } from '../../physics-engine/version-02/collision/lineSegmentWheelCollision.js';
-import { Particle } from '../../physics-engine/version-02/particle.js';
-import { Wheel } from '../../physics-engine/version-02/wheel.js';
-import { FixedSpring } from '../../physics-engine/version-02/fixedSpring.js';
-import { LinearSpring } from '../../physics-engine/version-02/linearSpring.js';
+import { LineSegmentParticleCollision } from '../../physics-engine/version-03/collision/lineSegmentParticleCollision.js';
+import { ParticleParticleCollision } from '../../physics-engine/version-03/collision/particleParticleCollision.js';
+import { LineSegmentWheelCollision } from '../../physics-engine/version-03/collision/lineSegmentWheelCollision.js';
+import { Particle } from '../../physics-engine/version-03/objects/particle.js';
+import { Wheel } from '../../physics-engine/version-03/objects/wheel.js';
+import { FixedSpring } from '../../physics-engine/version-03/constraints/fixedSpring.js';
+import { LinearSpring } from '../../physics-engine/version-03/constraints/linearSpring.js';
 import { draw } from '../../draw-logo/version-02/script.js'
 
 class Renderer {
     constructor(canvasId, simulation) {
         this.canvas = document.getElementById(canvasId);
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight * 0.8;
+        this.canvas.height = window.innerHeight; // * 0.8;
         this.ctx = canvas.getContext('2d');
         this.camera = new Camera(0, 0, 0.7);
         this.simulation = simulation;
@@ -69,10 +69,10 @@ class Renderer {
     }
     draw() {
 
-        if (this.simulation.followSelectedCreature && this.simulation.selectedCreature) {
-            this.camera.restPosition = this.simulation.selectedCreature.body.particles[0].position;
+        // if (this.simulation.followSelectedCreature && this.simulation.selectedCreature) {
+        //     this.camera.restPosition = this.simulation.selectedCreature.body.particles[0].position;
 
-        }
+        // }
         // // Make camera follow robot
         // if (this.simulation.robots.length > 0) {
         //     this.camera.restPosition = this.simulation.robots[0].body.particles[0].position;
@@ -87,7 +87,7 @@ class Renderer {
 
         // Clear canvas
         //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "rgb(64, 80, 96)";
+        this.ctx.fillStyle = "rgb(64, 96, 128)"; //"rgb(64, 96, 128)" // "rgb(64, 80, 96)"
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.save(); // Save the current context state
@@ -792,7 +792,7 @@ class Renderer {
         this.ctx.restore(); // Restore the context state
 
         // Render info in top-left corner of screen
-        this.ctx.font = "20px Arial";
+        this.ctx.font = "24px Arial";
         this.ctx.fillStyle = "rgb(255, 255, 255)";
         this.ctx.fillText("Generation: " + this.simulation.generation, 10, 30);
         this.ctx.fillText("Ticks: " + this.simulation.generationTicks + " / " + this.simulation.generationMaxTicks, 10, 60);

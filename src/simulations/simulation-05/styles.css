@@ -1,0 +1,19 @@
+:root {
+    overflow: hidden;
+    touch-action: none;
+  }
+  
+  body {
+    margin: 0%;
+    padding: 0%;
+    border: 0%;
+    overflow: hidden;
+  }
+  
+  canvas {
+    position: absolute;
+  }
+
+  span {
+    display: inline-block ;
+}

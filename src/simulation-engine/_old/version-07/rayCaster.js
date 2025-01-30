@@ -1,6 +1,6 @@
 "use strict";
 
-import { Vector2 } from '../../vector-library/version-02/vector2.js'
+import { Vector2 } from '../../../vector-library/version-01/vector2.js'
 
 class Ray {
     constructor(origin, directionVector) {
@@ -12,15 +12,12 @@ class Ray {
         const q = segment.pointA.position;
         const s = segment.pointB.position.sub(segment.pointA.position);
         const r = this.directionVector;
-        //const denominator = Vector2.perpDot(r, s);
-        const denominator = r.perpDot(s);
+        const denominator = Vector2.perpDot(r, s);
         if (denominator == 0) { return null; }  // Ray is parallel to segment
-        //const num_t = Vector2.perpDot(q.sub(this.origin), s);
-        const num_t = q.sub(this.origin).perpDot(s);
+        const num_t = Vector2.perpDot(q.sub(this.origin), s);
         const t = num_t / denominator;
         if (t < 0) { return null; } // No intersection
-        //const num_u = Vector2.perpDot(q.sub(this.origin), r);
-        const num_u = q.sub(this.origin).perpDot(r);
+        const num_u = Vector2.perpDot(q.sub(this.origin), r);
         const u = num_u / denominator;
         if (u < 0 || u > 1) { return null; }  // No intersection
         const intersectionPoint = this.origin.add(r.mul(t));
@@ -87,18 +84,15 @@ class RayCamera {
     //     }
     // }
     update() {
-        // TODO: Clean up this mess!
         this.closestIntersections = [];
         for (let i = 0; i < this.rays.length; i++) {
             this.rays[i].directionVector = this.directionVector;
             this.rays[i].directionVector = this.rays[i].directionVector.rotate(this.halfFovVector);
-            //this.rays[i].directionVector.rotateThis(this.halfFovVector);
         }
         // Rotate rays
         for (let i = 0; i < this.rays.length; i++) {
             for (let j = this.rays.length - 1; j > i; j--) {
-                //this.rays[j].directionVector = this.rays[j].directionVector.rotate(this.deltaAngleVector);
-                this.rays[j].directionVector.rotateThis(this.deltaAngleVector);
+                this.rays[j].directionVector = this.rays[j].directionVector.rotate(this.deltaAngleVector);
             }
             this.rays[i].origin = this.origin;
             this.closestIntersections[i] = this.rays[i].closestIntersection;

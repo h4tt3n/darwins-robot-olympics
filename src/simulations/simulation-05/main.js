@@ -21,7 +21,7 @@
 
 import { Vector2 } from '../../vector-library/version-02/vector2.js';
 import { GeneticOperators } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
-import { SimulationEngine } from '../../simulation-engine/version-08/simulationEngine.js';
+import { SimulationEngine } from '../../simulation-engine/version-09/simulationEngine.js';
 
 let numRobots = 50;
 
@@ -58,29 +58,29 @@ const simParams = {
 }
 
 const createRobotFuncs = {
-    "Worm" : createRoboWorms,
-    "Starfish" : createRoboStarfishes,
-    // "RoboCrab" : createRoboCrabs,
-    "Bird" : createRoboBirds,
-    // "RoboBlob" : createRoboBlobs,
-    "Car" : createRoboCars,
-    // "TopDownTracker" : createTrackers,
+    "RoboWorm" : createRoboWorms,
+    "RoboStarfish" : createRoboStarfishes,
+    "RoboCrab" : createRoboCrabs,
+    "RoboBird" : createRoboBirds,
+    "RoboBlob" : createRoboBlobs,
+    "RoboCar" : createRoboCars,
+    "TopDownTracker" : createTrackers,
 }
 
 const createChallengeFuncs = { 
-    "Sprint" : createWorld,
-    "Jump" : createWorld2,
-    //"Climb" : createWorld3,
+    "100-meter Sprint" : createWorld,
+    "Long Jump" : createWorld2,
+    "Climbing" : createWorld3,
     "Pitfall" : pitFall,
-    // "Pitfall2" : pitFall2,
-    //"Helmet" : helmet,
-    // "Thunder Dome" : thunderDome,
+    "Pitfall2" : pitFall2,
+    "Helmet" : helmet,
+    "Thunder Dome" : thunderDome,
     "Stairway" : createStairwayMap,
     "Aviary" : createAviary,
 }
 
-let createRobotFunc = createRobotFuncs["Worm"];
-let createChallengeFunc = createChallengeFuncs["Sprint"];
+let createRobotFunc = createRobotFuncs["RoboWorm"];
+let createChallengeFunc = createChallengeFuncs["100-meter Sprint"];
 
 // Create simulation
 const simulation = new SimulationEngine.Simulation(simParams);
@@ -649,7 +649,7 @@ function createMenu() {
 
     menu.style.backgroundColor = 'rgb(160, 160, 160)';
 
-    let height = window.innerHeight * 0.1;
+    let height = window.innerHeight * 0.2;
     let width = window.innerWidth;
 
     menu.style.height = height + 'px';
@@ -659,23 +659,21 @@ function createMenu() {
 
     // Fullscreen toggle
 
-    // let fullscreenButton = document.createElement('button');
-    // fullscreenButton.textContent = 'Toggle Fullscreen';
+    let fullscreenButton = document.createElement('button');
+    fullscreenButton.textContent = 'Toggle Fullscreen';
 
-    // // Add an onclick event handler to the button
-    // fullscreenButton.onclick = function() {
-    //     if (!document.fullscreenElement) {
-    //         document.documentElement.requestFullscreen();
-    //         simulation.renderer.canvas.width = window.innerWidth;
-    //         simulation.renderer.canvas.height = window.innerHeight// * 0.8;
-    //     } else {
-    //         if (document.exitFullscreen) {
-    //             document.exitFullscreen();
-    //         }
-    //     }
-    // };
+    // Add an onclick event handler to the button
+    fullscreenButton.onclick = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
 
-    // menu.appendChild(fullscreenButton);
+    menu.appendChild(fullscreenButton);
 
 
     // Toggle raycasting button
@@ -725,9 +723,9 @@ function createMenu() {
     let fps = Number((1000 / simulation.interval).toFixed(0));
     // if FPS is "infinity", display the word "max"
     if (fps === Infinity) {
-        displayInterval.textContent = " FPS: Max ";
+        displayInterval.textContent = "FPS: Max";
     } else {
-        displayInterval.textContent = " FPS: " + fps;
+        displayInterval.textContent = "FPS: " + fps;
     }
     menu.appendChild(displayInterval);
 
@@ -752,9 +750,9 @@ function createMenu() {
         let fps = Number((1000 / simulation.interval).toFixed(0));
         // if FPS is "infinity", display the word "max"
         if (fps === Infinity) {
-            displayInterval.textContent = " FPS: Max ";
+            displayInterval.textContent = "FPS: Max";
         } else {
-            displayInterval.textContent = " FPS: " + fps;
+            displayInterval.textContent = "FPS: " + fps;
         }
         // displayInterval.textContent = "FPS: " + Number((1000 / simulation.interval).toFixed(0));
         console.log("interval: " + simulation.interval);
@@ -823,7 +821,7 @@ function createMenu() {
     // input field for setting numRobots
 
     let label = document.createElement('label');
-    label.textContent = " Population size ";
+    label.textContent = "Number of robots";
     menu.appendChild(label);
 
     let input = document.createElement('input');
@@ -884,152 +882,152 @@ function createMenu() {
         
 // Pointer pan and zoom
 
-// let isDragging = false;
-// let initialPointerPos;
-// let initialCameraPos;
+let isDragging = false;
+let initialPointerPos;
+let initialCameraPos;
 
-// // Multi-pointer handling for two-finger zoom and pan
-// let activePointers = new Map();
-// let initialDistance = 0;
-// let initialZoom = 0;
-// let initialCenter = null;
+// Multi-pointer handling for two-finger zoom and pan
+let activePointers = new Map();
+let initialDistance = 0;
+let initialZoom = 0;
+let initialCenter = null;
 
-// simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
-//     if (event.pointerType === "mouse" && event.button !== 0) {
-//         return; // Only handle left mouse button for mouse
-//     }
+simulation.renderer.canvas.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) {
+        return; // Only handle left mouse button for mouse
+    }
 
-//     // Add the current pointer to activePointers
-//     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
-//     console.log("Pointer down", event.pointerId, activePointers);
+    // Add the current pointer to activePointers
+    activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
+    console.log("Pointer down", event.pointerId, activePointers);
 
-//     if (activePointers.size === 1) {
-//         // Single pointer (start panning)
-//         isDragging = true;
-//         initialPointerPos = new Vector2(event.clientX, event.clientY);
-//         initialCameraPos = new Vector2(
-//             simulation.renderer.camera.position.x,
-//             simulation.renderer.camera.position.y
-//         );
-//     } else if (activePointers.size === 2) {
-//         // Two pointers (start zooming/panning)
-//         const pointers = Array.from(activePointers.values());
-//         initialDistance = pointers[0].sub(pointers[1]).mag();
-//         initialZoom = simulation.renderer.camera.restZoom;
-//         initialCenter = pointers[0].add(pointers[1]).mul(0.5);
-//         console.log("Two-finger gesture started. Initial distance:", initialDistance);
-//     }
+    if (activePointers.size === 1) {
+        // Single pointer (start panning)
+        isDragging = true;
+        initialPointerPos = new Vector2(event.clientX, event.clientY);
+        initialCameraPos = new Vector2(
+            simulation.renderer.camera.position.x,
+            simulation.renderer.camera.position.y
+        );
+    } else if (activePointers.size === 2) {
+        // Two pointers (start zooming/panning)
+        const pointers = Array.from(activePointers.values());
+        initialDistance = pointers[0].sub(pointers[1]).mag();
+        initialZoom = simulation.renderer.camera.restZoom;
+        initialCenter = pointers[0].add(pointers[1]).mul(0.5);
+        console.log("Two-finger gesture started. Initial distance:", initialDistance);
+    }
 
-//     // Capture the pointer to ensure we get all pointermove events
-//     event.target.setPointerCapture(event.pointerId);
+    // Capture the pointer to ensure we get all pointermove events
+    event.target.setPointerCapture(event.pointerId);
 
-//     // Prevent default to avoid issues with touch scrolling
-//     event.preventDefault();
-// });
+    // Prevent default to avoid issues with touch scrolling
+    event.preventDefault();
+});
 
-// simulation.renderer.canvas.addEventListener("pointermove", (event) => {
-//     if (!activePointers.has(event.pointerId)) return;
+simulation.renderer.canvas.addEventListener("pointermove", (event) => {
+    if (!activePointers.has(event.pointerId)) return;
 
-//     // Update the current pointer position in activePointers
-//     activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
+    // Update the current pointer position in activePointers
+    activePointers.set(event.pointerId, new Vector2(event.clientX, event.clientY));
 
-//     if (activePointers.size === 1 && isDragging) {
-//         // Single pointer (panning)
-//         let currentPointerPos = new Vector2(event.clientX, event.clientY);
-//         let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
-//         deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
-//         simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
-//         simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
+    if (activePointers.size === 1 && isDragging) {
+        // Single pointer (panning)
+        let currentPointerPos = new Vector2(event.clientX, event.clientY);
+        let deltaPointerPos = currentPointerPos.sub(initialPointerPos);
+        deltaPointerPos = deltaPointerPos.div(simulation.renderer.camera.zoom);
+        simulation.renderer.camera.restPosition.x = initialCameraPos.x - deltaPointerPos.x;
+        simulation.renderer.camera.restPosition.y = initialCameraPos.y - deltaPointerPos.y;
 
-//     } else if (activePointers.size === 2) {
-//         // Two pointers (zooming and panning)
-//         const pointers = Array.from(activePointers.values());
-//         const pointer1 = pointers[0];
-//         const pointer2 = pointers[1];
+    } else if (activePointers.size === 2) {
+        // Two pointers (zooming and panning)
+        const pointers = Array.from(activePointers.values());
+        const pointer1 = pointers[0];
+        const pointer2 = pointers[1];
 
-//         // Calculate current distance and center
-//         const currentDistance = pointer1.sub(pointer2).length();
-//         const currentCenter = pointer1.add(pointer2).mul(0.5);
+        // Calculate current distance and center
+        const currentDistance = pointer1.sub(pointer2).length();
+        const currentCenter = pointer1.add(pointer2).mul(0.5);
 
-//         // Zoom factor
-//         const zoomFactor = currentDistance / initialDistance;
-//         const newZoom = initialZoom * zoomFactor;
-//         simulation.renderer.camera.restZoom = Math.max(
-//             simulation.renderer.camera.minZoom,
-//             Math.min(newZoom, simulation.renderer.camera.maxZoom)
-//         );
+        // Zoom factor
+        const zoomFactor = currentDistance / initialDistance;
+        const newZoom = initialZoom * zoomFactor;
+        simulation.renderer.camera.restZoom = Math.max(
+            simulation.renderer.camera.minZoom,
+            Math.min(newZoom, simulation.renderer.camera.maxZoom)
+        );
 
-//         // Calculate delta center for panning
-//         const deltaCenter = currentCenter.sub(initialCenter).div(simulation.renderer.camera.zoom);
-//         simulation.renderer.camera.restPosition.x -= deltaCenter.x;
-//         simulation.renderer.camera.restPosition.y -= deltaCenter.y;
+        // Calculate delta center for panning
+        const deltaCenter = currentCenter.sub(initialCenter).div(simulation.renderer.camera.zoom);
+        simulation.renderer.camera.restPosition.x -= deltaCenter.x;
+        simulation.renderer.camera.restPosition.y -= deltaCenter.y;
 
-//         // Update initial center to prevent drift
-//         initialCenter = currentCenter;
+        // Update initial center to prevent drift
+        initialCenter = currentCenter;
 
-//         // Log debugging data
-//         console.log({
-//             zoomFactor,
-//             newZoom: simulation.renderer.camera.restZoom,
-//             restPosition: simulation.renderer.camera.restPosition,
-//             deltaCenter,
-//         });
-//     }
-// });
+        // Log debugging data
+        console.log({
+            zoomFactor,
+            newZoom: simulation.renderer.camera.restZoom,
+            restPosition: simulation.renderer.camera.restPosition,
+            deltaCenter,
+        });
+    }
+});
 
 
-// simulation.renderer.canvas.addEventListener("pointerup", (event) => {
-//     activePointers.delete(event.pointerId);
-//     console.log("Pointer up", event.pointerId, activePointers);
+simulation.renderer.canvas.addEventListener("pointerup", (event) => {
+    activePointers.delete(event.pointerId);
+    console.log("Pointer up", event.pointerId, activePointers);
 
-//     if (isDragging && activePointers.size === 0) {
-//         // End single-finger panning
-//         isDragging = false;
-//     }
+    if (isDragging && activePointers.size === 0) {
+        // End single-finger panning
+        isDragging = false;
+    }
 
-//     // Release the pointer capture
-//     event.target.releasePointerCapture(event.pointerId);
+    // Release the pointer capture
+    event.target.releasePointerCapture(event.pointerId);
 
-//     // Prevent default for consistency
-//     event.preventDefault();
-// });
+    // Prevent default for consistency
+    event.preventDefault();
+});
 
-// simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
-//     activePointers.delete(event.pointerId);
-//     console.log("Pointer cancel", event.pointerId, activePointers);
+simulation.renderer.canvas.addEventListener("pointercancel", (event) => {
+    activePointers.delete(event.pointerId);
+    console.log("Pointer cancel", event.pointerId, activePointers);
 
-//     if (isDragging && activePointers.size === 0) {
-//         // End single-finger panning
-//         isDragging = false;
-//     }
+    if (isDragging && activePointers.size === 0) {
+        // End single-finger panning
+        isDragging = false;
+    }
 
-//     // Release the pointer capture
-//     event.target.releasePointerCapture(event.pointerId);
-// });
+    // Release the pointer capture
+    event.target.releasePointerCapture(event.pointerId);
+});
 
-// // Debugging data display
+// Debugging data display
 
-// let debugInfo = document.createElement('div');
-// debugInfo.textContent = 'Active Pointers: 0';
+let debugInfo = document.createElement('div');
+debugInfo.textContent = 'Active Pointers: 0';
 
-// // Style the debug info (optional)
-// debugInfo.style.marginTop = '10px';
-// debugInfo.style.fontSize = '14px';
-// debugInfo.style.color = '#333';
+// Style the debug info (optional)
+debugInfo.style.marginTop = '10px';
+debugInfo.style.fontSize = '14px';
+debugInfo.style.color = '#333';
 
-// // Function to update the debugging data
-// function updateDebugInfo() {
-//     debugInfo.textContent = `Active Pointers: ${activePointers.size}`;
-// }
+// Function to update the debugging data
+function updateDebugInfo() {
+    debugInfo.textContent = `Active Pointers: ${activePointers.size}`;
+}
 
-// // Append the debug info element to the menu
-// menu.appendChild(debugInfo);
+// Append the debug info element to the menu
+menu.appendChild(debugInfo);
 
-// // Update the debugging data when the active pointers change
-// simulation.renderer.canvas.addEventListener('pointerdown', updateDebugInfo);
-// simulation.renderer.canvas.addEventListener('pointermove', updateDebugInfo);
-// simulation.renderer.canvas.addEventListener('pointerup', updateDebugInfo);
-// simulation.renderer.canvas.addEventListener('pointercancel', updateDebugInfo);
+// Update the debugging data when the active pointers change
+simulation.renderer.canvas.addEventListener('pointerdown', updateDebugInfo);
+simulation.renderer.canvas.addEventListener('pointermove', updateDebugInfo);
+simulation.renderer.canvas.addEventListener('pointerup', updateDebugInfo);
+simulation.renderer.canvas.addEventListener('pointercancel', updateDebugInfo);
 
 
     // // Pointer pan
@@ -1090,35 +1088,35 @@ function createMenu() {
     // });
 
 
-    // Mouse pan
+    // // Mouse pan
 
-    let isDragging = false;
-    let initialMousePos;
-    let initialCameraPos;
+    // let isDragging = false;
+    // let initialMousePos;
+    // let initialCameraPos;
 
-    simulation.renderer.canvas.addEventListener("mousedown", (event) => {
-        if (event.button === 0) {
-            isDragging = true;
-            initialMousePos = new Vector2(event.clientX, event.clientY);
-            initialCameraPos = new Vector2(simulation.renderer.camera.position.x, simulation.renderer.camera.position.y);
-        }
-    });
+    // simulation.renderer.canvas.addEventListener("mousedown", (event) => {
+    //     if (event.button === 0) {
+    //         isDragging = true;
+    //         initialMousePos = new Vector2(event.clientX, event.clientY);
+    //         initialCameraPos = new Vector2(simulation.renderer.camera.position.x, simulation.renderer.camera.position.y);
+    //     }
+    // });
 
-    simulation.renderer.canvas.addEventListener("mousemove", (event) => {
-        if (isDragging) {
-            let currentMousePos = new Vector2(event.clientX, event.clientY);
-            let deltaMousePos = currentMousePos.sub(initialMousePos);
-            deltaMousePos = deltaMousePos.div(simulation.renderer.camera.zoom);
-            simulation.renderer.camera.restPosition.x = (initialCameraPos.x - deltaMousePos.x);
-            simulation.renderer.camera.restPosition.y = (initialCameraPos.y - deltaMousePos.y);
-        }
-    });
+    // simulation.renderer.canvas.addEventListener("mousemove", (event) => {
+    //     if (isDragging) {
+    //         let currentMousePos = new Vector2(event.clientX, event.clientY);
+    //         let deltaMousePos = currentMousePos.sub(initialMousePos);
+    //         deltaMousePos = deltaMousePos.div(simulation.renderer.camera.zoom);
+    //         simulation.renderer.camera.restPosition.x = (initialCameraPos.x - deltaMousePos.x);
+    //         simulation.renderer.camera.restPosition.y = (initialCameraPos.y - deltaMousePos.y);
+    //     }
+    // });
 
-    simulation.renderer.canvas.addEventListener("mouseup", (event) => {
-        if (event.button === 0) {
-            isDragging = false;
-        }
-    });
+    // simulation.renderer.canvas.addEventListener("mouseup", (event) => {
+    //     if (event.button === 0) {
+    //         isDragging = false;
+    //     }
+    // });
 
 
     // Mouse select nearest creature

@@ -1,18 +1,18 @@
 "use strict";
 
 
-import { Vector2 } from '../../vector-library/version-02/vector2.js';
-import { ToolBox } from '../../toolbox/version-01/toolbox.js';
-import { SquishyPlanet } from '../../physics-engine/version-03/squishyPlanet.js';
-import { Network } from "../../neural-network-engine/version-01/neural-network.js";
-import { ActivationFunctions } from "../../neural-network-engine/version-01/activation-functions.js";
-import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
+import { Vector2 } from '../../../vector-library/version-01/vector2.js';
+import { ToolBox } from '../../../toolbox/version-01/toolbox.js';
+import { SquishyPlanet } from '../../../physics-engine/version-01/squishyPlanet.js';
+import { Network, ActivationFunctions } from "../../../neural-network-engine/version-01/neural-network.js";
+import { GeneticAlgorithm, Individual } from "../../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
 import { WayPoint } from './wayPoint.js';
 import { Robot } from './robot.js';
 import { FitnessEvaluator } from './fitnessEvaluator.js';
-import { constants } from '../../physics-engine/version-03/constants.js';
+import { constants } from '../../../physics-engine/version-01/constants.js';
+import { MotorConstraint } from '../../../physics-engine/version-01/constraints/motorConstraint.js';
 
 class Simulation {
     constructor(params = {}) {
@@ -35,7 +35,6 @@ class Simulation {
         this.generationTicks = 0;
         this.generationMaxTicks = 1000;
         this.setIntervalId = null;
-        this.interval = 0;
 
         this.robotSpawner = {
             func : null,
@@ -104,7 +103,7 @@ class Simulation {
         // Neural network (Robot brain)
         this.robots.forEach(robot => { robot.update(); });
 
-        // // Evaluate population
+        // Evaluate population
         this.evaluate();
     }
     evaluate() {
@@ -138,10 +137,6 @@ class Simulation {
             this.robotSpawner.func(this.robotSpawner.numRobots, this.robotSpawner.robotParams, this.individuals);
             
             // Reset simulation
-            //this.world.reset();
-            //this.world.collisions = new Map();
-            //this.world.objectIdCounter = 0;
-            //this.world.collisionHandler = new CollisionHandler(this.world);
             this.deadRobots = [];
             //this.world.collisions = new Map();
             this.generationTicks = 0;
@@ -149,17 +144,17 @@ class Simulation {
         }
     }
     distanceToTarget(creature, target) {
-        // let position = creature.body.particles[0].position;
-        // let distance = position.distance(target.position);
-        // return distance;
+        let position = creature.body.particles[0].position;
+        let distance = position.distance(target.position);
+        return distance;
     }
     hasReachedTarget(creature, target) {
-        // let distance = this.distanceToTarget(creature, target);
-        // if (distance < target.radius + creature.body.particles[0].radius) {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
+        let distance = this.distanceToTarget(creature, target);
+        if (distance < target.radius + creature.body.particles[0].radius) {
+            return true;
+        } else {
+            return false;
+        }
     }
     calculateFitness(creature, target) {
         let fitness = 0;
@@ -207,8 +202,7 @@ class Simulation {
         for (let i = 0; i < collisionKeys.length; i++) {
             const collisionKey = collisionKeys[i];
             const collision = this.world.collisions.get(collisionKey);
-            // const objectIds = this.world.collisionHandler.getObjectIdsFromCollisionObjectId(collision.objectId);
-            const objectIds = this.world.spatialHashGrid.getObjectIdsFromCollisionObjectId(collision.objectId);
+            const objectIds = this.world.collisionHandler.getObjectIdsFromCollisionObjectId(collision.objectId);
             if (robot.body.wheels != undefined) {
                 for (let i = 0; i < robot.body.wheels.length; i++) {         
                     if (objectIds.includes(robot.body.wheels[i].objectId)) {
@@ -247,11 +241,6 @@ class Simulation {
         if (robot.body.motorConstraints != undefined) {
             for (let i = 0; i < robot.body.motorConstraints.length; i++) {
                 this.world.deleteMotorConstraint(robot.body.motorConstraints[i]);
-            }
-        }
-        if (robot.body.aerodynamicConstraints != undefined) {
-            for (let i = 0; i < robot.body.aerodynamicConstraints.length; i++) {
-                this.world.deleteAerodynamicConstraint(robot.body.aerodynamicConstraints[i]);
             }
         }
         if (robot.body.gearConstraints != undefined) {
@@ -785,7 +774,7 @@ class Simulation {
         let angle = Math.PI * 2; // * Math.random();
         let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
         let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let body = this.world.createParticle(position, 20, bodyRadius, randomColor);
+        var body = this.world.createParticle(position, 20, bodyRadius, randomColor);
         bodyParts.particles.push(body);
 
         // Legs
@@ -794,11 +783,11 @@ class Simulation {
             let legAngleVector = new Vector2(Math.cos(legAngle), Math.sin(legAngle));
 
             // Leg anchors
-            let legAnchor = this.world.createParticle(position.add(legAngleVector.mul(body.radius + legJointMaxRadius)), legJointMaxMass, legJointMaxRadius, randomColor);
+            var legAnchor = this.world.createParticle(position.add(legAngleVector.mul(body.radius + legJointMaxRadius)), legJointMaxMass, legJointMaxRadius, randomColor);
             bodyParts.particles.push(legAnchor);
 
             // Leg linear spring to body
-            let legLinear = this.world.createLinearSpring(body, legAnchor, 1.0, 1.0, 0.5);
+            var legLinear = this.world.createLinearSpring(body, legAnchor, 1.0, 1.0, 0.5);
             legLinear.radius = legJointMaxRadius;
             legLinear.color = randomColor2;
             bodyParts.linearSprings.push(legLinear);
@@ -815,17 +804,17 @@ class Simulation {
                 let legJointMass = ToolBox.map(j, 0, numLegSections - 1, legJointMaxMass, legJointMinMass);
 
                 // Leg joints
-                let legJoint = this.world.createParticle(prevLegJoint.position.add(legAngleVector.mul(prevLegJoint.radius+legJointRadius)), legJointMass, legJointRadius, randomColor);
+                var legJoint = this.world.createParticle(prevLegJoint.position.add(legAngleVector.mul(prevLegJoint.radius+legJointRadius)), legJointMass, legJointRadius, randomColor);
                 bodyParts.particles.push(legJoint);
 
                 // Leg sections
-                let legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 0.5, 1.0, 0.5);
+                var legSection = this.world.createLinearSpring(prevLegJoint, legJoint, 0.5, 1.0, 0.5);
                 legSection.radius = legJointRadius;
                 legSection.color = randomColor2;
                 bodyParts.linearSprings.push(legSection);
 
                 // Leg angular spring
-                let legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 1.0, 0.5);
+                var legAngular = this.world.createAngularSpring(prevLegSection, legSection, 0.25, 1.0, 0.5);
                 bodyParts.angularSprings.push(legAngular);
                 legAngulars.push(legAngular);
                 
@@ -1010,614 +999,6 @@ class Simulation {
         let robot = new Robot(brain, body, eyes, update);
         this.robots.push(robot);
         return robot;
-    }
-
-    createRoboBlob(brainGenome) {
-        
-        const numRays = 10;
-
-        const bodyParams = {
-            position : new Vector2(0, 0),
-            numSegments : 10,
-            radius : 14,
-            mass : 2,
-        }
-
-        const visionParams = {
-            position : new Vector2(0, 0),
-            direction : Math.PI * 2 * 0,
-            numRays : numRays,
-            fieldOfView : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
-        }
-
-        const brainParams = {
-            layers : [numRays, 24, bodyParams.numSegments],
-            activation : {
-                func : ActivationFunctions.parametricTanhLike,
-            },
-        }
-        
-        let body = {
-            particles : [],
-            linearSprings : [],
-            angularSprings : [],
-        }
-
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        
-        // Create particles in circle
-        for (let i = 0; i < bodyParams.numSegments; i++) {
-            let angle = Math.PI * 2 * i / bodyParams.numSegments;
-            let x = Math.cos(angle) * 100;
-            let y = Math.sin(angle) * 100;
-            let particle = this.world.createParticle(bodyParams.position.add(new Vector2(x, y)), bodyParams.mass, bodyParams.radius, randomColor);
-            body.particles.push(particle);
-        }
-        
-        // for (let i = 0; i < bodyParams.numSegments; i++) {
-        //     let particle = this.world.createParticle(bodyParams.position, bodyParams.mass, bodyParams.radius, randomColor);
-        //     bodyParams.position = bodyParams.position.sub(new Vector2(bodyParams.radius * 2.2, 0));
-        //     body.particles.push(particle);
-        // }
-
-        // Connect particles with linear springs
-        for (let i = 0; i < body.particles.length; i++) {
-            let j = (i + 1) % body.particles.length;
-            let linearSpring = this.world.createLinearSpring(body.particles[i], body.particles[j], 0.5, 1.0, 0.5);
-            linearSpring.radius = 16;
-            linearSpring.color = randomColor2;
-            body.linearSprings.push(linearSpring);
-        }
-
-        // Connect linearSprings with angular springs
-        for (let i = 0; i < body.linearSprings.length; i++) {
-            let j = (i + 1) % body.linearSprings.length;
-            let angularSpring = this.world.createAngularSpring(body.linearSprings[i], body.linearSprings[j], 0.25, 1.0, 0.5);
-            body.angularSprings.push(angularSpring);
-        }
-        
-        // let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fieldOfView);
-
-        // Create vision
-        //let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fieldOfView);
-        let eyes = this.createRayCamera(visionParams);
-
-        // Create brain
-        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
-        let brain = this.createNeuralNetwork(brainGenome, brainParams);
-
-        let update = function update() {
-            // Update eyes
-            const angleVector = this.body.particles[0].position.sub(this.body.particles[1].position).normalize();
-            this.eyes.directionVector = angleVector;
-            this.eyes.origin = this.body.particles[0].position;
-    
-            this.eyes.update();
-    
-            // Update brain
-            let inputs = [];
-    
-            let intersections = this.eyes.getOutput();
-            
-            for (let i = 0; i < intersections.length; i++) {
-                if( intersections[i] ) {
-                    //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                    let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                    inputs.push(invDistance);
-                }
-            }
-    
-            this.brain.setInput(inputs);
-            
-            this.brain.run();
-            let output = this.brain.getOutput();
-
-            //console.log(output);
-    
-            // Update body
-            for (let i = 0; i < this.body.angularSprings.length; i++) {
-                this.body.angularSprings[i].setRestAngleVector(output[i] * Math.PI * 2 * 0.125);
-            }
-        }
-
-        let robot = new Robot(brain, body, eyes, update);
-        this.robots.push(robot);
-        return robot;
-    }
-
-    createRoboBird(brainGenome) {
-
-        let bodyParts = {
-            particles : [],
-            linearSprings : [],
-            angularSprings : [],
-            aerodynamicConstraints : [],
-            leftWing1AngularSprings : [],
-            rightWing1AngularSprings : [],
-            leftWing1JointAngularSpring : null,
-            rightWing1JointAngularSpring : null,
-        }
-
-        let position = new Vector2(0, 0); //new Vector2(0, 0);
-        let bigWingSectionLength = 48;
-        let WingSectionRadius = 10;
-        let WingJointRadius = 8;
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-
-        // Body
-        var body = this.world.createParticle(position, 10, 30, randomColor);
-        bodyParts.particles.push(body);
-
-        // Wing anchors
-        var leftWingAnchor  = this.world.createParticle(position.add(new Vector2(-(body.radius+WingJointRadius+2), 0)), 5, WingJointRadius, randomColor);
-        var rightWingAnchor = this.world.createParticle(position.add(new Vector2( (body.radius+WingJointRadius+2), 0)), 5, WingJointRadius, randomColor);
-
-        var leftWingLinear = this.world.createLinearSpring(body, leftWingAnchor, 1.0, 1.0, 0.5);
-        var rightWingLinear = this.world.createLinearSpring(body, rightWingAnchor, 1.0, 1.0, 0.5);
-        leftWingLinear.radius = WingSectionRadius;
-        rightWingLinear.radius = WingSectionRadius;
-        leftWingLinear.color = randomColor2;
-        rightWingLinear.color = randomColor2;
-
-        var WingAngular = this.world.createAngularSpring(leftWingLinear, rightWingLinear, 0.5, 0.5, 0.5)
-
-        // Wings
-
-        // Left Wing 1
-        //var leftWing1Joint1 = this.world.createLinearState(leftWingAnchor.position.add(new Vector2(-30, -50)), 1.0);
-        var leftWing1Joint1 = this.world.createParticle(leftWingAnchor.position.add(new Vector2(-bigWingSectionLength * 0.5, 0)), 5, WingJointRadius, randomColor);
-        var leftWing1Joint2 = this.world.createParticle(leftWing1Joint1.position.add(new Vector2(-bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
-        var leftWing1Foot = this.world.createParticle(leftWing1Joint2.position.add(new Vector2(-bigWingSectionLength * 2, 0)), 5, WingJointRadius, randomColor);
-        bodyParts.particles.push(leftWing1Joint1);
-        bodyParts.particles.push(leftWing1Joint2);
-        bodyParts.particles.push(leftWing1Foot);
-
-        var leftWing1Section1 = this.world.createLinearSpring(leftWingAnchor, leftWing1Joint1, 1.0, 1.0, 0.5);
-        var leftWing1Section2 = this.world.createLinearSpring(leftWing1Joint1, leftWing1Joint2, 1.0, 1.0, 0.5);
-        var leftWing1Section3 = this.world.createLinearSpring(leftWing1Joint2, leftWing1Foot, 1.0, 1.0, 0.5);
-        leftWing1Section1.radius = WingSectionRadius;
-        leftWing1Section2.radius = WingSectionRadius;
-        leftWing1Section3.radius = WingSectionRadius;
-        leftWing1Section1.color = randomColor2;
-        leftWing1Section2.color = randomColor2;
-        leftWing1Section3.color = randomColor2;
-
-        var leftWing1Angular1 = this.world.createAngularSpring(leftWingLinear, leftWing1Section1, 0.25, 0.5, 0.5);
-        var leftWing1Angular2 = this.world.createAngularSpring(leftWing1Section1, leftWing1Section2, 0.25, 0.5, 0.5);
-        var leftWing1Angular3 = this.world.createAngularSpring(leftWing1Section2, leftWing1Section3, 0.25, 0.5, 0.5);
-        
-        bodyParts.leftWing1JointAngularSpring = leftWing1Angular1;
-        bodyParts.leftWing1AngularSprings.push(leftWing1Angular2);
-        bodyParts.leftWing1AngularSprings.push(leftWing1Angular3);
-
-        // Right Wing 1
-        var rightWing1Joint1 = this.world.createParticle(rightWingAnchor.position.add(new Vector2(bigWingSectionLength * 0.5, 0)), 5, WingJointRadius, randomColor);
-        var rightWing1Joint2 = this.world.createParticle(rightWing1Joint1.position.add(new Vector2(bigWingSectionLength, 0)), 5, WingJointRadius, randomColor);
-        var rightWing1Foot = this.world.createParticle(rightWing1Joint2.position.add(new Vector2(bigWingSectionLength * 2, 0)), 5, WingJointRadius, randomColor);
-
-        var rightWing1Section1 = this.world.createLinearSpring(rightWingAnchor, rightWing1Joint1, 1.0, 1.0, 0.5);
-        var rightWing1Section2 = this.world.createLinearSpring(rightWing1Joint1, rightWing1Joint2, 1.0, 1.0, 0.5);
-        var rightWing1Section3 = this.world.createLinearSpring(rightWing1Joint2, rightWing1Foot, 1.0, 1.0, 0.5);
-        rightWing1Section1.radius = WingSectionRadius;
-        rightWing1Section2.radius = WingSectionRadius;
-        rightWing1Section3.radius = WingSectionRadius;
-        rightWing1Section1.color = randomColor2;
-        rightWing1Section2.color = randomColor2;
-        rightWing1Section3.color = randomColor2;
-
-        var rightWing1Angular1 = this.world.createAngularSpring(rightWingLinear, rightWing1Section1, 0.25, 0.5, 0.5);
-        var rightWing1Angular2 = this.world.createAngularSpring(rightWing1Section1, rightWing1Section2, 0.25, 0.5, 0.5);
-        var rightWing1Angular3 = this.world.createAngularSpring(rightWing1Section2, rightWing1Section3, 0.25, 0.5, 0.5);
-
-        bodyParts.rightWing1JointAngularSpring = rightWing1Angular1;
-        bodyParts.rightWing1AngularSprings.push(rightWing1Angular2);
-        bodyParts.rightWing1AngularSprings.push(rightWing1Angular3);
-
-        // Add aerodynamic constraints to wings
-        var rightWing1Section2aerodynamics = this.world.createAerodynamicConstraint({ linearLink : rightWing1Section2 });
-        var rightWing1Section3aerodynamics = this.world.createAerodynamicConstraint({ linearLink : rightWing1Section3 });
-        var leftWing1Section2aerodynamics = this.world.createAerodynamicConstraint({ linearLink : leftWing1Section2 });
-        var leftWing1Section3aerodynamics = this.world.createAerodynamicConstraint({ linearLink : leftWing1Section3 });
-
-        //console.log(rightWing1Section2aerodynamics);
-
-        // Push all Particles, LiearSprings and AngularSprings to BodyParts arrays
-        bodyParts.angularSprings.push(WingAngular);
-        bodyParts.angularSprings.push(leftWing1Angular1);
-        bodyParts.angularSprings.push(leftWing1Angular2);
-        bodyParts.angularSprings.push(leftWing1Angular3);
-        bodyParts.angularSprings.push(rightWing1Angular1);
-        bodyParts.angularSprings.push(rightWing1Angular2);
-        bodyParts.angularSprings.push(rightWing1Angular3);
-
-        bodyParts.linearSprings.push(leftWingLinear);
-        bodyParts.linearSprings.push(rightWingLinear);
-        bodyParts.linearSprings.push(leftWing1Section1);
-        bodyParts.linearSprings.push(leftWing1Section2);
-        bodyParts.linearSprings.push(leftWing1Section3);
-        bodyParts.linearSprings.push(rightWing1Section1);
-        bodyParts.linearSprings.push(rightWing1Section2);
-        bodyParts.linearSprings.push(rightWing1Section3);
-
-        bodyParts.particles.push(body);
-        bodyParts.particles.push(leftWingAnchor);
-        bodyParts.particles.push(rightWingAnchor);
-        bodyParts.particles.push(leftWing1Joint1);
-        bodyParts.particles.push(leftWing1Joint2);
-        bodyParts.particles.push(leftWing1Foot);
-        bodyParts.particles.push(rightWing1Joint1);
-        bodyParts.particles.push(rightWing1Joint2);
-        bodyParts.particles.push(rightWing1Foot);
-
-        bodyParts.aerodynamicConstraints.push(rightWing1Section2aerodynamics);
-        bodyParts.aerodynamicConstraints.push(rightWing1Section3aerodynamics);
-        bodyParts.aerodynamicConstraints.push(leftWing1Section2aerodynamics);
-        bodyParts.aerodynamicConstraints.push(leftWing1Section3aerodynamics);
-
-        // Create vision
-        let numRays = 12;
-
-        const visionParams = {
-            position : new Vector2(0, 0),
-            direction : Math.PI * 2 * 0,
-            numRays : numRays,
-            fieldOfView : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
-        }
-
-        let eyes = this.createRayCamera(visionParams);
-
-        // Create brain
-        let brainParams = {
-            layers : [numRays, 16, 8],
-            activation : {
-                func : ActivationFunctions.parametricTanhLike,
-            },
-        }
-
-        let brain = this.createNeuralNetwork(brainGenome, brainParams);
-
-        let update = function update() {
-
-            // Update eyes
-            const angleVector = this.body.linearSprings[1].angleVector;
-            this.eyes.directionVector = angleVector.perp();
-            this.eyes.origin = this.body.particles[0].position;
-    
-            this.eyes.update();
-    
-            // Update brain
-            let inputs = [];
-    
-            let intersections = this.eyes.getOutput();
-
-            for (let i = 0; i < intersections.length; i++) {
-                if( intersections[i] ) {
-                    let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                    inputs.push(invDistance);
-                }
-            }
-    
-            this.brain.setInput(inputs);
-            this.brain.run();
-            let output = this.brain.getOutput();
-    
-            let jointAngle = Math.PI * 2 * 0.15;
-            let WingAngle = Math.PI * 2 * 0.15;
-    
-            // Update body
-            let angle = ToolBox.map(output[0], -1, 1, -WingAngle, WingAngle);
-    
-            for (let i = 0; i < this.body.leftWing1AngularSprings.length; i++) {
-                this.body.leftWing1AngularSprings[i].setRestAngleVector(angle);
-            }
-    
-            angle = ToolBox.map(output[2], -1, 1, -WingAngle, WingAngle);
-    
-            for (let i = 0; i < this.body.rightWing1AngularSprings.length; i++) {
-                this.body.rightWing1AngularSprings[i].setRestAngleVector(angle);
-            }
-    
-            this.body.leftWing1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, -jointAngle, jointAngle));
-            this.body.rightWing1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, -jointAngle, jointAngle));
-        }
-
-        let bird = new Robot(brain, bodyParts, eyes, update);
-        this.robots.push(bird);
-        return bird;
-    }
-
-    //createRoboCrab(params = {}) {
-    createRoboCrab(brainGenome) {
-
-        let bodyParts = {
-            particles : [],
-            linearSprings : [],
-            angularSprings : [],
-            leftLeg1AngularSprings : [],
-            leftLeg2AngularSprings : [],
-            rightLeg1AngularSprings : [],
-            rightLeg2AngularSprings : [],
-            leftLeg1JointAngularSpring : null,
-            leftLeg2JointAngularSpring : null,
-            rightLeg1JointAngularSpring : null,
-            rightLeg2JointAngularSpring : null,
-        }
-
-        let position = new Vector2(0, 0); //new Vector2(0, 0);
-        let bigLegSectionLength = 32;
-        let smallLegSectionLength = 18;
-        let legSectionRadius = 10;
-        let legJointRadius = 8;
-        let randomColor = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-        let randomColor2 = "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ", " + Math.floor(Math.random()*255) + ")";
-
-        // Body
-        var body = this.world.createParticle(position, 10, 30, randomColor);
-        bodyParts.particles.push(body);
-
-        // Leg anchors
-        var leftLegAnchor  = this.world.createParticle(position.add(new Vector2(-(body.radius+legJointRadius+2), 0)), 5, legJointRadius, randomColor);
-        var rightLegAnchor = this.world.createParticle(position.add(new Vector2( (body.radius+legJointRadius+2), 0)), 5, legJointRadius, randomColor);
-
-        var leftLegLinear = this.world.createLinearSpring(body, leftLegAnchor, 1.0, 1.0, 0.5);
-        var rightLegLinear = this.world.createLinearSpring(body, rightLegAnchor, 1.0, 1.0, 0.5);
-        leftLegLinear.radius = legSectionRadius;
-        rightLegLinear.radius = legSectionRadius;
-        leftLegLinear.color = randomColor2;
-        rightLegLinear.color = randomColor2;
-
-        var legAngular = this.world.createAngularSpring(leftLegLinear, rightLegLinear, 0.5, 0.5, 0.5)
-
-        // Articulated legs
-
-        // Left leg 1
-        //var leftLeg1Joint1 = this.world.createLinearState(leftLegAnchor.position.add(new Vector2(-30, -50)), 1.0);
-        var leftLeg1Joint1 = this.world.createParticle(leftLegAnchor.position.add(new Vector2(-bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var leftLeg1Joint2 = this.world.createParticle(leftLeg1Joint1.position.add(new Vector2(-bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var leftLeg1Foot = this.world.createParticle(leftLeg1Joint2.position.add(new Vector2(-bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        bodyParts.particles.push(leftLeg1Joint1);
-        bodyParts.particles.push(leftLeg1Joint2);
-        bodyParts.particles.push(leftLeg1Foot);
-
-        var leftLeg1Section1 = this.world.createLinearSpring(leftLegAnchor, leftLeg1Joint1, 1.0, 1.0, 0.5);
-        var leftLeg1Section2 = this.world.createLinearSpring(leftLeg1Joint1, leftLeg1Joint2, 1.0, 1.0, 0.5);
-        var leftLeg1Section3 = this.world.createLinearSpring(leftLeg1Joint2, leftLeg1Foot, 1.0, 1.0, 0.5);
-        leftLeg1Section1.radius = legSectionRadius;
-        leftLeg1Section2.radius = legSectionRadius;
-        leftLeg1Section3.radius = legSectionRadius;
-        leftLeg1Section1.color = randomColor2;
-        leftLeg1Section2.color = randomColor2;
-        leftLeg1Section3.color = randomColor2;
-
-        var leftLeg1Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg1Section1, 0.25, 0.5, 0.5);
-        var leftLeg1Angular2 = this.world.createAngularSpring(leftLeg1Section1, leftLeg1Section2, 0.25, 0.5, 0.5);
-        var leftLeg1Angular3 = this.world.createAngularSpring(leftLeg1Section2, leftLeg1Section3, 0.25, 0.5, 0.5);
-        
-        bodyParts.leftLeg1JointAngularSpring = leftLeg1Angular1;
-        bodyParts.leftLeg1AngularSprings.push(leftLeg1Angular2);
-        bodyParts.leftLeg1AngularSprings.push(leftLeg1Angular3);
-
-        // Left leg 2
-        var leftLeg2Joint1 = this.world.createParticle(leftLegAnchor.position.add(new Vector2(-smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var leftLeg2Joint2 = this.world.createParticle(leftLeg2Joint1.position.add(new Vector2(-smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var leftLeg2Foot = this.world.createParticle(leftLeg2Joint2.position.add(new Vector2(-smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
-
-        var leftLeg2Section1 = this.world.createLinearSpring(leftLegAnchor, leftLeg2Joint1, 1.0, 1.0, 0.5);
-        var leftLeg2Section2 = this.world.createLinearSpring(leftLeg2Joint1, leftLeg2Joint2, 1.0, 1.0, 0.5);
-        var leftLeg2Section3 = this.world.createLinearSpring(leftLeg2Joint2, leftLeg2Foot, 1.0, 1.0, 0.5);
-        leftLeg2Section1.radius = legSectionRadius;
-        leftLeg2Section2.radius = legSectionRadius;
-        leftLeg2Section3.radius = legSectionRadius;
-        leftLeg2Section1.color = randomColor2;
-        leftLeg2Section2.color = randomColor2;
-        leftLeg2Section3.color = randomColor2;
-
-        var leftLeg2Angular1 = this.world.createAngularSpring(leftLegLinear, leftLeg2Section1, 0.25, 0.5, 0.5);
-        var leftLeg2Angular2 = this.world.createAngularSpring(leftLeg2Section1, leftLeg2Section2, 0.25, 0.5, 0.5);
-        var leftLeg2Angular3 = this.world.createAngularSpring(leftLeg2Section2, leftLeg2Section3, 0.25, 0.5, 0.5);
-
-        bodyParts.leftLeg2JointAngularSpring = leftLeg2Angular1;
-        bodyParts.leftLeg2AngularSprings.push(leftLeg2Angular2);
-        bodyParts.leftLeg2AngularSprings.push(leftLeg2Angular3);
-
-        // Right leg 1
-        var rightLeg1Joint1 = this.world.createParticle(rightLegAnchor.position.add(new Vector2(bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var rightLeg1Joint2 = this.world.createParticle(rightLeg1Joint1.position.add(new Vector2(bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var rightLeg1Foot = this.world.createParticle(rightLeg1Joint2.position.add(new Vector2(bigLegSectionLength, 0)), 5, legJointRadius, randomColor);
-
-        var rightLeg1Section1 = this.world.createLinearSpring(rightLegAnchor, rightLeg1Joint1, 1.0, 1.0, 0.5);
-        var rightLeg1Section2 = this.world.createLinearSpring(rightLeg1Joint1, rightLeg1Joint2, 1.0, 1.0, 0.5);
-        var rightLeg1Section3 = this.world.createLinearSpring(rightLeg1Joint2, rightLeg1Foot, 1.0, 1.0, 0.5);
-        rightLeg1Section1.radius = legSectionRadius;
-        rightLeg1Section2.radius = legSectionRadius;
-        rightLeg1Section3.radius = legSectionRadius;
-        rightLeg1Section1.color = randomColor2;
-        rightLeg1Section2.color = randomColor2;
-        rightLeg1Section3.color = randomColor2;
-
-        var rightLeg1Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg1Section1, 0.25, 0.5, 0.5);
-        var rightLeg1Angular2 = this.world.createAngularSpring(rightLeg1Section1, rightLeg1Section2, 0.25, 0.5, 0.5);
-        var rightLeg1Angular3 = this.world.createAngularSpring(rightLeg1Section2, rightLeg1Section3, 0.25, 0.5, 0.5);
-
-        bodyParts.rightLeg1JointAngularSpring = rightLeg1Angular1;
-        bodyParts.rightLeg1AngularSprings.push(rightLeg1Angular2);
-        bodyParts.rightLeg1AngularSprings.push(rightLeg1Angular3);
-
-        // Right leg 2
-        var rightLeg2Joint1 = this.world.createParticle(rightLegAnchor.position.add(new Vector2(smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var rightLeg2Joint2 = this.world.createParticle(rightLeg2Joint1.position.add(new Vector2(smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
-        var rightLeg2Foot = this.world.createParticle(rightLeg2Joint2.position.add(new Vector2(smallLegSectionLength, 0)), 5, legJointRadius, randomColor);
-
-        var rightLeg2Section1 = this.world.createLinearSpring(rightLegAnchor, rightLeg2Joint1, 1.0, 1.0, 0.5);
-        var rightLeg2Section2 = this.world.createLinearSpring(rightLeg2Joint1, rightLeg2Joint2, 1.0, 1.0, 0.5);
-        var rightLeg2Section3 = this.world.createLinearSpring(rightLeg2Joint2, rightLeg2Foot, 1.0, 1.0, 0.5);
-        rightLeg2Section1.radius = legSectionRadius;
-        rightLeg2Section2.radius = legSectionRadius;
-        rightLeg2Section3.radius = legSectionRadius;
-        rightLeg2Section1.color = randomColor2;
-        rightLeg2Section2.color = randomColor2;
-        rightLeg2Section3.color = randomColor2;
-
-        var rightLeg2Angular1 = this.world.createAngularSpring(rightLegLinear, rightLeg2Section1, 0.25, 0.5, 0.5);
-        var rightLeg2Angular2 = this.world.createAngularSpring(rightLeg2Section1, rightLeg2Section2, 0.25, 0.5, 0.5);
-        var rightLeg2Angular3 = this.world.createAngularSpring(rightLeg2Section2, rightLeg2Section3, 0.25, 0.5, 0.5);
-
-        bodyParts.rightLeg2JointAngularSpring = rightLeg2Angular1;
-        bodyParts.rightLeg2AngularSprings.push(rightLeg2Angular2);
-        bodyParts.rightLeg2AngularSprings.push(rightLeg2Angular3);
-
-        // Push all Particles, LiearSprings and AngularSprings to BodyParts arrays
-        bodyParts.angularSprings.push(legAngular);
-        bodyParts.angularSprings.push(leftLeg1Angular1);
-        bodyParts.angularSprings.push(leftLeg1Angular2);
-        bodyParts.angularSprings.push(leftLeg1Angular3);
-        bodyParts.angularSprings.push(leftLeg2Angular1);
-        bodyParts.angularSprings.push(leftLeg2Angular2);
-        bodyParts.angularSprings.push(leftLeg2Angular3);
-        bodyParts.angularSprings.push(rightLeg1Angular1);
-        bodyParts.angularSprings.push(rightLeg1Angular2);
-        bodyParts.angularSprings.push(rightLeg1Angular3);
-        bodyParts.angularSprings.push(rightLeg2Angular1);
-        bodyParts.angularSprings.push(rightLeg2Angular2);
-        bodyParts.angularSprings.push(rightLeg2Angular3);
-
-        bodyParts.linearSprings.push(leftLegLinear);
-        bodyParts.linearSprings.push(rightLegLinear);
-        bodyParts.linearSprings.push(leftLeg1Section1);
-        bodyParts.linearSprings.push(leftLeg1Section2);
-        bodyParts.linearSprings.push(leftLeg1Section3);
-        bodyParts.linearSprings.push(leftLeg2Section1);
-        bodyParts.linearSprings.push(leftLeg2Section2);
-        bodyParts.linearSprings.push(leftLeg2Section3);
-        bodyParts.linearSprings.push(rightLeg1Section1);
-        bodyParts.linearSprings.push(rightLeg1Section2);
-        bodyParts.linearSprings.push(rightLeg1Section3);
-        bodyParts.linearSprings.push(rightLeg2Section1);
-        bodyParts.linearSprings.push(rightLeg2Section2);
-        bodyParts.linearSprings.push(rightLeg2Section3);
-
-        bodyParts.particles.push(body);
-        bodyParts.particles.push(leftLegAnchor);
-        bodyParts.particles.push(rightLegAnchor);
-        bodyParts.particles.push(leftLeg1Joint1);
-        bodyParts.particles.push(leftLeg1Joint2);
-        bodyParts.particles.push(leftLeg1Foot);
-        bodyParts.particles.push(leftLeg2Joint1);
-        bodyParts.particles.push(leftLeg2Joint2);
-        bodyParts.particles.push(leftLeg2Foot);
-        bodyParts.particles.push(rightLeg1Joint1);
-        bodyParts.particles.push(rightLeg1Joint2);
-        bodyParts.particles.push(rightLeg1Foot);
-        bodyParts.particles.push(rightLeg2Joint1);
-        bodyParts.particles.push(rightLeg2Joint2);
-        bodyParts.particles.push(rightLeg2Foot);
-
-        // let brain = this.createNeuralNetwork(params.brain.genome, params.brain.params);
-        // let eyes = this.createRayCamera(params.eyes.position, params.eyes.direction, params.eyes.numRays, params.eyes.fov);
-
-        // Create vision
-        let numRays = 12;
-
-        // let visionParams = {
-        //     position : new Vector2(0, 0),
-        //     direction : Math.PI * 2 * 0,
-        //     numRays : numRays,
-        //     fov : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
-        // }
-
-        const visionParams = {
-            position : new Vector2(0, 200),
-            direction : Math.PI * 2 * 0,
-            numRays : numRays,
-            fieldOfView : Math.PI * 2 * 1 - Math.PI * 2 * (1/numRays),
-        }
-
-        //let eyes = this.createRayCamera(visionParams.position, visionParams.direction, visionParams.numRays, visionParams.fov);
-        let eyes = this.createRayCamera(visionParams);
-
-        // Create brain
-        let brainParams = {
-            layers : [numRays, 16, 8],
-            activation : {
-                func : ActivationFunctions.parametricTanhLike,
-            },
-        }
-
-        //let brain = this.createNeuralNetwork(params.brain.genome, brainParams);
-        let brain = this.createNeuralNetwork(brainGenome, brainParams);
-
-        let update = function update() {
-            // Update eyes
-            
-            const angleVector = this.body.linearSprings[1].angleVector;
-            this.eyes.directionVector = angleVector.perp();
-            this.eyes.origin = this.body.particles[0].position;
-    
-            this.eyes.update();
-    
-            // Update brain
-            let inputs = [];
-    
-            let intersections = this.eyes.getOutput();
-            
-            // for (let i = 0; i < intersections.length; i++) {
-            //     inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-            // }
-
-            for (let i = 0; i < intersections.length; i++) {
-                if( intersections[i] ) {
-                    //inputs.push(intersections[i] ? intersections[i].intersection.distance : 100000);
-                    let invDistance = 1.0 / (1.0 + intersections[i].intersection.distance);
-                    inputs.push(invDistance);
-                }
-            }
-    
-            this.brain.setInput(inputs);
-            this.brain.run();
-            let output = this.brain.getOutput();
-
-            //console.log(output);
-    
-            let jointAngle = Math.PI * 2 * 0.15;
-            let legAngle = Math.PI * 2 * 0.15;
-    
-            // Update body
-            let angle = ToolBox.map(output[0], -1, 1, -legAngle, legAngle);
-    
-            for (let i = 0; i < this.body.leftLeg1AngularSprings.length; i++) {
-                this.body.leftLeg1AngularSprings[i].setRestAngleVector(angle);
-            }
-    
-            angle = ToolBox.map(output[1], -1, 1, -legAngle, legAngle);
-    
-            for (let i = 0; i < this.body.leftLeg2AngularSprings.length; i++) {
-                this.body.leftLeg2AngularSprings[i].setRestAngleVector(angle);
-            }
-    
-            angle = ToolBox.map(output[2], -1, 1, -legAngle, legAngle);
-    
-            for (let i = 0; i < this.body.rightLeg1AngularSprings.length; i++) {
-                this.body.rightLeg1AngularSprings[i].setRestAngleVector(angle);
-            }
-    
-            angle = ToolBox.map(output[3], -1, 1, -legAngle, legAngle);
-    
-            for (let i = 0; i < this.body.rightLeg2AngularSprings.length; i++) {
-                this.body.rightLeg2AngularSprings[i].setRestAngleVector(angle);
-            }
-    
-            this.body.leftLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[4], -1, 1, -jointAngle, jointAngle));
-            this.body.leftLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[5], -1, 1, -jointAngle, jointAngle));
-            this.body.rightLeg1JointAngularSpring.setRestAngleVector( ToolBox.map(output[6], -1, 1, -jointAngle, jointAngle));
-            this.body.rightLeg2JointAngularSpring.setRestAngleVector( ToolBox.map(output[7], -1, 1, -jointAngle, jointAngle));
-        }
-
-        let crab = new Robot(brain, bodyParts, eyes, update);
-        this.robots.push(crab);
-        return crab;
     }
 
     //

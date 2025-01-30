@@ -1,0 +1,1 @@
+Base objects are the core elements used for creating physical objects and constraints, but they are not intended to be used directly.
