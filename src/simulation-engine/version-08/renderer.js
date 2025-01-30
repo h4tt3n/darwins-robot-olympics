@@ -55,10 +55,11 @@ class Renderer {
         // Documentation
         this.ctx.fillStyle = "rgb(0, 0, 0)";
         this.ctx.font = "italic 16px Arial";
-        this.ctx.fillText("To start the simulation, please select a robot, a challenge, and a population size anc click start button.", 20, 580);
+        this.ctx.fillText("Please select a robot, a challenge, and a population size, then click start challenge button.", 20, 580);
         this.ctx.fillText("Each robot has a unique neural network that translates input (vision) into movement.", 20, 600);
         this.ctx.fillText("The robots earn points by getting as close to the target as possible.", 20, 620);
         this.ctx.fillText("Every new generation of robots is created from the previous generation.", 20, 640);
+        this.ctx.fillText("Use mouse to zoom and pan around in the simulated environment.", 20, 660);
         
         // Version and copyright
         this.ctx.fillStyle = "rgb(128, 128, 128)";

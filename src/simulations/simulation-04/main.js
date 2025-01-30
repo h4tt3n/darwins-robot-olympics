@@ -341,18 +341,18 @@ function createWorld2() {
     target = simulation.createWaypoint(new Vector2(2000, 200), 50, "black");
 
     // Params
-    let top = -400;
+    let top = -800;
     let bottom = 400;
-    let left = -400;
+    let left = -1600;
     let right = 3000;
 
     // Create world
     let topLeftPoint = simulation.world.createPoint(new Vector2(left, top));
     let topRightPoint = simulation.world.createPoint(new Vector2(right, top));
-    let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom + 600));
+    let bottomRightPoint = simulation.world.createPoint(new Vector2(right, bottom + 2400));
     let bottomLeftPoint = simulation.world.createPoint(new Vector2(left, bottom));
     let edgeCenterTop = simulation.world.createPoint(new Vector2(1600, bottom ));
-    let edgeCenterBtm = simulation.world.createPoint(new Vector2(1600, bottom + 300));
+    let edgeCenterBtm = simulation.world.createPoint(new Vector2(1600, bottom + 2400));
 
     simulation.world.createLineSegment(topLeftPoint, topRightPoint);
     simulation.world.createLineSegment(topRightPoint, bottomRightPoint);

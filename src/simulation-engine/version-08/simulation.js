@@ -715,7 +715,7 @@ class Simulation {
             let output = this.brain.getOutput();
     
             // Acceleration
-            this.body.angularStates[0].addAngularImpulse(output[0] * 1.0);
+            this.body.angularStates[0].addAngularImpulse(output[0] * 0.5);
     
             // Brake
             // TODO: Model as constraint, and make gradual, not binary
