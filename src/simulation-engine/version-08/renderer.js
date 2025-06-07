@@ -64,7 +64,7 @@ class Renderer {
         // Version and copyright
         this.ctx.fillStyle = "rgb(128, 128, 128)";
         this.ctx.font = "14px Arial";
-        this.ctx.fillText("Version 0.4.0 - 30.01.2025 - Copyright \u00A9 Michael Schmidt Nissen 2023-2025", 20, this.canvas.height * 0.87);
+        this.ctx.fillText("Version 0.4.1 - 07.06.2025 - Copyright \u00A9 Michael Schmidt Nissen 2023-2025", 20, this.canvas.height * 0.87);
 
         // Render logo
         this.ctx.translate(240, 200);
