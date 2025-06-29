@@ -11,6 +11,7 @@ class Robot {
         this.eyes = eyes;
         this.update = update;
         this.fitness = 0;
+        this.distance = Infinity;
         this.ticksAlive = 0;
     }
 }

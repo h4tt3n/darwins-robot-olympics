@@ -115,9 +115,17 @@ class Simulation {
         for (let i = 0; i < this.robots.length; i++) {
             
             let robot = this.robots[i];
+
+            this.calculateFitness(robot, this.wayPoints[0]);
             
             if (this.creatureTimeouts(robot, this.generationMaxTicks) || this.hasReachedTarget(robot, this.wayPoints[0])) {
-                this.calculateFitness(robot, this.wayPoints[0]);
+                
+                robot.fitness += robot.ticksAlive;
+
+                if (this.hasReachedTarget(robot, this.wayPoints[0])) {
+                    robot.fitness *= 0.5;
+                }
+                
                 console.log("fitness " + robot.fitness);
                 this.deleteRobot(robot);
             } else {
@@ -164,13 +172,11 @@ class Simulation {
         }
     }
     calculateFitness(creature, target) {
-        let fitness = 0;
-        fitness += this.distanceToTarget(creature, target);
-        fitness += creature.ticksAlive;
-        if (this.hasReachedTarget(creature, target)) {
-            fitness *= 0.5;
+        let distance = this.distanceToTarget(creature, target);
+        if(distance < creature.distance) {
+            creature.distance = distance;
         }
-        creature.fitness = fitness;
+        creature.fitness = creature.distance;
     }
     creatureTimeouts(creature, timeout) {
         return (creature.ticksAlive > timeout);
