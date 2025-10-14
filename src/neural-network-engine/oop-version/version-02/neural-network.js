@@ -1,43 +1,14 @@
 "use strict";
 
-/*
- * Copyright (c) 2023 Michael Schmidt Nissen, darwinsrobotolympics@gmail.com
- *
- * All rights reserved.
- *
- * This software and associated documentation files (the "Software"), and the
- * use or other dealings in the Software, are restricted and require the
- * express written consent of the copyright owner. 
- *
- * The Software is provided "as is", without warranty of any kind, express or
- * implied, including but not limited to the warranties of merchantability, 
- * fitness for a particular purpose and noninfringement. In no event shall the
- * authors or copyright holders be liable for any claim, damages or other 
- * liability, whether in an action of contract, tort or otherwise, arising 
- * from, out of or in connection with the Software or the use or other 
- * dealings in the Software.
- */
-
-// ******************************************************
-//   Neural network engine version 0.1
-//
-// ******************************************************
-
-// TODO:
-// Add createRandomNetwork that takes min / max parameters, and encode to genome, not the other way around.
-
 import { ActivationFunctions } from "./activation-functions.js";
-import { ToolBox } from "../../toolbox/version-01/toolbox.js";
-
+import { ToolBox } from "../../../toolbox/version-01/toolbox.js";
 
 class Neuron {
     constructor() {
-        this.inputConnections = []
-        this.outputConnections = []
-        this.bias = 0
+        this.bias = 0;
         this.n = 0;
-        this.input = 0
-        this.output = 0
+        this.input = 0;
+        this.output = 0;
         //this.init()
     }
     // init() {
@@ -46,19 +17,13 @@ class Neuron {
     //     this.input = 0
     //     this.output = 0
     // }
-    addInputConnection(connection) {
-        this.inputConnections.push(connection)
-    }
-    addOutputConnection(connection) {
-        this.outputConnections.push(connection)
-    }
 }
 
 class Connection {
     constructor(from, to) {
-        this.from = from
-        this.to = to
-        this.weight = 0
+        this.from = from;
+        this.to = to;
+        this.weight = 0;
         //this.init()
     }
     // init() {
@@ -68,13 +33,14 @@ class Connection {
 
 class Layer {
     constructor(numberOfNeurons) {
-        this.neurons = []
-        this.init(numberOfNeurons)
+        this.neurons = [];
+        this.connections = []; // Connections leading into this layer's neurons
+        this.init(numberOfNeurons);
     }
     init(numberOfNeurons) {
         for (let i = 0; i < numberOfNeurons; i++) {
-            const neuron = new Neuron()
-            this.neurons.push(neuron)
+            const neuron = new Neuron();
+            this.neurons.push(neuron);
         }
     }
 }
@@ -82,7 +48,6 @@ class Layer {
 class Network {
     constructor(genome = null, params = {}) {
         this.fitness = null;
-        this.connections = [];
         this.params = params;
         this.minBiasValue = -100;
         this.maxBiasValue = 100;
@@ -111,9 +76,10 @@ class Network {
         return new Network(genome, params);
     }
     initiateNeuralNetwork() {
-        for (let i = 0; i < this.connections.length; i++) {
-            this.connections[i].weight = ToolBox.lerp(this.minWeightValue, this.maxWeightValue, Math.random());
-            // console.log(this.minWeightValue, this.maxWeightValue, this.connections[i].weight)
+        for (let i = 1; i < this.layers.length; i++) {
+            for (const connection of this.layers[i].connections) {
+                 connection.weight = ToolBox.lerp(this.minWeightValue, this.maxWeightValue, Math.random());
+            }
         }
 
         for (let i = 1; i < this.layers.length; i++) {
@@ -149,7 +115,7 @@ class Network {
         let numGenes = numLinks + numBiases + numNs;
 
         for (let i = 0; i < numGenes; i++) {
-            let gene =  Math.random();
+            let gene = Math.random();
             genome.push(gene);
         }
         return genome;
@@ -161,15 +127,14 @@ class Network {
         })
     }
     connectLayers() {
-        for (let layer = 1; layer < this.layers.length; layer++) {
-            const thisLayer = this.layers[layer]
-            const prevLayer = this.layers[layer - 1]
-            for (let neuron = 0; neuron < prevLayer.neurons.length; neuron++) {
-                for (let neuronInThisLayer = 0; neuronInThisLayer < thisLayer.neurons.length; neuronInThisLayer++) {
-                    const connection = new Connection(prevLayer.neurons[neuron], thisLayer.neurons[neuronInThisLayer])
-                    prevLayer.neurons[neuron].addOutputConnection(connection)
-                    thisLayer.neurons[neuronInThisLayer].addInputConnection(connection)
-                    this.connections.push(connection);
+        for (let i = 1; i < this.layers.length; i++) {
+            const thisLayer = this.layers[i];
+            const prevLayer = this.layers[i - 1];
+            for (let j = 0; j < prevLayer.neurons.length; j++) {
+                for (let k = 0; k < thisLayer.neurons.length; k++) {
+                    const connection = new Connection(prevLayer.neurons[j], thisLayer.neurons[k]);
+                    // Add connection to the current layer's list
+                    thisLayer.connections.push(connection);
                 }
             }
         }
@@ -187,33 +152,34 @@ class Network {
     }
     run() {
         //console.log("Neuron n values:");
-        for (let layer = 1; layer < this.layers.length; layer++) {
-            const thisLayer = this.layers[layer]
-            const prevLayer = this.layers[layer - 1]
-            for (let neuron = 0; neuron < thisLayer.neurons.length; neuron++) {
-                const thisNeuron = thisLayer.neurons[neuron]
-                let sum = 0
-                for (let neuronInPrevLayer = 0; neuronInPrevLayer < prevLayer.neurons.length; neuronInPrevLayer++) {
-                    const prevNeuron = prevLayer.neurons[neuronInPrevLayer]
-                    for (let connection = 0; connection < prevNeuron.outputConnections.length; connection++) {
-                        const thisConnection = prevNeuron.outputConnections[connection]
-                        if (thisConnection.to === thisNeuron) {
-                            sum += prevNeuron.output * thisConnection.weight
-                        }
-                    }
+        for (let i = 1; i < this.layers.length; i++) {
+            const thisLayer = this.layers[i];
+            const prevLayer = this.layers[i - 1];
+
+            for (let j = 0; j < thisLayer.neurons.length; j++) {
+                const thisNeuron = thisLayer.neurons[j];
+                let sum = 0;
+
+                for (let k = 0; k < prevLayer.neurons.length; k++) {
+                    const prevNeuron = prevLayer.neurons[k];
+                    // Find the connection from the k-th previous neuron to the j-th current neuron
+                    const connectionIndex = k * thisLayer.neurons.length + j;
+                    const connection = thisLayer.connections[connectionIndex];
+                    sum += prevNeuron.output * connection.weight;
                 }
-                sum += thisNeuron.bias
+
+                sum += thisNeuron.bias;
                 // Original version
-                thisNeuron.input = sum
-                
+                thisNeuron.input = sum;
+
                 // Accumulating input version
                 //thisNeuron.input = ToolBox.lerp(thisNeuron.input, sum, 0.5);
 
                 //thisNeuron.output = this.params.activation.func(sum, this.params.activation.params);
-                
+
                 // Original version
-                thisNeuron.output = this.params.activation.func(sum, {n : thisNeuron.n});
-                
+                thisNeuron.output = this.params.activation.func(sum, { n: thisNeuron.n });
+
                 // Accumulating output version
                 //thisNeuron.output = ToolBox.lerp(thisNeuron.output, this.params.activation.func(sum, {n : thisNeuron.n}), 0.5);
                 //thisNeuron.output = this.params.activation.func(sum, {n : 1});
@@ -225,9 +191,10 @@ class Network {
     // Encode neural network, including all weights and biases, into a "chromosome" array of floats in the range [0, 1]
     encode() {
         let chromosome = [];
-        for (let i = 0; i < this.connections.length; i++) {
-            chromosome.push(ToolBox.map(this.connections[i].weight, this.minWeightValue, this.maxWeightValue, 0, 1));
-            //console.log(this.connections[i].weight, this.minWeightValue, this.maxWeightValue, chromosome[chromosome.length - 1]);
+        for (let i = 1; i < this.layers.length; i++) {
+            for (const connection of this.layers[i].connections) {
+                chromosome.push(ToolBox.map(connection.weight, this.minWeightValue, this.maxWeightValue, 0, 1));
+            }
         }
         for (let i = 1; i < this.layers.length; i++) {
             for (let j = 0; j < this.layers[i].neurons.length; j++) {
@@ -246,10 +213,11 @@ class Network {
     // Decode a "chromosome" array of floats in the range [0, 1] into a neural network, including all weights and biases
     decode(chromosome) {
         let chromosomeIndex = 0;
-        for (let i = 0; i < this.connections.length; i++) {
-            this.connections[i].weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minWeightValue, this.maxWeightValue);
-            //console.log(chromosome[chromosomeIndex], this.minWeightValue, this.maxWeightValue, this.connections[i].weight);
-            chromosomeIndex++;
+        for (let i = 1; i < this.layers.length; i++) {
+            for (const connection of this.layers[i].connections) {
+                connection.weight = ToolBox.map(chromosome[chromosomeIndex], 0, 1, this.minWeightValue, this.maxWeightValue);
+                chromosomeIndex++;
+            }
         }
         for (let i = 1; i < this.layers.length; i++) {
             for (let j = 0; j < this.layers[i].neurons.length; j++) {
