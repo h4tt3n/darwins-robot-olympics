@@ -4,8 +4,9 @@
 import { Vector2 } from '../../vector-library/version-02/vector2.js';
 import { ToolBox } from '../../toolbox/version-01/toolbox.js';
 import { SquishyPlanet } from '../../physics-engine/version-02/squishyPlanet.js';
-import { Network } from "../../neural-network-engine/oop-version/version-02/neural-network.js";
-import { ActivationFunctions } from "../../neural-network-engine/oop-version/version-02/activation-functions.js";
+import { Network } from "../../neural-network-engine/oop-version/version-03/neural-network.js";
+import { ActivationFunctions } from "../../neural-network-engine/oop-version/version-03/activation-functions.js";
+import { Codec } from "../../neural-network-engine/oop-version/version-03/neural-network-codec.js";
 import { GeneticAlgorithm, Individual } from "../../genetic-algorithm-engine/version-01/genetic-algorithm.js";
 import { Renderer } from './renderer.js';
 import { Ray, RayCamera } from './rayCaster.js';
@@ -188,7 +189,8 @@ class Simulation {
         // Create genetic algorithm individuals from disabled robots
         for (let i = 0; i < this.deadRobots.length; i++) {
             let individualParams = {
-                genome : this.deadRobots[i].brain.encode(),
+                //genome : this.deadRobots[i].brain.encode(),
+                genome : Codec.encode(this.deadRobots[i].brain),
                 fitness : this.deadRobots[i].fitness,
             }
             this.createIndividual(individualParams);
@@ -1640,10 +1642,26 @@ class Simulation {
 
     //
     createNeuralNetwork(genome, params) {
-        let neuralNetwork = new Network(genome, params);
+        
+        let neuralNetwork = new Network(params);
+        
+        if(genome){
+            Codec.decode(genome, neuralNetwork);
+        } else {
+            const randomGenome = Codec.createRandomGenome(neuralNetwork);
+            Codec.decode(randomGenome, neuralNetwork);
+        }
+
         this.neuralNetworks.push(neuralNetwork);
         return neuralNetwork;
     }
+
+    // createNeuralNetwork(genome, params) {
+    //     let neuralNetwork = new Network(genome, params);
+    //     this.neuralNetworks.push(neuralNetwork);
+    //     return neuralNetwork;
+    // }
+
     deleteNeuralNetwork(neuralNetwork) {
         this.neuralNetworks.splice(this.neuralNetworks.indexOf(neuralNetwork), 1);
     }
