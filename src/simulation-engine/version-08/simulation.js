@@ -189,7 +189,6 @@ class Simulation {
         // Create genetic algorithm individuals from disabled robots
         for (let i = 0; i < this.deadRobots.length; i++) {
             let individualParams = {
-                //genome : this.deadRobots[i].brain.encode(),
                 genome : Codec.encode(this.deadRobots[i].brain),
                 fitness : this.deadRobots[i].fitness,
             }
@@ -938,7 +937,7 @@ class Simulation {
         }
 
         const brainParams = {
-            layers : [numRays, 24, bodyParams.numSegments-2],
+            layers : [numRays, 128, bodyParams.numSegments-2],
             activation : {
                 func : ActivationFunctions.parametricTanhLike,
             },
